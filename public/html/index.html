@@ -38,6 +38,7 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
+    <script src="../js/nodescores.js"></script>
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -490,7 +491,8 @@
 
     <script>
       var phylotree_extensions = new Object();
-
+      tree_1=[];
+      tree_2=[];
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
           tree.getNewick(function(node) {
@@ -584,7 +586,7 @@
 
             tree = new phylotree.phylotree(res);
             global_tree = tree;
-
+            tree_1=tree;
             if (!tree["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -788,7 +790,7 @@
 
         tree = new phylotree.phylotree(test_string);
         global_tree = tree;
-
+        tree_2=tree;
         if (!tree["json"]) {
           var warning_div = d3
             .select("#newick_body")
@@ -827,6 +829,7 @@
           $("#newick_modal").modal("hide");
           $(tree.display.container).html(tree.display.show());
         }
+        console.log((compareTree(tree_1,tree_2)))
       });
 
       function default_tree_settings() {
