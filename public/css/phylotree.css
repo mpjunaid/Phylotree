@@ -32,7 +32,7 @@ font: 10px sans-serif;
 }
 
 .node-selected {
-fill: #f00 !important;     
+fill: orange !important;     
 }
 
 .node-collapsed circle, .node-collapsed ellipse, .node-collapsed rect{
@@ -45,24 +45,24 @@ fill: #00f;
 
 .branch {
 fill: none;
-stroke: #999;
+stroke: black;
 stroke-width: 2px;
 }
 
 .clade {
-fill: lightgrey;
+fill: green;
 stroke: #222;
 stroke-width: 2px;
 opacity: 0.5;
 }
 
 .branch-selected {
-stroke: #f00 !important; 
+stroke: orange !important; 
 stroke-width: 3px;
 }
 
 .branch-tagged {
-stroke: #00f;
+stroke: orange;
 stroke-dasharray: 10,5;
 stroke-width: 2px;
 }
@@ -80,12 +80,14 @@ stroke-width: 3px;
 }
 
 .branch:hover {
+stroke: green;
 stroke-width: 10px;
 }
 
 .internal-node circle:hover, .internal-node ellipse:hover, .internal-node rect:hover {
-fill: black;
-stroke: #CCC;
+fill: green;
+stroke: green;
+stroke-width: 10px;
 }
 
 .tree-widget {

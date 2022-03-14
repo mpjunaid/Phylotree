@@ -1973,7 +1973,7 @@
     if (this.radial()) {
       spline = d3__namespace
         .line()
-        .curve(d3__namespace.curveBasis)
+        .curve(d3__namespace.curveStepBefore)
         .y(function(d) {
           return d[0];
         })
@@ -1992,15 +1992,16 @@
         }
       };
     } else {
-      spline = d3__namespace
+      spline = d3
         .line()
+        .curve(d3__namespace.curveStepBefore)
         .y(function(d) {
           return d[0];
         })
         .x(function(d) {
           return d[1];
-        }).curve(d3__namespace.curveLinear);
-
+        });
+        
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
            return [
