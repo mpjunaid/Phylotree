@@ -50,7 +50,7 @@ stroke-width: 2px;
 }
 
 .clade {
-fill: green;
+fill: blue;
 stroke: #222;
 stroke-width: 2px;
 opacity: 0.5;
@@ -80,13 +80,13 @@ stroke-width: 3px;
 }
 
 .branch:hover {
-stroke: green;
+stroke: blue;
 stroke-width: 10px;
 }
 
 .internal-node circle:hover, .internal-node ellipse:hover, .internal-node rect:hover {
-fill: green;
-stroke: green;
+fill: orange;
+stroke: orange;
 stroke-width: 10px;
 }
 
