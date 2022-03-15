@@ -458,7 +458,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <label class="pull-right"
             ><b>Selected</b>
             <span class="badge badge-secondary" id="selected_branch_counter"
@@ -466,13 +466,13 @@
             >
             <b>branches with current label</b></label
           >
-        </div>
+        </div> -->
       </div>
 
       
       
     </div>
-    <table align="left">
+    <table align ="left">
         
       <tbody>
       <tr>
@@ -480,7 +480,7 @@
           <div id="tree_container" class="tree-widget" style="display: block,width: 10%;"></div>
         </th>
         <th>
-          <div id="tree_container2" class="tree-widget" style="display: block,width: 5%;"></div>
+          <div id="tree_container2" class="tree-widget" style="display: block,width:  10%;"></div>
         </th>
       </tr>
     </tbody>
@@ -495,7 +495,7 @@
       tree_2=[];
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
-          tree.getNewick(function(node) {
+          tree1.getNewick(function(node) {
             var tags = [];
             selection_set.forEach(function(d) {
               if (node[d]) {
@@ -523,10 +523,10 @@
               .select("#main_display")
               .insert("div", ":first-child");
 
-            tree = new phylotree.phylotree(res);
-            global_tree = tree;
+            tree1 = new phylotree.phylotree(res);
+            //global_tree = tree;
 
-            if (!tree["json"]) {
+            if (!tree1["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -536,7 +536,7 @@
                     res["error"]
                 );
             } else {
-              tree.render({
+              tree1.render({
                 container: "#tree_container",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
@@ -544,25 +544,25 @@
                 "edge-styler": edge_colorizer
               });
 
-              tree.display.selectionLabel(current_selection_name);
+              tree1.display.selectionLabel(current_selection_name);
 
-              tree.display.countHandler(count => {
+              tree1.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
 
               // Get selection set names from parsed newick
-              if (tree.parsed_tags.length) {
-                selection_set = tree.parsed_tags;
+              if (tree1.parsed_tags.length) {
+                selection_set = tree1.parsed_tags;
               }
 
               update_selection_names();
 
               $("#newick_modal").modal("hide");
 
-              $(tree.display.container).empty();
-              $(tree.display.container).html(tree.display.show());
+              $(tree1.display.container).empty();
+              $(tree1.display.container).html(tree1.display.show());
             }
           };
 
@@ -584,10 +584,10 @@
               .select("#main_display")
               .insert("div", ":first-child");
 
-            tree = new phylotree.phylotree(res);
-            global_tree = tree;
-            tree_1=tree;
-            if (!tree["json"]) {
+            tree2 = new phylotree.phylotree(res);
+            global_tree = tree2;
+            tree_1 = tree1;
+            if (!tree2["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -597,7 +597,7 @@
                     res["error"]
                 );
             } else {
-              tree.render({
+              tree2.render({
                 container: "#tree_container2",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
@@ -605,25 +605,25 @@
                 "edge-styler": edge_colorizer
               });
 
-              tree.display.selectionLabel(current_selection_name);
+              tree2.display.selectionLabel(current_selection_name);
 
-              tree.display.countHandler(count => {
+              tree2.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
 
               // Get selection set names from parsed newick
-              if (tree.parsed_tags.length) {
-                selection_set = tree.parsed_tags;
+              if (tree2.parsed_tags.length) {
+                selection_set = tree2.parsed_tags;
               }
 
               update_selection_names();
 
               $("#newick_modal").modal("hide");
 
-              $(tree.display.container).empty();
-              $(tree.display.container).html(tree.display.show());
+              $(tree2.display.container).empty();
+              $(tree2.display.container).html(tree2.display.show());
             }
           };
 
@@ -633,65 +633,92 @@
       });
 
       $("#display_tree").on("click", function(e) {
-        tree.options({ branches: "straight" }, true);
+        tree1.options({ branches: "straight" }, true);
+        tree2.options({ branches: "straight" }, true);
       });
 
       $("[data-direction]").on("click", function(e) {
         var which_function =
           $(this).data("direction") == "vertical"
-            ? tree.display.spacing_x.bind(tree.display)
-            : tree.display.spacing_y.bind(tree.display);
+            ? tree1.display.spacing_x.bind(tree1.display)
+            : tree1.display.spacing_y.bind(tree1.display)
+            ? tree2.display.spacing_x.bind(tree2.display)
+            : tree2.display.spacing_y.bind(tree2.display);
         which_function(which_function() + +$(this).data("amount")).update();
       });
 
       $(".phylotree-layout-mode").on("click", function(e) {
-        if (tree.display.radial() != ($(this).data("mode") == "radial")) {
+        if (tree1.display.radial() != ($(this).data("mode") == "radial")) {
           $(".phylotree-layout-mode").toggleClass("active");
-          tree.display.radial(!tree.display.radial()).update();
+          tree1.display.radial(!tree1.display.radial()).update();
+        }
+        if (tree2.display.radial() != ($(this).data("mode") == "radial")) {
+          $(".phylotree-layout-mode").toggleClass("active");
+          tree2.display.radial(!tree2.display.radial()).update();
         }
       });
 
       $("#toggle_animation").on("click", function(e) {
         var current_mode = $(this).hasClass("active");
         $(this).toggleClass("active");
-        tree.options({ transitions: !current_mode });
+        tree1.options({ transitions: !current_mode })
+        tree2.options({ transitions: !current_mode });
       });
 
       $(".phylotree-align-toggler").on("click", function(e) {
         var button_align = $(this).data("align");
-        var tree_align = tree.display.options.alignTips;
+        var tree1_align = tree1.display.options.alignTips;
 
-        if (tree_align != button_align) {
-          tree.display.alignTips(button_align == "right");
+        if (tree1_align != button_align) {
+          tree1.display.alignTips(button_align == "right");
           $(".phylotree-align-toggler").toggleClass("active");
-          tree.display.update();
+          tree1.display.update();
+        }
+        var tree2_align = tree2.display.options.alignTips;
+
+        if (tree2_align != button_align) {
+          tree2.display.alignTips(button_align == "right");
+          $(".phylotree-align-toggler").toggleClass("active");
+          tree2.display.update();
         }
       });
 
-      function sort_nodes(asc) {
+      function sort_nodes(asc, tree) {
         tree.resortChildren(function(a, b) {
           return (b.height - a.height || b.value - a.value) * (asc ? 1 : -1);
         });
       }
 
       $("#sort_original").on("click", function(e) {
-        tree.resortChildren(function(a, b) {
+        tree1.resortChildren(function(a, b) {
+          return a["original_child_order"] - b["original_child_order"];
+        });
+        tree2.resortChildren(function(a, b) {
           return a["original_child_order"] - b["original_child_order"];
         });
       });
 
       $("#sort_ascending").on("click", function(e) {
-        sort_nodes(true);
-        tree.display.update();
+        sort_nodes(false, tree1);
+        tree1.display.update();
+        sort_nodes(false,tree2);
+        tree2.display.update();
       });
 
       $("#sort_descending").on("click", function(e) {
-        sort_nodes(false);
-        tree.display.update();
+        sort_nodes(true, tree1);
+        tree1.display.update();
+        sort_nodes(true, tree2);
+        tree2.display.update();
       });
 
       $("#and_label").on("click", function(e) {
-        tree.display.internalLabel(function(d) {
+        tree1.display.internalLabel(function(d) {
+          return d.reduce(function(prev, curr) {
+            return curr[current_selection_name] && prev;
+          }, true);
+        }, true);
+        tree2.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
             return curr[current_selection_name] && prev;
           }, true);
@@ -699,7 +726,12 @@
       });
 
       $("#or_label").on("click", function(e) {
-        tree.display.internalLabel(function(d) {
+        tree1.display.internalLabel(function(d) {
+          return d.reduce(function(prev, curr) {
+            return curr[current_selection_name] || prev;
+          }, false);
+        }, true);
+        tree2.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
             return curr[current_selection_name] || prev;
           }, false);
@@ -707,7 +739,19 @@
       });
 
       $("#filter_add").on("click", function(e) {
-        tree.display
+        tree1.display
+          .modifySelection(function(d) {
+            return d.tag || d[current_selection_name];
+          })
+          .modifySelection(
+            function(d) {
+              return false;
+            },
+            "tag",
+            false,
+            false
+          );
+          tree2.display
           .modifySelection(function(d) {
             return d.tag || d[current_selection_name];
           })
@@ -722,53 +766,79 @@
       });
 
       $("#filter_remove").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return !d.tag;
+        });
+        tree2.display.modifySelection(function(d) {
           return !d.tag;
         });
       });
 
       $("#select_all").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return true;
+        });
+        tree2.display.modifySelection(function(d) {
           return true;
         });
       });
 
       $("#select_all_internal").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return !tree.isLeafNode(d.target);
+        tree1.display.modifySelection(function(d) {
+          return !tree1.isLeafNode(d.target);
+        });
+        tree2.display.modifySelection(function(d) {
+          return !tree2.isLeafNode(d.target);
         });
       });
 
       $("#select_all_leaves").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return tree.isLeafNode(d.target);
+        tree1.display.modifySelection(function(d) {
+          return tree1.isLeafNode(d.target);
+        });
+        tree2.display.modifySelection(function(d) {
+          return tree2.isLeafNode(d.target);
         });
       });
 
       $("#select_none").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return false;
+        });
+        tree2.display.modifySelection(function(d) {
           return false;
         });
       });
 
       $("#clear_internal").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return tree.isLeafNode(d.target)
+        tree1.display.modifySelection(function(d) {
+          return tree1.isLeafNode(d.target)
+            ? d.target[current_selection_name]
+            : false;
+        });
+        tree2.display.modifySelection(function(d) {
+          return tree2.isLeafNode(d.target)
             ? d.target[current_selection_name]
             : false;
         });
       });
 
       $("#clear_leaves").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return !tree.isLeafNode(d.target)
+        tree1.display.modifySelection(function(d) {
+          return !tree1.isLeafNode(d.target)
+            ? d.target[current_selection_name]
+            : false;
+        });
+        tree2.display.modifySelection(function(d) {
+          return !tree2.isLeafNode(d.target)
             ? d.target[current_selection_name]
             : false;
         });
       });
 
       $("#display_dengrogram").on("click", function(e) {
-        tree.display.options({ branches: "step" }, true);
+        tree1.display.options({ branches: "step" }, true);
+        tree2.display.options({ branches: "step" }, true);
       });
 
       $("#branch_filter").on("input propertychange", function(e) {
@@ -776,7 +846,14 @@
 
         var rx = new RegExp(filter_value, "i");
 
-        tree.display.modifySelection(n => {
+        tree1.display.modifySelection(n => {
+          if (!n.target.data.name) {
+            return false;
+          }
+          m = n.target.data.name.search(rx);
+          return filter_value.length && m != -1;
+        }, "tag");
+        tree2.display.modifySelection(n => {
           if (!n.target.data.name) {
             return false;
           }
@@ -788,10 +865,10 @@
       $("#validate_newick").on("click", function(e) {
         let test_string = $('textarea[id$="nwk_spec"]').val();
 
-        tree = new phylotree.phylotree(test_string);
+        tree1 = new phylotree.phylotree(test_string);
         global_tree = tree;
         tree_2=tree;
-        if (!tree["json"]) {
+        if (!tree1["json"]) {
           var warning_div = d3
             .select("#newick_body")
             .selectAll("div  .alert-danger")
@@ -803,7 +880,7 @@
             })
             .attr("class", "alert-danger");
         } else {
-          tree.render({
+          tree1.render({
             container: "#tree_container",
             "draw-size-bubbles": false,
             "node-styler": node_colorizer,
@@ -811,32 +888,32 @@
             "edge-styler": edge_colorizer
           });
 
-          tree.display.selectionLabel(current_selection_name);
+          tree1.display.selectionLabel(current_selection_name);
 
-          tree.display.countHandler(count => {
+          tree1.display.countHandler(count => {
             $("#selected_branch_counter").text(function(d) {
               return count[current_selection_name];
             });
           });
 
           // Get selection set names from parsed newick
-          if (tree.parsed_tags.length) {
-            selection_set = tree.parsed_tags;
+          if (tree1.parsed_tags.length) {
+            selection_set = tree1.parsed_tags;
           }
 
           update_selection_names();
 
           $("#newick_modal").modal("hide");
-          $(tree.display.container).html(tree.display.show());
+          $(tree1.display.container).html(tree1.display.show());
         }
         console.log((compareTree(tree_1,tree_2)))
       });
 
       function default_tree_settings() {
-        tree = phylotree();
-        tree.branchLength(null);
-        tree.branchName(null);
-        tree.display.radial(false).separation(function(a, b) {
+        tree1 = phylotree();
+        tree1.branchLength(null);
+        tree1.branchName(null);
+        tree1.display.radial(false).separation(function(a, b) {
           return 0;
         });
       }
@@ -914,7 +991,7 @@
             ).val();
 
             if (old_selection_name != current_selection_name) {
-              tree.update_key_name(old_selection_name, current_selection_name);
+              tree1.update_key_name(old_selection_name, current_selection_name);
               update_selection_names(current_selection_id);
             }
             send_click_event_to_menu_objects(
@@ -945,7 +1022,7 @@
       });
 
       $("#selection_delete").on("click", function(e) {
-        tree.display.updateKeyName(selection_set[current_selection_id], null);
+        tree1.display.updateKeyName(selection_set[current_selection_id], null);
         selection_set.splice(current_selection_id, 1);
 
         if (current_selection_id > 0) {
@@ -1043,12 +1120,12 @@
 
         // Loop through all selection_sets
         _.each(selection_set, function(id) {
-          tree.display.selectionLabel(id);
-          tree.display.update();
+          tree1.display.selectionLabel(id);
+          tree1.display.update();
         });
 
-        tree.display.selectionLabel(selection_set[id]);
-        tree.display.update();
+        tree1.display.selectionLabel(selection_set[id]);
+        tree1.display.update();
       }
 
       var width = 800, //$(container_id).width(),
