@@ -4,6 +4,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.phylotree = global.phylotree || {}, global.d3, global._, global._$1));
 }(this, (function (exports, d3, _, _$1) { 'use strict';
 
+
   function _interopNamespace(e) {
     if (e && e.__esModule) return e;
     var n = Object.create(null);
@@ -5418,8 +5419,11 @@
   exports.preOrder = preOrder;
   exports.rootToTip = rootToTip;
   exports.sackin = sackin;
+  exports.assignAttributes = assignAttributes;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
 })));
 //# sourceMappingURL=phylotree.js.map
+
+
