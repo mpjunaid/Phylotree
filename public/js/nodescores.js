@@ -5,6 +5,12 @@
  * deepLeafList: getTips (all leaves from root)
  */
 
+import getTips from phylotree.js;
+import assignAttributes from phylotree.js;
+import name from phylotree.js;
+import getChildren from phylotree.js;
+
+
 function compareTree(tree_1, tree_2) {
     tree_1.traverse_and_compute(function(node) {
         const nodeScore = {
@@ -29,7 +35,7 @@ function getBCN(v, tree) {
             elementBCNNode = spanningTree[i];
         }
     }
-    return elementBCNNode;
+    return maxElementS;
     //v.elementS = maxElementS; Maybe add later
 }
 

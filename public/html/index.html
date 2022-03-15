@@ -39,6 +39,7 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
+
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -631,7 +632,7 @@
           reader.readAsText(f);
         }
       });
-
+      
       $("#display_tree").on("click", function(e) {
         tree.options({ branches: "straight" }, true);
       });
