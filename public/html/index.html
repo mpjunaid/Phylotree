@@ -39,7 +39,7 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
-
+    <script src="../js/phyloiobcn.js" type="module"></script>
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -478,10 +478,10 @@
       <tbody>
       <tr>
         <th>
-          <div id="tree_container" class="tree-widget" style="display: block,width: 10%;"></div>
+          <div id="tree_container" class="tree-widget" style="display: block,width: 10%,padding:0px;"></div>
         </th>
         <th>
-          <div id="tree_container2" class="tree-widget" style="display: block,width: 5%;"></div>
+          <div id="tree_container2" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
         </th>
       </tr>
     </tbody>
@@ -491,6 +491,12 @@
 -->
 
     <script>
+      if('function' === typeof importScripts) {
+        importScripts('../js/underscore.js');
+      }
+
+      
+
       var phylotree_extensions = new Object();
       tree_1=[];
       tree_2=[];
@@ -511,13 +517,233 @@
         );
       });
 
+      /////////////////////////////
+
+      function preprocess_tree(tree){
+        if (tree.name=="OROOT")
+            tree.startroot=true;
+        tree.leaves=getChildLeaves(tree);
+        try{
+          len=tree.children.length;
+          tree.leaf=false;
+          
+          for (i=0;i<len;++i)
+          {
+            tree.children[i]= preprocess_tree(tree.children[i]);
+            console.log(tree.children[i]);
+            // tree.leaves= getChildLeaves(tree.children[i]);
+          }
+
+          }
+          catch(error){
+            tree.leaf=true;
+            tree.leaves=getChildLeaves(tree);
+          }
+
+        
+      return tree;
+      }
+
+
+
+
+      
+      function loadtree(s) {
+    var ancestors = [];
+    var tree = {};
+    var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
+    for (var i=0; i<tokens.length; i++) {
+      var token = tokens[i];
+      switch (token) {
+        case '(': // new children
+          var subtree = {};
+          tree.children = [subtree];
+          ancestors.push(tree);
+          tree = subtree;
+          break;
+        case ',': // another branch
+          var subtree = {};
+          ancestors[ancestors.length-1].children.push(subtree);
+          tree = subtree;
+          break;
+        case ')': // optional name next
+          tree = ancestors.pop();
+          break;
+        case ':': // optional length next
+          break;
+        default:
+          var x = tokens[i-1];
+          if (x == ')' || x == '(' || x == ',') {
+            tree.name = token;
+          } else if (x == ':') {
+            tree.length = parseFloat(token);
+          }
+      }
+    }
+    return tree;
+}
+function getChildLeaves(d) {
+        if (d.children || d._children) {
+            var leaves = [];
+            var children = getChildren(d);
+            for (var i = 0; i < children.length; i++) {
+                leaves = leaves.concat(getChildLeaves(children[i]));
+            }
+            return leaves;
+        } else {
+            return [d];
+        }
+    }
+    
+function wrapGetAllBCNs(tree1, tree2, recalculate="True") {
+
+function getAllBCNs(d, t) {
+
+    // var d.children = d.children ? d.children : [];
+    var children = getChildren(d);
+    // function getChild(d){x
+    //   return d.children ? d.children : [];
+    // }
+    if (children.length > 0) {
+        for (var a = 0; a < children.length; a++) {
+            getAllBCNs(children[a], t);
+        }
+        if (recalculate || !d.elementBCN) {
+            BCN(d, t);
+            // once all the leaves have been compared to the other tree, the node is also compared.
+            // Seems rather redundant, but if we comment this out, the tree has no coloring...
+        }
+        return;
+    } else {
+        if (recalculate || !d.elementBCN) {
+            BCN(d, t);
+        }
+        return;
+    }
+}
+getAllBCNs(tree1, tree2);
+postMessage(tree1);
+}
+// function BCN(v, tree) {
+
+// var elementBCNNode = null;
+// var maxElementS = 0;
+
+// var spanningTree = getSpanningTree(tree, v);
+
+// for (var i = 0; i < spanningTree.length; i++) {
+//     //get elementBCN for node v
+//     x = getElementS(v, spanningTree[i]);
+//     if (x > maxElementS) {
+//         maxElementS = x;
+//         elementBCNNode = spanningTree[i];
+//     }
+// }
+// v.elementBCN = elementBCNNode;
+// v.elementS = maxElementS;
+// }
+
+function BCN(v, tree) {
+
+var elementBCNNode = null;
+var maxElementS = 0;
+
+// var spanningTree = getSpanningTree(tree, v);
+tree=getChildLeaves(tree);
+for (var i = 0; i < tree.length; i++) {
+    //get elementBCN for node v
+    x = getElementS(v, tree);
+    if (x > maxElementS) {
+        maxElementS = x;
+        elementBCNNode = tree[i];
+    }
+}
+v.elementBCN = elementBCNNode;
+v.elementS = maxElementS;
+}
+
+// function getSpanningTree(tree, node) {
+//     var nodes = [];
+//     //var bcns = [];
+//     for (var i = 0; i < tree.children.length; i++) {   //tree.leaves.length
+//         var test = _.indexOf(node.deepLeafList, tree.children[i].name);
+//         console.log(test);
+//         if (test > -1){
+//             nodes.push(tree);
+//             //bcns.push(getElementS(tree, node));
+//             // var children = getChildren(tree);
+//             for (var j = 0; j < children.length; j++) {
+//                 nodes = nodes.concat(getSpanningTree(children[j], node));
+//             }
+//             return nodes;
+//         }
+//     }
+//     return nodes;
+// }
+
+function getElementS(v, n) {
+
+var lv = v.deepLeafList;
+var ln = n.deepLeafList;
+console.log(lv);
+console.log(ln);
+var lvlen = lv.length;
+var lnlen = ln.length;
+
+var intersect = _.intersection(lv, ln).length;
+return intersect / (lvlen + lnlen - intersect);
+
+}
+function getChildren(d) {
+    return d._children ? d._children : (d.children ? d.children : []);
+}
+
+onmessage = function(event) {
+    var tree1 = event.data.tree1;
+    var tree2 = event.data.tree2;
+    var recalculate = event.data.recalculate;
+
+    // Instead of 2 calls to the same function, we should use web workers!
+    // BUT:
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=31666
+    wrapGetAllBCNs(tree1, tree2, recalculate);
+};
+function postorderTraverse(d, f, do_children) {
+        if (do_children === undefined) { //check whether variable is defined, e.g. string, integer ...
+            do_children = true;
+        }
+        var children = [];
+        if (do_children) {
+            children = getChildren(d);
+        } else {
+            if (d.children) {
+                children = d.children
+            }
+        }
+        if (children.length > 0) {
+            for (var i = 0; i < children.length; i++) {
+                postorderTraverse(children[i], f, do_children);
+            }
+            f(d);
+            return;
+
+        } else {
+            f(d);
+            return;
+        }
+    }
+      ////////////////////////////
+  ph_tree1=[]
+  ph_tree2=[]
+  tree1=[]
+  tree2=[]
+
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
 
         if (files.length == 1) {
           var f = files[0];
           var reader = new FileReader();
-
           reader.onload = function(e) {
             var res = e.target.result;
             var warning_div = d3
@@ -525,8 +751,10 @@
               .insert("div", ":first-child");
 
             tree = new phylotree.phylotree(res);
-            global_tree = tree;
 
+            global_tree = tree;
+            ph_tree1=loadtree(res+'');
+            tree1=tree;
             if (!tree["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -587,7 +815,8 @@
 
             tree = new phylotree.phylotree(res);
             global_tree = tree;
-            tree_1=tree;
+            tree2=tree;
+            ph_tree2=loadtree(res+'');
             if (!tree["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -625,6 +854,8 @@
 
               $(tree.display.container).empty();
               $(tree.display.container).html(tree.display.show());
+              
+              console.log(wrapGetAllBCNs(ph_tree1,ph_tree2,"True"));
             }
           };
 

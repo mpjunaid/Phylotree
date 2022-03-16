@@ -5,7 +5,7 @@
  * deepLeafList: getTips (all leaves from root)
  */
 
-import { assignAttributes } from "./phylotree.js";
+// import { assignAttributes } from "./phylotree.js";
 //import assignAttributes from phylotree
 //import getTips from phylotree.js;
 //import assignAttributes from phylotree.js;
@@ -17,7 +17,7 @@ function compareTree(tree_1, tree_2) {
     tree_1.traverse_and_compute(function(node) {
         const nodeScore = {
             nodeName: node.name,
-            nodeValue: getBCN(node, tree_2.root)
+            nodeValue: getBCN(node, tree_2.root) //best corresponding node
           };
         assignAttributes(nodeScore);
     });
