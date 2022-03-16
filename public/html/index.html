@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+      .button {
+        background-color: gray; /* Green */
+        border: none;
+        color: black;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      .button1 {border-radius: 8px;}
+      </style>
     <meta charset="utf-8" />
     <!-- Latest compiled and minified CSS -->
     <script src="https://code.jquery.com/jquery.js"></script>
@@ -12,6 +27,11 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
+
+    <!-- New font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" 
+    rel="stylesheet">
+    
     <link
       href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
       rel="stylesheet"
@@ -22,7 +42,7 @@
       rel="stylesheet"
       href="//stackpath.bootstrapcdn.com/bootswatch/4.1.1/spacelab/bootstrap.min.css"
     />
-
+    
     <!-- Latest compiled and minified JavaScript -->
     <script
       src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
@@ -68,7 +88,7 @@
         }
       }
 
-      .btn {
+      .button {
         height: 30px;
       }
 
@@ -103,7 +123,7 @@
               class="nav-link dropdown-toggle"
               role="button"
               data-toggle="dropdown"
-              >Newick <b class="caret"></b
+              >Files <b class="caret"></b
             ></a>
             <div class="dropdown-menu">
               <a
@@ -244,8 +264,8 @@
               <input
                 type="text"
                 id="branch_filter"
-                class="form-control mr-sm-2"
-                placeholder="Filter branches on"
+                class="form-control"
+                placeholder="Search"
               />
             </form>
           </li>
@@ -286,7 +306,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="button1"
               id="validate_newick"
             >
               Display this tree
@@ -314,7 +334,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="button1"
               data-dismiss="modal"
             >
               Close
@@ -356,11 +376,11 @@
     <div class="container" id="main_display" >
       <div class="row">
         <div class="col-md-8">
-          <div class="btn-toolbar" role="toolbar" id="toolbar">
-            <div class="btn-group">
+          <div class="button1" role="toolbar" id="toolbar">
+            <div class="button1">
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="vertical"
                 data-amount="1"
                 title="Expand vertical spacing"
@@ -369,7 +389,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="vertical"
                 data-amount="-1"
                 title="Compress vertical spacing"
@@ -378,7 +398,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="horizontal"
                 data-amount="1"
                 title="Expand horizonal spacing"
@@ -387,7 +407,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="horizontal"
                 data-amount="-1"
                 title="Compress horizonal spacing"
@@ -396,7 +416,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_ascending"
                 title="Sort deepest clades to the bottom"
               >
@@ -404,7 +424,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_descending"
                 title="Sort deepsest clades to the top"
               >
@@ -412,7 +432,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_original"
                 title="Restore original order"
               >
@@ -420,36 +440,36 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="save_image"
                 title="Save image"
               >
                 <i class="fa fa-picture-o"></i>
               </button>
             </div>
-            <div class="btn-group" role="group">
+            <div class="button1" role="group">
               <button
-                class="btn btn-light btn-sm active phylotree-layout-mode"
+                class="button1 active phylotree-layout-mode"
                 data-mode="linear"
               >
                 Linear
               </button>
               <button
-                class="btn btn-light btn-sm phylotree-layout-mode"
+                class="button1 phylotree-layout-mode"
                 data-mode="radial"
               >
                 Radial
               </button>
             </div>
-            <div class="btn-group" role="group">
+            <div class="button1" role="group">
               <button
-                class="btn btn-light btn-sm active phylotree-align-toggler"
+                class="button1 active phylotree-align-toggler"
                 data-align="left"
               >
                 <i class="fa fa-align-left"></i>
               </button>
               <button
-                class="btn btn-light btn-sm phylotree-align-toggler"
+                class="button1 phylotree-align-toggler"
                 data-align="right"
               >
                 <i class="fa fa-align-right"></i>
