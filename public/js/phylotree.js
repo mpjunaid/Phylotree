@@ -1113,6 +1113,7 @@
    *
    * @param {Function} function that scales the branches
    */
+  
   function scale(scale_by) {
 
     let bl = this.branch_length;

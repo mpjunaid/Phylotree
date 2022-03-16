@@ -39,7 +39,6 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
-
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -632,7 +631,7 @@
           reader.readAsText(f);
         }
       });
-      
+
       $("#display_tree").on("click", function(e) {
         tree1.options({ branches: "straight" }, true);
         tree2.options({ branches: "straight" }, true);
@@ -643,8 +642,14 @@
           $(this).data("direction") == "vertical"
             ? tree1.display.spacing_x.bind(tree1.display)
             : tree1.display.spacing_y.bind(tree1.display)
+        which_function(which_function() + +$(this).data("amount")).update();
+      });
+
+      $("[data-direction]").on("click", function(e) {
+        var which_function =
+          $(this).data("direction") == "vertical"
             ? tree2.display.spacing_x.bind(tree2.display)
-            : tree2.display.spacing_y.bind(tree2.display);
+            : tree2.display.spacing_y.bind(tree2.display)
         which_function(which_function() + +$(this).data("amount")).update();
       });
 
@@ -1362,21 +1367,18 @@
         tree.render({
           container: "#tree_container",
           "draw-size-bubbles": false,
+          "left-right-spacing" : "fixed-step",
           "node-styler": node_colorizer,
-          zoom: false,
           "edge-styler": edge_colorizer
         });
 
-        $('#tree_container').on('reroot', function (e) {  
-          update_selection_names();
 
-          tree.display.countHandler(count => {
+        tree.display.countHandler(count => {
             $("#selected_branch_counter").text(function(d) {
               return count[current_selection_name];
             });
           });
 
-        });
 
         tree.display.selectionLabel(current_selection_name);
 
@@ -1390,9 +1392,12 @@
         if (tree.parsed_tags.length) {
           selection_set = tree.parsed_tags;
         }
+        //update_selection_names();
 
+        $(tree.display.container).empty();
+        $(tree.display.container).html(tree.display.show());
         // Until a cleaner solution to supporting both Observable and regular HTML
-        $(tree.display.container).append(tree.display.show());
+        //$(tree.display.container).append(tree.display.show());
 
         $("#selection_new")
           .get(0)
