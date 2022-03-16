@@ -859,6 +859,7 @@
           m = n.target.data.name.search(rx);
           return filter_value.length && m != -1;
         }, "tag");
+
         tree2.display.modifySelection(n => {
           if (!n.target.data.name) {
             return false;
@@ -868,52 +869,52 @@
         }, "tag");
       });
 
-      $("#validate_newick").on("click", function(e) {
-        let test_string = $('textarea[id$="nwk_spec"]').val();
+      // $("#validate_newick").on("click", function(e) {
+      //   let test_string = $('textarea[id$="nwk_spec"]').val();
 
-        tree1 = new phylotree.phylotree(test_string);
-        global_tree = tree;
-        tree_2=tree;
-        if (!tree1["json"]) {
-          var warning_div = d3
-            .select("#newick_body")
-            .selectAll("div  .alert-danger")
-            .data([res["error"]]);
-          warning_div.enter().append("div");
-          warning_div
-            .html(function(d) {
-              return d;
-            })
-            .attr("class", "alert-danger");
-        } else {
-          tree1.render({
-            container: "#tree_container",
-            "draw-size-bubbles": false,
-            "node-styler": node_colorizer,
-            zoom: false,
-            "edge-styler": edge_colorizer
-          });
+      //   tree1 = new phylotree.phylotree(test_string);
+      //   global_tree = tree;
+      //   tree_2 = tree;
+      //   if (!tree1["json"]) {
+      //     var warning_div = d3
+      //       .select("#newick_body")
+      //       .selectAll("div  .alert-danger")
+      //       .data([res["error"]]);
+      //     warning_div.enter().append("div");
+      //     warning_div
+      //       .html(function(d) {
+      //         return d;
+      //       })
+      //       .attr("class", "alert-danger");
+      //   } else {
+      //     tree1.render({
+      //       container: "#tree_container",
+      //       "draw-size-bubbles": false,
+      //       "node-styler": node_colorizer,
+      //       zoom: false,
+      //       "edge-styler": edge_colorizer
+      //     });
 
-          tree1.display.selectionLabel(current_selection_name);
+      //     tree1.display.selectionLabel(current_selection_name);
 
-          tree1.display.countHandler(count => {
-            $("#selected_branch_counter").text(function(d) {
-              return count[current_selection_name];
-            });
-          });
+      //     tree1.display.countHandler(count => {
+      //       $("#selected_branch_counter").text(function(d) {
+      //         return count[current_selection_name];
+      //       });
+      //     });
 
-          // Get selection set names from parsed newick
-          if (tree1.parsed_tags.length) {
-            selection_set = tree1.parsed_tags;
-          }
+      //     // Get selection set names from parsed newick
+      //     if (tree1.parsed_tags.length) {
+      //       selection_set = tree1.parsed_tags;
+      //     }
 
-          update_selection_names();
+      //     update_selection_names();
 
-          $("#newick_modal").modal("hide");
-          $(tree1.display.container).html(tree1.display.show());
-        }
-        console.log((compareTree(tree_1,tree_2)))
-      });
+      //     $("#newick_modal").modal("hide");
+      //     $(tree1.display.container).html(tree1.display.show());
+      //   }
+      //   console.log((compareTree(tree_1,tree_2)))
+      // });
 
       function default_tree_settings() {
         tree1 = phylotree();
@@ -986,46 +987,46 @@
         );
       });
 
-      $("#selection_rename").on("click", function(e) {
-        d3.select("#save_selection_button")
-          .classed("disabled", true)
-          .on("click", function(e) {
-            // save selection handler
-            var old_selection_name = current_selection_name;
-            selection_set[current_selection_id] = current_selection_name = $(
-              "#selection_name_box"
-            ).val();
+      // $("#selection_rename").on("click", function(e) {
+      //   d3.select("#save_selection_button")
+      //     .classed("disabled", true)
+      //     .on("click", function(e) {
+      //       // save selection handler
+      //       var old_selection_name = current_selection_name;
+      //       selection_set[current_selection_id] = current_selection_name = $(
+      //         "#selection_name_box"
+      //       ).val();
 
-            if (old_selection_name != current_selection_name) {
-              tree1.update_key_name(old_selection_name, current_selection_name);
-              update_selection_names(current_selection_id);
-            }
-            send_click_event_to_menu_objects(
-              new CustomEvent(selection_menu_element_action, {
-                detail: ["save", this]
-              })
-            );
-          });
+      //       if (old_selection_name != current_selection_name) {
+      //         tree1.update_key_name(old_selection_name, current_selection_name);
+      //         update_selection_names(current_selection_id);
+      //       }
+      //       send_click_event_to_menu_objects(
+      //         new CustomEvent(selection_menu_element_action, {
+      //           detail: ["save", this]
+      //         })
+      //       );
+      //     });
 
-        d3.select("#cancel_selection_button")
-          .classed("disabled", false)
-          .on("click", function(e) {
-            // save selection handler
-            $("#selection_name_box").val(current_selection_name);
-            send_click_event_to_menu_objects(
-              new CustomEvent(selection_menu_element_action, {
-                detail: ["cancel", this]
-              })
-            );
-          });
+      //   d3.select("#cancel_selection_button")
+      //     .classed("disabled", false)
+      //     .on("click", function(e) {
+      //       // save selection handler
+      //       $("#selection_name_box").val(current_selection_name);
+      //       send_click_event_to_menu_objects(
+      //         new CustomEvent(selection_menu_element_action, {
+      //           detail: ["cancel", this]
+      //         })
+      //       );
+      //     });
 
-        send_click_event_to_menu_objects(
-          new CustomEvent(selection_menu_element_action, {
-            detail: ["rename", this]
-          })
-        );
-        e.preventDefault();
-      });
+      //   send_click_event_to_menu_objects(
+      //     new CustomEvent(selection_menu_element_action, {
+      //       detail: ["rename", this]
+      //     })
+      //   );
+      //   e.preventDefault();
+      // });
 
       $("#selection_delete").on("click", function(e) {
         tree1.display.updateKeyName(selection_set[current_selection_id], null);
@@ -1147,16 +1148,9 @@
         "(((EELA:0.150276,CONGERA:0.213019):0.230956,(EELB:0.263487,CONGERB:0.202633):0.246917):0.094785,((CAVEFISH:0.451027,(GOLDFISH:0.340495,ZEBRAFISH:0.390163):0.220565):0.067778,((((((NSAM:0.008113,NARG:0.014065):0.052991,SPUN:0.061003,(SMIC:0.027806,SDIA:0.015298,SXAN:0.046873):0.046977):0.009822,(NAUR:0.081298,(SSPI:0.023876,STIE:0.013652):0.058179):0.091775):0.073346,(MVIO:0.012271,MBER:0.039798):0.178835):0.147992,((BFNKILLIFISH:0.317455,(ONIL:0.029217,XCAU:0.084388):0.201166):0.055908,THORNYHEAD:0.252481):0.061905):0.157214,LAMPFISH:0.717196,((SCABBARDA:0.189684,SCABBARDB:0.362015):0.282263,((VIPERFISH:0.318217,BLACKDRAGON:0.109912):0.123642,LOOSEJAW:0.397100):0.287152):0.140663):0.206729):0.222485,(COELACANTH:0.558103,((CLAWEDFROG:0.441842,SALAMANDER:0.299607):0.135307,((CHAMELEON:0.771665,((PIGEON:0.150909,CHICKEN:0.172733):0.082163,ZEBRAFINCH:0.099172):0.272338):0.014055,((BOVINE:0.167569,DOLPHIN:0.157450):0.104783,ELEPHANT:0.166557):0.367205):0.050892):0.114731):0.295021)myroot";
       var container_id = "#tree_container";
 
-      //var tree = phylotree.phylotree(test_string);
-      //.size([height, width]);
-
-      //window.setInterval (function () {});
 
       var example_controls = d3.select("#controls_form").append("form");
 
-      //var svg = d3.select(container_id).append("svg")
-      //    .attr("width", width)
-      //    .attr("height", height);
 
       function selection_handler_name_box(e) {
         var name_box = d3.select(this);
@@ -1361,10 +1355,9 @@
       };
 
       $(document).ready(function() {
-        tree = new phylotree.phylotree(test_string);
-        global_tree = tree;
+        tree1 = new phylotree.phylotree(test_string);
 
-        tree.render({
+        tree1.render({
           container: "#tree_container",
           "draw-size-bubbles": false,
           "left-right-spacing" : "fixed-step",
@@ -1373,83 +1366,23 @@
         });
 
 
-        tree.display.countHandler(count => {
+        tree1.display.countHandler(count => {
             $("#selected_branch_counter").text(function(d) {
               return count[current_selection_name];
             });
           });
 
 
-        tree.display.selectionLabel(current_selection_name);
-
-        tree.display.countHandler(count => {
-          $("#selected_branch_counter").text(function(d) {
-            return count[current_selection_name];
-          });
-        });
+        tree1.display.selectionLabel(current_selection_name);
 
         // Get selection set names from parsed newick
-        if (tree.parsed_tags.length) {
-          selection_set = tree.parsed_tags;
+        if (tree1.parsed_tags.length) {
+          selection_set = tree1.parsed_tags;
         }
         //update_selection_names();
 
-        $(tree.display.container).empty();
-        $(tree.display.container).html(tree.display.show());
-        // Until a cleaner solution to supporting both Observable and regular HTML
-        //$(tree.display.container).append(tree.display.show());
-
-        $("#selection_new")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_new,
-            false
-          );
-        $("#selection_rename")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_rename,
-            false
-          );
-        $("#selection_delete")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_delete,
-            false
-          );
-        $("#selection_delete")
-          .get(0)
-          .dispatchEvent(
-            new CustomEvent(selection_menu_element_action, {
-              detail: ["cancel", null]
-            })
-          );
-        $("#selection_name_box")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_name_box,
-            false
-          );
-        $("#save_selection_name")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_save_selection_name,
-            false
-          );
-        $("#selection_name_dropdown")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_name_dropdown,
-            false
-          );
-
-        update_selection_names();
+        $(tree1.display.container).empty();
+        $(tree1.display.container).html(tree1.display.show());
 
         $("#save_image").on("click", function(e) {
           datamonkey_save_image("svg", "#tree_container");
