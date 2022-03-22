@@ -2436,7 +2436,7 @@
             .append("a")
             .attr("class", "dropdown-item")
             .attr("tabindex", "-1")
-            .text(false ? "Expand Subtree" : "Load two trees")       
+            .text(false ? "Expand Subtree" : "Noad score:"+''+node.score)       
         }
           if (options["selectable"]) {
             menu_object.append("div").attr("class", "dropdown-divider");

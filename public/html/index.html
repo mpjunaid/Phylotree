@@ -890,6 +890,8 @@ function postorderTraverse(d, f, do_children) {
             tree = new phylotree.phylotree(res);
             global_tree = tree;
             tree2=tree;
+            preprocess_BCN(tree1, tree2);
+            preprocess_BCN(tree2, tree1);
             ph_tree2=loadtree(res+'');
             if (!tree["json"]) {
               warning_div
