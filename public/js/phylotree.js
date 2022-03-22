@@ -1955,6 +1955,16 @@
   }
 
   function updateCollapsedClades(transitions) {
+    var rectangle = { 
+          draw: function(context, size){
+          let s = Math.sqrt(size)/2;
+          context.moveTo(s/4,s*2);
+          context.lineTo(s/4,-s*2);
+          context.lineTo(-s/4,-s*2);
+          context.lineTo(-s/4,s*2);
+          context.closePath();
+      }
+  }
 
     let enclosure = this.svg.selectAll("." + this.css_classes["tree-container"]);
     var node_id = 0;
@@ -1973,7 +1983,7 @@
 
     // Collapse radial differently
     if (this.radial()) {
-      spline = d3.symbol().type(d3.symbolTriangle).size(100);
+      spline = d3.symbol().type(rectangle).size(100);
 
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -1986,7 +1996,7 @@
         }
       };
     } else {
-      spline = d3.symbol().type(d3.symbolTriangle).size(100);
+      spline = d3.symbol().type(rectangle).size(100);
         
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -2021,12 +2031,13 @@
           //console.log (d.collapsed);
           let init_0 = d.collapsed[0][0];
           let init_1 = d.collapsed[0][1];
-          
+
 
     
           // #1 return spline(d.collapsed.map(spline_f, d, init_0, init_1));
           return spline(
             d.collapsed.map(function(coord, i) {
+              console.log (spline_f(coord, i, d, init_0, init_1))
               return spline_f(coord, i, d, init_0, init_1);
             })
           );
@@ -2036,7 +2047,7 @@
         })
         .attr("transform",function(d){
           console.log(d);
-          return `translate(${d.collapsed[0][1]+d.height*8},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+          return `translate(${d.collapsed[0][1]+d.height*10},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
           
         });
     } else {
@@ -2053,7 +2064,7 @@
        })
        .attr("transform",function(d){
          console.log(d);
-         return `translate(${d.collapsed[0][1]+d.height*8},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+         return `translate(${d.collapsed[0][1]+d.height*10},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
          
        });
     }
