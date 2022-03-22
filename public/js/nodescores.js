@@ -44,8 +44,8 @@ function getBCN(v, tree) {
 
 function getSpanningTree(tree, node) {
     var nodes = [];
-    for (var i = 0; i < tree.getTips.length; i++) {
-        var test = $.inArray(tree.getTips[i].name, node.getTips);
+    for (var i = 0; i < tree.leaves.length; i++) {
+        var test = $.inArray(tree.leaves[i].name, node.leaves);
         if (test > -1){
             nodes.push(tree);
             var children = getChildren(tree);
@@ -59,8 +59,8 @@ function getSpanningTree(tree, node) {
 }
 
 function getElementS(v, n) {
-    var lv = v.getTips();
-    var ln = n.getTips();
+    var lv = v.leaves;
+    var ln = n.leaves;
 
     var lvlen = lv ? lv.length : 0;
     var lnlen = ln ? ln.length : 0;
