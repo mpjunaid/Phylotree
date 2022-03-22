@@ -1973,15 +1973,7 @@
 
     // Collapse radial differently
     if (this.radial()) {
-      spline = d3__namespace
-        .line()
-        .curve(d3__namespace.curveStepBefore)
-        .y(function(d) {
-          return d[0];
-        })
-        .x(function(d) {
-          return d[1];
-        });
+      spline = d3.symbol().type(d3.symbolTriangle).size(100);
 
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -1994,15 +1986,7 @@
         }
       };
     } else {
-      spline = d3
-        .line()
-        .curve(d3__namespace.curveStepBefore)
-        .y(function(d) {
-          return d[0];
-        })
-        .x(function(d) {
-          return d[1];
-        });
+      spline = d3.symbol().type(d3.symbolTriangle).size(100);
         
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -2049,6 +2033,11 @@
         })
         .attr("d", function(d) {        
           return (d.collapsed_clade = spline(d.collapsed));
+        })
+        .attr("transform",function(d){
+          console.log(d);
+          return `translate(${d.collapsed[0][1]+d.height*8},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+          
         });
     } else {
       collapsed_clades
@@ -2058,7 +2047,15 @@
         .merge(collapsed_clades)
         .attr("d", function(d) {
           return (d.collapsed_clade ? d.collapsed_clade : d.collapsed_clade = spline(d.collapsed));
-        });
+       })
+       .attr("d", function(d) {        
+         return (d.collapsed_clade = spline(d.collapsed));
+       })
+       .attr("transform",function(d){
+         console.log(d);
+         return `translate(${d.collapsed[0][1]+d.height*8},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+         
+       });
     }
   }
 
