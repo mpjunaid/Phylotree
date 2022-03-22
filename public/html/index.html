@@ -518,16 +518,14 @@
       });
 
       /////////////////////////////
+      //// For the node scores!!
 
       function preprocess_tree(tree){
         if(tree.hasOwnProperty('children')){
           leaf = []
           tree.leaves=getleaf(tree);
             const len=tree.children.length;
-            
             for(let i=0;i<len;i=i+1){
-                // console.log("Length"+len+"--"+i);
-                
               preprocess_tree(tree.children[i]);
              
             }
@@ -551,17 +549,15 @@ function getleaf(tree){
     return leaf;
 }
 
-/////////////////////////////////
 function preprocess_BCN(v, tree) {
- v = preprocess_tree(v);
- tree = preprocess_tree(tree);
-
- if(v.hasOwnProperty('children')){
-   v.score = getBCN(v, tree);
-   const len=v.children.length;
-   for(let i=0;i<len;i=i+1){
+  v = preprocess_tree(v);
+  tree = preprocess_tree(tree);
+  if(v.hasOwnProperty('children')){
+    getBCN(v, tree);
+    const len=v.children.length;
+    for(let i=0;i<len;i=i+1){
   //         // console.log("Length"+len+"--"+i);      
-           preprocess_BCN(v.children[i]); 
+           preprocess_BCN(v.children[i], tree); 
              }
          }
 }
@@ -581,8 +577,9 @@ for (var i = 0; i < spanningTree.length; i++) {
         elementBCNNode = spanningTree[i];
     }
 }
-//v.BCN = elementBCNNode;
-return maxElementS;
+v.BCN = elementBCNNode;
+v.score = maxElementS;
+//return maxElementS;
 //return v;
 //v.elementS = maxElementS; Maybe add later
 }
