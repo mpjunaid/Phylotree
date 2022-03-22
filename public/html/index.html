@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <style>
+      .button {
+        background-color: gray; /* Green */
+        border: none;
+        color: black;
+        padding: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+      .button1 {border-radius: 8px;}
+      </style>
     <meta charset="utf-8" />
     <!-- Latest compiled and minified CSS -->
     <script src="https://code.jquery.com/jquery.js"></script>
@@ -12,6 +27,11 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
+
+    <!-- New font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" 
+    rel="stylesheet">
+    
     <link
       href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
       rel="stylesheet"
@@ -22,7 +42,7 @@
       rel="stylesheet"
       href="//stackpath.bootstrapcdn.com/bootswatch/4.1.1/spacelab/bootstrap.min.css"
     />
-
+    
     <!-- Latest compiled and minified JavaScript -->
     <script
       src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
@@ -39,7 +59,10 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
+<<<<<<< HEAD
     <script src="../js/phyloiobcn.js" type="module"></script>
+=======
+>>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -69,7 +92,7 @@
         }
       }
 
-      .btn {
+      .button {
         height: 30px;
       }
 
@@ -104,7 +127,7 @@
               class="nav-link dropdown-toggle"
               role="button"
               data-toggle="dropdown"
-              >Newick <b class="caret"></b
+              >Files <b class="caret"></b
             ></a>
             <div class="dropdown-menu">
               <a
@@ -245,8 +268,8 @@
               <input
                 type="text"
                 id="branch_filter"
-                class="form-control mr-sm-2"
-                placeholder="Filter branches on"
+                class="form-control"
+                placeholder="Search"
               />
             </form>
           </li>
@@ -287,7 +310,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="button1"
               id="validate_newick"
             >
               Display this tree
@@ -315,7 +338,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-primary btn-sm"
+              class="button1"
               data-dismiss="modal"
             >
               Close
@@ -357,11 +380,11 @@
     <div class="container" id="main_display" >
       <div class="row">
         <div class="col-md-8">
-          <div class="btn-toolbar" role="toolbar" id="toolbar">
-            <div class="btn-group">
+          <div class="button1" role="toolbar" id="toolbar">
+            <div class="button1">
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="vertical"
                 data-amount="1"
                 title="Expand vertical spacing"
@@ -370,7 +393,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="vertical"
                 data-amount="-1"
                 title="Compress vertical spacing"
@@ -379,7 +402,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="horizontal"
                 data-amount="1"
                 title="Expand horizonal spacing"
@@ -388,7 +411,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 data-direction="horizontal"
                 data-amount="-1"
                 title="Compress horizonal spacing"
@@ -397,7 +420,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_ascending"
                 title="Sort deepest clades to the bottom"
               >
@@ -405,7 +428,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_descending"
                 title="Sort deepsest clades to the top"
               >
@@ -413,7 +436,7 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="sort_original"
                 title="Restore original order"
               >
@@ -421,36 +444,36 @@
               </button>
               <button
                 type="button"
-                class="btn btn-light btn-sm"
+                class="button1"
                 id="save_image"
                 title="Save image"
               >
                 <i class="fa fa-picture-o"></i>
               </button>
             </div>
-            <div class="btn-group" role="group">
+            <div class="button1" role="group">
               <button
-                class="btn btn-light btn-sm active phylotree-layout-mode"
+                class="button1 active phylotree-layout-mode"
                 data-mode="linear"
               >
                 Linear
               </button>
               <button
-                class="btn btn-light btn-sm phylotree-layout-mode"
+                class="button1 phylotree-layout-mode"
                 data-mode="radial"
               >
                 Radial
               </button>
             </div>
-            <div class="btn-group" role="group">
+            <div class="button1" role="group">
               <button
-                class="btn btn-light btn-sm active phylotree-align-toggler"
+                class="button1 active phylotree-align-toggler"
                 data-align="left"
               >
                 <i class="fa fa-align-left"></i>
               </button>
               <button
-                class="btn btn-light btn-sm phylotree-align-toggler"
+                class="button1 phylotree-align-toggler"
                 data-align="right"
               >
                 <i class="fa fa-align-right"></i>
@@ -459,7 +482,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <label class="pull-right"
             ><b>Selected</b>
             <span class="badge badge-secondary" id="selected_branch_counter"
@@ -467,13 +490,13 @@
             >
             <b>branches with current label</b></label
           >
-        </div>
+        </div> -->
       </div>
 
       
       
     </div>
-    <table align="left">
+    <table align ="left">
         
       <tbody>
       <tr>
@@ -481,7 +504,11 @@
           <div id="tree_container" class="tree-widget" style="display: block,width: 10%,padding:0px;"></div>
         </th>
         <th>
+<<<<<<< HEAD
           <div id="tree_container2" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
+=======
+          <div id="tree_container2" class="tree-widget" style="display: block,width:  10%;"></div>
+>>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
         </th>
       </tr>
     </tbody>
@@ -502,7 +529,7 @@
       tree_2=[];
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
-          tree.getNewick(function(node) {
+          tree1.getNewick(function(node) {
             var tags = [];
             selection_set.forEach(function(d) {
               if (node[d]) {
@@ -820,12 +847,19 @@ function postorderTraverse(d, f, do_children) {
               .select("#main_display")
               .insert("div", ":first-child");
 
+<<<<<<< HEAD
             tree = new phylotree.phylotree(res);
 
             global_tree = tree;
             ph_tree1=loadtree(res+'');
             tree1=tree;
             if (!tree["json"]) {
+=======
+            tree1 = new phylotree.phylotree(res);
+            //global_tree = tree;
+
+            if (!tree1["json"]) {
+>>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -835,7 +869,7 @@ function postorderTraverse(d, f, do_children) {
                     res["error"]
                 );
             } else {
-              tree.render({
+              tree1.render({
                 container: "#tree_container",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
@@ -843,25 +877,25 @@ function postorderTraverse(d, f, do_children) {
                 "edge-styler": edge_colorizer
               });
 
-              tree.display.selectionLabel(current_selection_name);
+              tree1.display.selectionLabel(current_selection_name);
 
-              tree.display.countHandler(count => {
+              tree1.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
 
               // Get selection set names from parsed newick
-              if (tree.parsed_tags.length) {
-                selection_set = tree.parsed_tags;
+              if (tree1.parsed_tags.length) {
+                selection_set = tree1.parsed_tags;
               }
 
               update_selection_names();
 
               $("#newick_modal").modal("hide");
 
-              $(tree.display.container).empty();
-              $(tree.display.container).html(tree.display.show());
+              $(tree1.display.container).empty();
+              $(tree1.display.container).html(tree1.display.show());
             }
           };
 
@@ -883,11 +917,18 @@ function postorderTraverse(d, f, do_children) {
               .select("#main_display")
               .insert("div", ":first-child");
 
+<<<<<<< HEAD
             tree = new phylotree.phylotree(res);
             global_tree = tree;
             tree2=tree;
             ph_tree2=loadtree(res+'');
             if (!tree["json"]) {
+=======
+            tree2 = new phylotree.phylotree(res);
+            global_tree = tree2;
+            tree_1 = tree1;
+            if (!tree2["json"]) {
+>>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -897,7 +938,7 @@ function postorderTraverse(d, f, do_children) {
                     res["error"]
                 );
             } else {
-              tree.render({
+              tree2.render({
                 container: "#tree_container2",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
@@ -905,27 +946,32 @@ function postorderTraverse(d, f, do_children) {
                 "edge-styler": edge_colorizer
               });
 
-              tree.display.selectionLabel(current_selection_name);
+              tree2.display.selectionLabel(current_selection_name);
 
-              tree.display.countHandler(count => {
+              tree2.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
 
               // Get selection set names from parsed newick
-              if (tree.parsed_tags.length) {
-                selection_set = tree.parsed_tags;
+              if (tree2.parsed_tags.length) {
+                selection_set = tree2.parsed_tags;
               }
 
               update_selection_names();
 
               $("#newick_modal").modal("hide");
 
+<<<<<<< HEAD
               $(tree.display.container).empty();
               $(tree.display.container).html(tree.display.show());
               
               console.log(wrapGetAllBCNs(ph_tree1,ph_tree2,"True"));
+=======
+              $(tree2.display.container).empty();
+              $(tree2.display.container).html(tree2.display.show());
+>>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
             }
           };
 
@@ -933,67 +979,100 @@ function postorderTraverse(d, f, do_children) {
           reader.readAsText(f);
         }
       });
-      
+
       $("#display_tree").on("click", function(e) {
-        tree.options({ branches: "straight" }, true);
+        tree1.options({ branches: "straight" }, true);
+        tree2.options({ branches: "straight" }, true);
       });
 
       $("[data-direction]").on("click", function(e) {
         var which_function =
           $(this).data("direction") == "vertical"
-            ? tree.display.spacing_x.bind(tree.display)
-            : tree.display.spacing_y.bind(tree.display);
+            ? tree1.display.spacing_x.bind(tree1.display)
+            : tree1.display.spacing_y.bind(tree1.display)
+        which_function(which_function() + +$(this).data("amount")).update();
+      });
+
+      $("[data-direction]").on("click", function(e) {
+        var which_function =
+          $(this).data("direction") == "vertical"
+            ? tree2.display.spacing_x.bind(tree2.display)
+            : tree2.display.spacing_y.bind(tree2.display)
         which_function(which_function() + +$(this).data("amount")).update();
       });
 
       $(".phylotree-layout-mode").on("click", function(e) {
-        if (tree.display.radial() != ($(this).data("mode") == "radial")) {
+        if (tree1.display.radial() != ($(this).data("mode") == "radial")) {
           $(".phylotree-layout-mode").toggleClass("active");
-          tree.display.radial(!tree.display.radial()).update();
+          tree1.display.radial(!tree1.display.radial()).update();
+        }
+        if (tree2.display.radial() != ($(this).data("mode") == "radial")) {
+          $(".phylotree-layout-mode").toggleClass("active");
+          tree2.display.radial(!tree2.display.radial()).update();
         }
       });
 
       $("#toggle_animation").on("click", function(e) {
         var current_mode = $(this).hasClass("active");
         $(this).toggleClass("active");
-        tree.options({ transitions: !current_mode });
+        tree1.options({ transitions: !current_mode })
+        tree2.options({ transitions: !current_mode });
       });
 
       $(".phylotree-align-toggler").on("click", function(e) {
         var button_align = $(this).data("align");
-        var tree_align = tree.display.options.alignTips;
+        var tree1_align = tree1.display.options.alignTips;
 
-        if (tree_align != button_align) {
-          tree.display.alignTips(button_align == "right");
+        if (tree1_align != button_align) {
+          tree1.display.alignTips(button_align == "right");
           $(".phylotree-align-toggler").toggleClass("active");
-          tree.display.update();
+          tree1.display.update();
+        }
+        var tree2_align = tree2.display.options.alignTips;
+
+        if (tree2_align != button_align) {
+          tree2.display.alignTips(button_align == "right");
+          $(".phylotree-align-toggler").toggleClass("active");
+          tree2.display.update();
         }
       });
 
-      function sort_nodes(asc) {
+      function sort_nodes(asc, tree) {
         tree.resortChildren(function(a, b) {
           return (b.height - a.height || b.value - a.value) * (asc ? 1 : -1);
         });
       }
 
       $("#sort_original").on("click", function(e) {
-        tree.resortChildren(function(a, b) {
+        tree1.resortChildren(function(a, b) {
+          return a["original_child_order"] - b["original_child_order"];
+        });
+        tree2.resortChildren(function(a, b) {
           return a["original_child_order"] - b["original_child_order"];
         });
       });
 
       $("#sort_ascending").on("click", function(e) {
-        sort_nodes(true);
-        tree.display.update();
+        sort_nodes(false, tree1);
+        tree1.display.update();
+        sort_nodes(false,tree2);
+        tree2.display.update();
       });
 
       $("#sort_descending").on("click", function(e) {
-        sort_nodes(false);
-        tree.display.update();
+        sort_nodes(true, tree1);
+        tree1.display.update();
+        sort_nodes(true, tree2);
+        tree2.display.update();
       });
 
       $("#and_label").on("click", function(e) {
-        tree.display.internalLabel(function(d) {
+        tree1.display.internalLabel(function(d) {
+          return d.reduce(function(prev, curr) {
+            return curr[current_selection_name] && prev;
+          }, true);
+        }, true);
+        tree2.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
             return curr[current_selection_name] && prev;
           }, true);
@@ -1001,7 +1080,12 @@ function postorderTraverse(d, f, do_children) {
       });
 
       $("#or_label").on("click", function(e) {
-        tree.display.internalLabel(function(d) {
+        tree1.display.internalLabel(function(d) {
+          return d.reduce(function(prev, curr) {
+            return curr[current_selection_name] || prev;
+          }, false);
+        }, true);
+        tree2.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
             return curr[current_selection_name] || prev;
           }, false);
@@ -1009,7 +1093,19 @@ function postorderTraverse(d, f, do_children) {
       });
 
       $("#filter_add").on("click", function(e) {
-        tree.display
+        tree1.display
+          .modifySelection(function(d) {
+            return d.tag || d[current_selection_name];
+          })
+          .modifySelection(
+            function(d) {
+              return false;
+            },
+            "tag",
+            false,
+            false
+          );
+          tree2.display
           .modifySelection(function(d) {
             return d.tag || d[current_selection_name];
           })
@@ -1024,53 +1120,79 @@ function postorderTraverse(d, f, do_children) {
       });
 
       $("#filter_remove").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return !d.tag;
+        });
+        tree2.display.modifySelection(function(d) {
           return !d.tag;
         });
       });
 
       $("#select_all").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return true;
+        });
+        tree2.display.modifySelection(function(d) {
           return true;
         });
       });
 
       $("#select_all_internal").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return !tree.isLeafNode(d.target);
+        tree1.display.modifySelection(function(d) {
+          return !tree1.isLeafNode(d.target);
+        });
+        tree2.display.modifySelection(function(d) {
+          return !tree2.isLeafNode(d.target);
         });
       });
 
       $("#select_all_leaves").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return tree.isLeafNode(d.target);
+        tree1.display.modifySelection(function(d) {
+          return tree1.isLeafNode(d.target);
+        });
+        tree2.display.modifySelection(function(d) {
+          return tree2.isLeafNode(d.target);
         });
       });
 
       $("#select_none").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
+        tree1.display.modifySelection(function(d) {
+          return false;
+        });
+        tree2.display.modifySelection(function(d) {
           return false;
         });
       });
 
       $("#clear_internal").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return tree.isLeafNode(d.target)
+        tree1.display.modifySelection(function(d) {
+          return tree1.isLeafNode(d.target)
+            ? d.target[current_selection_name]
+            : false;
+        });
+        tree2.display.modifySelection(function(d) {
+          return tree2.isLeafNode(d.target)
             ? d.target[current_selection_name]
             : false;
         });
       });
 
       $("#clear_leaves").on("click", function(e) {
-        tree.display.modifySelection(function(d) {
-          return !tree.isLeafNode(d.target)
+        tree1.display.modifySelection(function(d) {
+          return !tree1.isLeafNode(d.target)
+            ? d.target[current_selection_name]
+            : false;
+        });
+        tree2.display.modifySelection(function(d) {
+          return !tree2.isLeafNode(d.target)
             ? d.target[current_selection_name]
             : false;
         });
       });
 
       $("#display_dengrogram").on("click", function(e) {
-        tree.display.options({ branches: "step" }, true);
+        tree1.display.options({ branches: "step" }, true);
+        tree2.display.options({ branches: "step" }, true);
       });
 
       $("#branch_filter").on("input propertychange", function(e) {
@@ -1078,7 +1200,15 @@ function postorderTraverse(d, f, do_children) {
 
         var rx = new RegExp(filter_value, "i");
 
-        tree.display.modifySelection(n => {
+        tree1.display.modifySelection(n => {
+          if (!n.target.data.name) {
+            return false;
+          }
+          m = n.target.data.name.search(rx);
+          return filter_value.length && m != -1;
+        }, "tag");
+
+        tree2.display.modifySelection(n => {
           if (!n.target.data.name) {
             return false;
           }
@@ -1087,58 +1217,58 @@ function postorderTraverse(d, f, do_children) {
         }, "tag");
       });
 
-      $("#validate_newick").on("click", function(e) {
-        let test_string = $('textarea[id$="nwk_spec"]').val();
+      // $("#validate_newick").on("click", function(e) {
+      //   let test_string = $('textarea[id$="nwk_spec"]').val();
 
-        tree = new phylotree.phylotree(test_string);
-        global_tree = tree;
-        tree_2=tree;
-        if (!tree["json"]) {
-          var warning_div = d3
-            .select("#newick_body")
-            .selectAll("div  .alert-danger")
-            .data([res["error"]]);
-          warning_div.enter().append("div");
-          warning_div
-            .html(function(d) {
-              return d;
-            })
-            .attr("class", "alert-danger");
-        } else {
-          tree.render({
-            container: "#tree_container",
-            "draw-size-bubbles": false,
-            "node-styler": node_colorizer,
-            zoom: false,
-            "edge-styler": edge_colorizer
-          });
+      //   tree1 = new phylotree.phylotree(test_string);
+      //   global_tree = tree;
+      //   tree_2 = tree;
+      //   if (!tree1["json"]) {
+      //     var warning_div = d3
+      //       .select("#newick_body")
+      //       .selectAll("div  .alert-danger")
+      //       .data([res["error"]]);
+      //     warning_div.enter().append("div");
+      //     warning_div
+      //       .html(function(d) {
+      //         return d;
+      //       })
+      //       .attr("class", "alert-danger");
+      //   } else {
+      //     tree1.render({
+      //       container: "#tree_container",
+      //       "draw-size-bubbles": false,
+      //       "node-styler": node_colorizer,
+      //       zoom: false,
+      //       "edge-styler": edge_colorizer
+      //     });
 
-          tree.display.selectionLabel(current_selection_name);
+      //     tree1.display.selectionLabel(current_selection_name);
 
-          tree.display.countHandler(count => {
-            $("#selected_branch_counter").text(function(d) {
-              return count[current_selection_name];
-            });
-          });
+      //     tree1.display.countHandler(count => {
+      //       $("#selected_branch_counter").text(function(d) {
+      //         return count[current_selection_name];
+      //       });
+      //     });
 
-          // Get selection set names from parsed newick
-          if (tree.parsed_tags.length) {
-            selection_set = tree.parsed_tags;
-          }
+      //     // Get selection set names from parsed newick
+      //     if (tree1.parsed_tags.length) {
+      //       selection_set = tree1.parsed_tags;
+      //     }
 
-          update_selection_names();
+      //     update_selection_names();
 
-          $("#newick_modal").modal("hide");
-          $(tree.display.container).html(tree.display.show());
-        }
-        console.log((compareTree(tree_1,tree_2)))
-      });
+      //     $("#newick_modal").modal("hide");
+      //     $(tree1.display.container).html(tree1.display.show());
+      //   }
+      //   console.log((compareTree(tree_1,tree_2)))
+      // });
 
       function default_tree_settings() {
-        tree = phylotree();
-        tree.branchLength(null);
-        tree.branchName(null);
-        tree.display.radial(false).separation(function(a, b) {
+        tree1 = phylotree();
+        tree1.branchLength(null);
+        tree1.branchName(null);
+        tree1.display.radial(false).separation(function(a, b) {
           return 0;
         });
       }
@@ -1205,49 +1335,49 @@ function postorderTraverse(d, f, do_children) {
         );
       });
 
-      $("#selection_rename").on("click", function(e) {
-        d3.select("#save_selection_button")
-          .classed("disabled", true)
-          .on("click", function(e) {
-            // save selection handler
-            var old_selection_name = current_selection_name;
-            selection_set[current_selection_id] = current_selection_name = $(
-              "#selection_name_box"
-            ).val();
+      // $("#selection_rename").on("click", function(e) {
+      //   d3.select("#save_selection_button")
+      //     .classed("disabled", true)
+      //     .on("click", function(e) {
+      //       // save selection handler
+      //       var old_selection_name = current_selection_name;
+      //       selection_set[current_selection_id] = current_selection_name = $(
+      //         "#selection_name_box"
+      //       ).val();
 
-            if (old_selection_name != current_selection_name) {
-              tree.update_key_name(old_selection_name, current_selection_name);
-              update_selection_names(current_selection_id);
-            }
-            send_click_event_to_menu_objects(
-              new CustomEvent(selection_menu_element_action, {
-                detail: ["save", this]
-              })
-            );
-          });
+      //       if (old_selection_name != current_selection_name) {
+      //         tree1.update_key_name(old_selection_name, current_selection_name);
+      //         update_selection_names(current_selection_id);
+      //       }
+      //       send_click_event_to_menu_objects(
+      //         new CustomEvent(selection_menu_element_action, {
+      //           detail: ["save", this]
+      //         })
+      //       );
+      //     });
 
-        d3.select("#cancel_selection_button")
-          .classed("disabled", false)
-          .on("click", function(e) {
-            // save selection handler
-            $("#selection_name_box").val(current_selection_name);
-            send_click_event_to_menu_objects(
-              new CustomEvent(selection_menu_element_action, {
-                detail: ["cancel", this]
-              })
-            );
-          });
+      //   d3.select("#cancel_selection_button")
+      //     .classed("disabled", false)
+      //     .on("click", function(e) {
+      //       // save selection handler
+      //       $("#selection_name_box").val(current_selection_name);
+      //       send_click_event_to_menu_objects(
+      //         new CustomEvent(selection_menu_element_action, {
+      //           detail: ["cancel", this]
+      //         })
+      //       );
+      //     });
 
-        send_click_event_to_menu_objects(
-          new CustomEvent(selection_menu_element_action, {
-            detail: ["rename", this]
-          })
-        );
-        e.preventDefault();
-      });
+      //   send_click_event_to_menu_objects(
+      //     new CustomEvent(selection_menu_element_action, {
+      //       detail: ["rename", this]
+      //     })
+      //   );
+      //   e.preventDefault();
+      // });
 
       $("#selection_delete").on("click", function(e) {
-        tree.display.updateKeyName(selection_set[current_selection_id], null);
+        tree1.display.updateKeyName(selection_set[current_selection_id], null);
         selection_set.splice(current_selection_id, 1);
 
         if (current_selection_id > 0) {
@@ -1345,12 +1475,12 @@ function postorderTraverse(d, f, do_children) {
 
         // Loop through all selection_sets
         _.each(selection_set, function(id) {
-          tree.display.selectionLabel(id);
-          tree.display.update();
+          tree1.display.selectionLabel(id);
+          tree1.display.update();
         });
 
-        tree.display.selectionLabel(selection_set[id]);
-        tree.display.update();
+        tree1.display.selectionLabel(selection_set[id]);
+        tree1.display.update();
       }
 
       var width = 800, //$(container_id).width(),
@@ -1366,16 +1496,9 @@ function postorderTraverse(d, f, do_children) {
         "(((EELA:0.150276,CONGERA:0.213019):0.230956,(EELB:0.263487,CONGERB:0.202633):0.246917):0.094785,((CAVEFISH:0.451027,(GOLDFISH:0.340495,ZEBRAFISH:0.390163):0.220565):0.067778,((((((NSAM:0.008113,NARG:0.014065):0.052991,SPUN:0.061003,(SMIC:0.027806,SDIA:0.015298,SXAN:0.046873):0.046977):0.009822,(NAUR:0.081298,(SSPI:0.023876,STIE:0.013652):0.058179):0.091775):0.073346,(MVIO:0.012271,MBER:0.039798):0.178835):0.147992,((BFNKILLIFISH:0.317455,(ONIL:0.029217,XCAU:0.084388):0.201166):0.055908,THORNYHEAD:0.252481):0.061905):0.157214,LAMPFISH:0.717196,((SCABBARDA:0.189684,SCABBARDB:0.362015):0.282263,((VIPERFISH:0.318217,BLACKDRAGON:0.109912):0.123642,LOOSEJAW:0.397100):0.287152):0.140663):0.206729):0.222485,(COELACANTH:0.558103,((CLAWEDFROG:0.441842,SALAMANDER:0.299607):0.135307,((CHAMELEON:0.771665,((PIGEON:0.150909,CHICKEN:0.172733):0.082163,ZEBRAFINCH:0.099172):0.272338):0.014055,((BOVINE:0.167569,DOLPHIN:0.157450):0.104783,ELEPHANT:0.166557):0.367205):0.050892):0.114731):0.295021)myroot";
       var container_id = "#tree_container";
 
-      //var tree = phylotree.phylotree(test_string);
-      //.size([height, width]);
-
-      //window.setInterval (function () {});
 
       var example_controls = d3.select("#controls_form").append("form");
 
-      //var svg = d3.select(container_id).append("svg")
-      //    .attr("width", width)
-      //    .attr("height", height);
 
       function selection_handler_name_box(e) {
         var name_box = d3.select(this);
@@ -1580,95 +1703,34 @@ function postorderTraverse(d, f, do_children) {
       };
 
       $(document).ready(function() {
-        tree = new phylotree.phylotree(test_string);
-        global_tree = tree;
+        tree1 = new phylotree.phylotree(test_string);
 
-        tree.render({
+        tree1.render({
           container: "#tree_container",
           "draw-size-bubbles": false,
+          "left-right-spacing" : "fixed-step",
           "node-styler": node_colorizer,
-          zoom: false,
           "edge-styler": edge_colorizer
         });
 
-        $('#tree_container').on('reroot', function (e) {  
-          update_selection_names();
 
-          tree.display.countHandler(count => {
+        tree1.display.countHandler(count => {
             $("#selected_branch_counter").text(function(d) {
               return count[current_selection_name];
             });
           });
 
-        });
 
-        tree.display.selectionLabel(current_selection_name);
-
-        tree.display.countHandler(count => {
-          $("#selected_branch_counter").text(function(d) {
-            return count[current_selection_name];
-          });
-        });
+        tree1.display.selectionLabel(current_selection_name);
 
         // Get selection set names from parsed newick
-        if (tree.parsed_tags.length) {
-          selection_set = tree.parsed_tags;
+        if (tree1.parsed_tags.length) {
+          selection_set = tree1.parsed_tags;
         }
+        //update_selection_names();
 
-        // Until a cleaner solution to supporting both Observable and regular HTML
-        $(tree.display.container).append(tree.display.show());
-
-        $("#selection_new")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_new,
-            false
-          );
-        $("#selection_rename")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_rename,
-            false
-          );
-        $("#selection_delete")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_delete,
-            false
-          );
-        $("#selection_delete")
-          .get(0)
-          .dispatchEvent(
-            new CustomEvent(selection_menu_element_action, {
-              detail: ["cancel", null]
-            })
-          );
-        $("#selection_name_box")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_name_box,
-            false
-          );
-        $("#save_selection_name")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_save_selection_name,
-            false
-          );
-        $("#selection_name_dropdown")
-          .get(0)
-          .addEventListener(
-            selection_menu_element_action,
-            selection_handler_name_dropdown,
-            false
-          );
-
-        update_selection_names();
+        $(tree1.display.container).empty();
+        $(tree1.display.container).html(tree1.display.show());
 
         $("#save_image").on("click", function(e) {
           datamonkey_save_image("svg", "#tree_container");

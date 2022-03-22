@@ -1,0 +1,95 @@
+ function preprocess_tree(tree){
+        if(tree.hasOwnProperty('children')){
+          leaf = []
+          tree.leaves=getleaf(tree);
+            const len=tree.children.length;
+            for(let i=0;i<len;i=i+1){
+              preprocess_tree(tree.children[i]);
+             
+            }
+        }
+    return tree;
+}
+
+leaf=[]
+function getleaf(tree){
+  if(tree.hasOwnProperty('children')){
+            const len=tree.children.length;
+            for(let i=0;i<len;i=i+1){
+                // console.log("Length"+len+"--"+i);
+              getleaf(tree.children[i]);
+            }
+        }
+  else{
+    leaf.push(tree.name);
+  }
+    // console.log(leaf);
+    return leaf;
+}
+
+function preprocess_BCN(v, tree) {
+  v = preprocess_tree(v);
+  tree = preprocess_tree(tree);
+  if(v.hasOwnProperty('children')){
+    getBCN(v, tree);
+    const len=v.children.length;
+    for(let i=0;i<len;i=i+1){
+  //         // console.log("Length"+len+"--"+i);      
+           preprocess_BCN(v.children[i], tree); 
+             }
+         }
+}
+
+
+function getBCN(v, tree) {
+
+var elementBCNNode = null;
+var maxElementS = 0;
+var spanningTree = getSpanningTree(tree, v);
+
+for (var i = 0; i < spanningTree.length; i++) {
+    //get elementBCN for node v
+    var x = getElementS(v, spanningTree[i]);
+    if (x > maxElementS) {
+        maxElementS = x;
+        elementBCNNode = spanningTree[i];
+    }
+}
+v.BCN = elementBCNNode;
+v.score = maxElementS;
+//return maxElementS;
+//return v;
+//v.elementS = maxElementS; Maybe add later
+}
+
+function getSpanningTree(tree, node) {
+  var nodes = [];
+  if(tree.hasOwnProperty('children')) {
+    len = tree.leaves.length;
+  }
+  else { len = 0;}
+    for (var i = 0; i < len; i++) {
+        var test = $.inArray(tree.leaves[i], node.leaves);
+        if (test > -1){
+            nodes.push(tree);
+            var children = getChildren(tree);
+            for (var j = 0; j < children.length; j++) {
+                nodes = nodes.concat(getSpanningTree(children[j], node));
+            }
+            return nodes;
+        }
+    }
+    return nodes;
+}
+
+function getElementS(v, n) {
+    var lv = v.leaves;
+    var ln = n.leaves;
+
+    var lvlen = lv ? lv.length : 0;
+    var lnlen = ln ? ln.length : 0;
+
+    var intersect = _.intersection(lv, ln).length;
+    return intersect / (lvlen + lnlen - intersect);
+}
+

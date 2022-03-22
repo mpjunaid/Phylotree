@@ -1113,6 +1113,7 @@
    *
    * @param {Function} function that scales the branches
    */
+  
   function scale(scale_by) {
 
     let bl = this.branch_length;
@@ -1954,6 +1955,16 @@
   }
 
   function updateCollapsedClades(transitions) {
+    var rectangle = { 
+          draw: function(context, size){
+          let s = Math.sqrt(size)/2;
+          context.moveTo(s/4,s*2);
+          context.lineTo(s/4,-s*2);
+          context.lineTo(-s/4,-s*2);
+          context.lineTo(-s/4,s*2);
+          context.closePath();
+      }
+  }
 
     let enclosure = this.svg.selectAll("." + this.css_classes["tree-container"]);
     var node_id = 0;
@@ -1972,15 +1983,7 @@
 
     // Collapse radial differently
     if (this.radial()) {
-      spline = d3__namespace
-        .line()
-        .curve(d3__namespace.curveStepBefore)
-        .y(function(d) {
-          return d[0];
-        })
-        .x(function(d) {
-          return d[1];
-        });
+      spline = d3.symbol().type(rectangle).size(100);
 
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -1993,15 +1996,7 @@
         }
       };
     } else {
-      spline = d3
-        .line()
-        .curve(d3__namespace.curveStepBefore)
-        .y(function(d) {
-          return d[0];
-        })
-        .x(function(d) {
-          return d[1];
-        });
+      spline = d3.symbol().type(rectangle).size(100);
         
       spline_f = function(coord, i, d, init_0, init_1) {
         if (i) {
@@ -2036,18 +2031,24 @@
           //console.log (d.collapsed);
           let init_0 = d.collapsed[0][0];
           let init_1 = d.collapsed[0][1];
-          
+
 
     
           // #1 return spline(d.collapsed.map(spline_f, d, init_0, init_1));
           return spline(
             d.collapsed.map(function(coord, i) {
+              console.log (spline_f(coord, i, d, init_0, init_1))
               return spline_f(coord, i, d, init_0, init_1);
             })
           );
         })
         .attr("d", function(d) {        
           return (d.collapsed_clade = spline(d.collapsed));
+        })
+        .attr("transform",function(d){
+          console.log(d);
+          return `translate(${d.collapsed[0][1]+d.height*10},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+          
         });
     } else {
       collapsed_clades
@@ -2057,7 +2058,15 @@
         .merge(collapsed_clades)
         .attr("d", function(d) {
           return (d.collapsed_clade ? d.collapsed_clade : d.collapsed_clade = spline(d.collapsed));
-        });
+       })
+       .attr("d", function(d) {        
+         return (d.collapsed_clade = spline(d.collapsed));
+       })
+       .attr("transform",function(d){
+         console.log(d);
+         return `translate(${d.collapsed[0][1]+d.height*10},${d.collapsed[0][0]}) scale(${d.height}) rotate(-90)`;
+         
+       });
     }
   }
 
