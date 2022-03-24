@@ -59,10 +59,7 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
-<<<<<<< HEAD
     <script src="../js/phyloiobcn.js" type="module"></script>
-=======
->>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -504,11 +501,7 @@
           <div id="tree_container" class="tree-widget" style="display: block,width: 10%,padding:0px;"></div>
         </th>
         <th>
-<<<<<<< HEAD
           <div id="tree_container2" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
-=======
-          <div id="tree_container2" class="tree-widget" style="display: block,width:  10%;"></div>
->>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
         </th>
       </tr>
     </tbody>
@@ -851,19 +844,12 @@ function postorderTraverse(d, f, do_children) {
               .select("#main_display")
               .insert("div", ":first-child");
 
-<<<<<<< HEAD
             tree = new phylotree.phylotree(res);
 
             global_tree = tree;
             ph_tree1=loadtree(res+'');
             tree1=tree;
             if (!tree["json"]) {
-=======
-            tree1 = new phylotree.phylotree(res);
-            //global_tree = tree;
-
-            if (!tree1["json"]) {
->>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -921,7 +907,6 @@ function postorderTraverse(d, f, do_children) {
               .select("#main_display")
               .insert("div", ":first-child");
 
-<<<<<<< HEAD
             tree = new phylotree.phylotree(res);
             global_tree = tree;
             tree2=tree;
@@ -929,12 +914,6 @@ function postorderTraverse(d, f, do_children) {
             preprocess_BCN(tree2, tree1);
             ph_tree2=loadtree(res+'');
             if (!tree["json"]) {
-=======
-            tree2 = new phylotree.phylotree(res);
-            global_tree = tree2;
-            tree_1 = tree1;
-            if (!tree2["json"]) {
->>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -969,15 +948,10 @@ function postorderTraverse(d, f, do_children) {
 
               $("#newick_modal").modal("hide");
 
-<<<<<<< HEAD
               $(tree.display.container).empty();
               $(tree.display.container).html(tree.display.show());
               
               console.log(wrapGetAllBCNs(ph_tree1,ph_tree2,"True"));
-=======
-              $(tree2.display.container).empty();
-              $(tree2.display.container).html(tree2.display.show());
->>>>>>> f850a3b7bb24d52894ac140d9e8d1913d6509be1
             }
           };
 
