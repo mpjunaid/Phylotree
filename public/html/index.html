@@ -515,8 +515,6 @@
         importScripts('../js/underscore.js');
       }
 
-      
-
       var phylotree_extensions = new Object();
       tree_1=[];
       tree_2=[];
@@ -536,301 +534,9 @@
           })
         );
       });
-
-      /////////////////////////////
-      //// For the node scores!!
-
-      function preprocess_tree(tree){
-        if (tree.hasOwnProperty('newick_string')) 
-        {
-          if(tree.nodes.hasOwnProperty('children')){
-            leaf = []
-            tree.nodes.leaves=getleaf(tree);
-            const len=tree.nodes.children.length;
-            for(let i=0;i<len;i=i+1){
-              preprocess_tree(tree.nodes.children[i]);
-
-            }
-          }
-        }
-        if(tree.hasOwnProperty('children')){
-          leaf = []
-          tree.leaves=getleaf(tree);
-            const len=tree.children.length;
-            for(let i=0;i<len;i=i+1){
-              preprocess_tree(tree.children[i]);
-             
-            }
-        }
-    return tree;
-}
-
-leaf=[]
-function getleaf(tree){
-  if (tree.hasOwnProperty('newick_string')) 
-  {
-    if(tree.nodes.hasOwnProperty('children')){
-            const len=tree.nodes.children.length;
-            for(let i=0;i<len;i=i+1){
-                // console.log("Length"+len+"--"+i);
-              getleaf(tree.nodes.children[i]);
-            }
-        }
-  else{
-    leaf.push(tree.nodes.data.name);
-  }
-  }
-  else{
-    if(tree.hasOwnProperty('children')){
-            const len=tree.children.length;
-            for(let i=0;i<len;i=i+1){
-                // console.log("Length"+len+"--"+i);
-              getleaf(tree.children[i]);
-            }
-        }
-  else{
-    leaf.push(tree.data.name);
-  }
-  }
-    // console.log(leaf);
-    return leaf;
-}
-
-function preprocess_BCN(v, tree) {
-  v = preprocess_tree(v);
-  tree = preprocess_tree(tree);
-  if (v.hasOwnProperty('newick_string')) {
-    if(v.nodes.hasOwnProperty('children')){
-      getBCN(v, tree);
-      const len=v.nodes.children.length;
-      for(let i=0;i<len;i=i+1){
-  //         // console.log("Length"+len+"--"+i);      
-           preprocess_BCN(v.nodes.children[i], tree); 
-             }
-         }
-  } else {
-    if(v.hasOwnProperty('children')){
-    getBCN(v, tree);
-    const len=v.children.length;
-    for(let i=0;i<len;i=i+1){
-  //         // console.log("Length"+len+"--"+i);      
-           preprocess_BCN(v.children[i], tree); 
-             }
-         }
-  }
-  
-}
-
-function getBCN(v, tree) {
-
-var elementBCNNode = null;
-var maxElementS = 0;
-var spanningTree = getSpanningTree(tree, v);
-
-for (var i = 0; i < spanningTree.length; i++) {
-    //get elementBCN for node v
-    var x = getElementS(v, spanningTree[i]);
-    if (x > maxElementS) {
-        maxElementS = x;
-        elementBCNNode = spanningTree[i];
-    }
-}
-if (v.hasOwnProperty('newick_string')) {
-  v.nodes.BCN = elementBCNNode;
-  v.nodes.score = maxElementS;
-} else {
-  v.BCN = elementBCNNode;
-  v.score = maxElementS;
-}
-}
-
-function getSpanningTree(tree, node) {
-  var nodes = [];
-  if (tree.hasOwnProperty('newick_string') && node.hasOwnProperty('newick_string')) {
-    if(tree.nodes.hasOwnProperty('children')) {
-      len = tree.nodes.leaves.length;
-  }
-  else { len = 0;}
-    for (var i = 0; i < len; i++) {
-        var test = $.inArray(tree.nodes.leaves[i], node.nodes.leaves);
-        if (test > -1){
-            nodes.push(tree);
-            var children = tree.nodes.children;
-            for (var j = 0; j < children.length; j++) {
-                nodes = nodes.concat(getSpanningTree(children[j], node));
-            }
-            return nodes;
-        }
-  }
-} else if (tree.hasOwnProperty('newick_string')) {
-  if(tree.nodes.hasOwnProperty('children')) {
-      len = tree.nodes.leaves.length;
-  }
-  else { len = 0;}
-    for (var i = 0; i < len; i++) {
-        var test = $.inArray(tree.nodes.leaves[i], node.leaves);
-        if (test > -1){
-            nodes.push(tree);
-            var children = tree.nodes.children;
-            for (var j = 0; j < children.length; j++) {
-                nodes = nodes.concat(getSpanningTree(children[j], node));
-            }
-            return nodes;
-        }
-  }
-} else if (node.hasOwnProperty('newick_string')) {
-  if(tree.hasOwnProperty('children')) {
-      len = tree.leaves.length;
-  }
-  else { len = 0;}
-    for (var i = 0; i < len; i++) {
-        var test = $.inArray(tree.leaves[i], node.nodes.leaves);
-        if (test > -1){
-            nodes.push(tree);
-            var children = tree.children;
-            for (var j = 0; j < children.length; j++) {
-                nodes = nodes.concat(getSpanningTree(children[j], node));
-            }
-            return nodes;
-        }
-  }
-} else {
-  if(tree.hasOwnProperty('children')) {
-    len = tree.leaves.length;
-  }
-  else { len = 0;}
-    for (var i = 0; i < len; i++) {
-        var test = $.inArray(tree.leaves[i], node.leaves);
-        if (test > -1){
-            nodes.push(tree);
-            var children = tree.children;
-            for (var j = 0; j < children.length; j++) {
-                nodes = nodes.concat(getSpanningTree(children[j], node));
-            }
-            return nodes;
-        }
-    }
-  }
-    return nodes;
-}
-
-function getElementS(v, n) {
-  if (v.hasOwnProperty('newick_string') && n.hasOwnProperty('newick_string')) {
-    var lv = v.nodes.leaves;
-    var ln = n.nodes.leaves;
-  } else if (v.hasOwnProperty('newick_string')) {
-    var lv = v.nodes.leaves;
-    var ln = n.leaves;
-  } else if (n.hasOwnProperty('newick_string')) {
-    var lv = v.leaves;
-    var ln = n.nodes.leaves;
-  }
-  else {
-    var lv = v.leaves;
-    var ln = n.leaves;    
-  }
-  var lvlen = lv ? lv.length : 0;
-  var lnlen = ln ? ln.length : 0;
-
-  var intersect = _.intersection(lv, ln).length;
-  return intersect / (lvlen + lnlen - intersect);
-}
-
-
-/////////////////////////////////////////////
       
-    function loadtree(s) {
-    var ancestors = [];
-    var tree = {};
-    var tokens = s.split(/\s*(;|\(|\)|,|:)\s*/);
-    for (var i=0; i<tokens.length; i++) {
-      var token = tokens[i];
-      switch (token) {
-        case '(': // new children
-          var subtree = {};
-          tree.children = [subtree];
-          ancestors.push(tree);
-          tree = subtree;
-          break;
-        case ',': // another branch
-          var subtree = {};
-          ancestors[ancestors.length-1].children.push(subtree);
-          tree = subtree;
-          break;
-        case ')': // optional name next
-          tree = ancestors.pop();
-          break;
-        case ':': // optional length next
-          break;
-        default:
-          var x = tokens[i-1];
-          if (x == ')' || x == '(' || x == ',') {
-            tree.name = token;
-          } else if (x == ':') {
-            tree.length = parseFloat(token);
-          }
-      }
-    }
-    return tree;
-}
-function getChildLeaves(d) {
-        if (d.children || d._children) {
-            var leaves = [];
-            var children = getChildren(d);
-            for (var i = 0; i < children.length; i++) {
-                leaves = leaves.concat(getChildLeaves(children[i]));
-            }
-            return leaves;
-        } else {
-            return [d];
-        }
-    }
-    
-
-
-function getChildren(d) {
-    return d._children ? d._children : (d.children ? d.children : []);
-}
-
-onmessage = function(event) {
-    var tree1 = event.data.tree1;
-    var tree2 = event.data.tree2;
-    var recalculate = event.data.recalculate;
-
-    // Instead of 2 calls to the same function, we should use web workers!
-    // BUT:
-    // https://bugs.chromium.org/p/chromium/issues/detail?id=31666
-    wrapGetAllBCNs(tree1, tree2, recalculate);
-};
-function postorderTraverse(d, f, do_children) {
-        if (do_children === undefined) { //check whether variable is defined, e.g. string, integer ...
-            do_children = true;
-        }
-        var children = [];
-        if (do_children) {
-            children = getChildren(d);
-        } else {
-            if (d.children) {
-                children = d.children
-            }
-        }
-        if (children.length > 0) {
-            for (var i = 0; i < children.length; i++) {
-                postorderTraverse(children[i], f, do_children);
-            }
-            f(d);
-            return;
-
-        } else {
-            f(d);
-            return;
-        }
-    }
-      ////////////////////////////
-  ph_tree1=[]
-  ph_tree2=[]
-  tree1=[]
-  tree2=[]
+      tree1=[]
+      tree2=[]
 
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
@@ -847,7 +553,7 @@ function postorderTraverse(d, f, do_children) {
             tree = new phylotree.phylotree(res);
 
             global_tree = tree;
-            ph_tree1=loadtree(res+'');
+            
             tree1=tree;
             if (!tree["json"]) {
               warning_div
@@ -912,7 +618,6 @@ function postorderTraverse(d, f, do_children) {
             tree2=tree;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
-            ph_tree2=loadtree(res+'');
             if (!tree["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -950,8 +655,6 @@ function postorderTraverse(d, f, do_children) {
 
               $(tree.display.container).empty();
               $(tree.display.container).html(tree.display.show());
-              
-              console.log(wrapGetAllBCNs(ph_tree1,ph_tree2,"True"));
             }
           };
 
@@ -1733,5 +1436,6 @@ function postorderTraverse(d, f, do_children) {
         return _warn.apply(console, arguments);
       };
     </script>
+
   </body>
 </html>

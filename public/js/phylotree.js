@@ -2439,13 +2439,18 @@
               menu_object.style("display", "none");
               this.toggleCollapse(node).update();
             });
-            // If there are two trees loaded? areTwoTreesLoaded()
         if (options["nodescore"]) {
           menu_object
             .append("a")
             .attr("class", "dropdown-item")
             .attr("tabindex", "-1")
-            .text(false ? "Expand Subtree" : "Noad score:"+''+node.score)       
+            .text("Node score:"+''+node.score)
+            .on("click", function(d) {
+              menu_object.style("display", "none");
+              phylotree.modifySelection(
+                phylotree.selectAllDescendants(node, true, true)
+              );
+            });       
         }
           if (options["selectable"]) {
             menu_object.append("div").attr("class", "dropdown-divider");
@@ -5046,6 +5051,9 @@
     }
     return null;
   };
+
+
+  
 
   /*
    *  Extracts dates from nodes using a provided callback (defaults supplied),
