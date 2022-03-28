@@ -959,8 +959,7 @@
       function node_colorizer(element, data) {
         try {
           var count_class = 0;
-
-          selection_set.forEach(function(d, i) {
+          selection_set.forEach(function(d, i) {  
             if (data[d]) {
               count_class++;
               element.style(

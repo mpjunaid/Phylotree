@@ -1772,6 +1772,19 @@
     if (this.node_styler) {
       this.node_styler(container, node);
     }
+    
+    var sc = node.score
+      
+    if (sc !== undefined) {
+      var haz_title = container.selectAll("title");
+
+      if (haz_title.empty()) {
+        haz_title = container.append("title");
+      }
+      haz_title.text("Node score = " + sc);
+    } else {
+      container.selectAll("title").remove();
+    }
 
     return node;
   }
@@ -2422,8 +2435,7 @@
           Boolean(node.menu_items),
           options["hide"],
           options["selectable"],
-          options["collapsible"],
-          options["nodescore"]
+          options["collapsible"]
         ]) ||
         !options["show-menu"]
       )
@@ -2439,19 +2451,6 @@
               menu_object.style("display", "none");
               this.toggleCollapse(node).update();
             });
-        if (options["nodescore"]) {
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text("Node score:"+''+node.score)
-            .on("click", function(d) {
-              menu_object.style("display", "none");
-              phylotree.modifySelection(
-                phylotree.selectAllDescendants(node, true, true)
-              );
-            });       
-        }
           if (options["selectable"]) {
             menu_object.append("div").attr("class", "dropdown-divider");
             menu_object
@@ -2593,8 +2592,7 @@
         const show_divider_options = [
           options["hide"],
           options["selectable"],
-          options["collapsible"],
-          options["nodescore"]
+          options["collapsible"]
         ];
 
         if (___namespace.some(show_divider_options)) {
@@ -2927,7 +2925,6 @@
         // branches
         "restricted-selectable": false,
         collapsible: true,
-        nodescore: true,
         "left-right-spacing": "fixed-step", //'fit-to-size',
         "top-bottom-spacing": "fixed-step",
         "left-offset": 0,
