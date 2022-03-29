@@ -18,26 +18,15 @@
 .node circle, .node ellipse, .node rect {
 fill: steelblue;
 stroke: black;
-stroke-width: 0.5px;
+stroke-width: 1px;
 }
 
 .internal-node circle, .internal-node ellipse, .internal-node rect{
 fill: rgb(79, 43, 238);
 stroke: black;
-stroke-width: 0.5px;
+stroke-width: 1px;
 }
 
-.test1 circle, .test1 ellipse, .tes1 rect{
-fill: rgb(245, 6, 6);
-stroke: black;
-stroke-width: 0.5px;
-}
-
-.test2 circle, .test2 ellipse, .tes2 rect{
-  fill: rgb(19, 228, 30);
-  stroke: black;
-  stroke-width: 0.5px;
-  }
 
 .node {
 font: 10px "Open Sans", sans-serif;
@@ -74,63 +63,63 @@ stroke-width: 3px;
 .n01 circle, .n01 ellipse, .n01 rect{
 fill: rgb(245, 141, 6);
 stroke: rgb(245, 141, 6);
-stroke-width: 1px;
+stroke-width: 2px;
 }
 
 .n02 circle, .n02 ellipse, .n02 rect{
 fill:rgb(245, 100, 6);
 stroke: rgb(245, 100, 6);
-stroke-width: 1px;
+stroke-width: 2px;
 }
 
 .n03 circle, .n03 ellipse, .n03 rect{
   fill: rgb(245, 60, 6);
   stroke: rgb(245, 60, 6);
-  stroke-width: 1px;
+  stroke-width: 2px;
   }
 
 .n04 circle, .n04 ellipse, .n04 rect{
   fill: rgb(245, 0, 6);
   stroke: rgb(245, 0, 6);
-  stroke-width: 1px;
+  stroke-width: 2px;
   }
 
 .n05 circle, .n05 ellipse, .n05 rect{
   fill: rgb(205, 0, 46);
   stroke: rgb(205, 0, 46);
-  stroke-width: 1px;
+  stroke-width: 2px;
   }
 
 .n06 circle, .n06 ellipse, .n06 rect{
   fill: rgb(185, 0, 86);;
   stroke: rgb(185, 0, 86);;
-  stroke-width: 1px;
+  stroke-width: 2px;
   }
 
 .n07 circle, .n07 ellipse, .n07 rect{
   fill: rgb(165, 0, 126);;
   stroke: rgb(165, 0, 126);;
-  stroke-width: 1px;
+  stroke-width: 2px;
   }
   .n08 circle, .n08 ellipse, .n08 rect{
     fill: rgb(125, 0, 166);;
     stroke: rgb(125, 0, 166);;
-    stroke-width: 1px;
+    stroke-width: 2px;
     }
   .n09 circle, .n09 ellipse, .n09 rect{
     fill: rgb(85, 0, 206);
     stroke: rgb(85, 0, 206);
-    stroke-width: 1px;
+    stroke-width: 2px;
     }
   .n10 circle, .n10 ellipse, .n10 rect{
     fill: rgb(45, 0, 245);
     stroke: rgb(45, 0, 245);
-    stroke-width: 1px;
+    stroke-width:2px;
     }
   .n1 circle, .n1 ellipse, .n1 rect{
     fill: rgb(0, 245,0);
     stroke: rgb(0, 245, 0);
-    stroke-width: 1px;
+    stroke-width: 3px;
     }
     
   
