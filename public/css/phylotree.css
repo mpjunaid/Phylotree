@@ -22,10 +22,22 @@ stroke-width: 0.5px;
 }
 
 .internal-node circle, .internal-node ellipse, .internal-node rect{
-fill: #CCC;
+fill: rgb(79, 43, 238);
 stroke: black;
 stroke-width: 0.5px;
 }
+
+.test1 circle, .test1 ellipse, .tes1 rect{
+  fill: rgb(245, 6, 6);
+  stroke: black;
+  stroke-width: 0.5px;
+  }
+
+  .test2 circle, .test2 ellipse, .tes2 rect{
+    fill: rgb(19, 228, 30);
+    stroke: black;
+    stroke-width: 0.5px;
+    }
 
 .node {
 font: 10px "Open Sans", sans-serif;

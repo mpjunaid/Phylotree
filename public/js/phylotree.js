@@ -1438,6 +1438,8 @@
     "tree-scale-bar": "tree-scale-bar",
     node: "node",
     "internal-node": "internal-node",
+    "test1" : "test1",
+    "test2" : "test2",
     "tagged-node": "node-tagged",
     "selected-node": "node-selected",
     "collapsed-node": "node-collapsed",
@@ -1844,6 +1846,20 @@
 
     let class_var = css_classes[isLeafNode(node) ? "node" : "internal-node"];
 
+    if (node.hasOwnProperty('newick_string')) {
+      if (node.nodes.score != undefined) {
+        if (node.nodes.score >= 0.5) {
+          class_var = css_classes["test1"];
+        } else { class_var = css_classes["test2"]; }
+      }
+    } else {
+      if (node.score != undefined) {
+        if (node.score >= 0.5) {
+          class_var = css_classes["test1"];
+        } else { class_var = css_classes["test2"]; }
+      }
+    }
+
     if (itemTagged(node)) {
       class_var += " " + css_classes["tagged-node"];
     }
@@ -1883,6 +1899,8 @@
     return [
       css_classes["node"],
       css_classes["internal-node"],
+      css_classes["test1"],
+      css_classes["test2"],
       css_classes["collapsed-node"],
       css_classes["tagged-node"],
       css_classes["root-node"]
@@ -2592,7 +2610,7 @@
         const show_divider_options = [
           options["hide"],
           options["selectable"],
-          options["collapsible"]
+          options["collapsible"],
         ];
 
         if (___namespace.some(show_divider_options)) {
@@ -2916,7 +2934,7 @@
         branches: "step",
         scaling: true,
         bootstrap: false,
-        "color-fill": true,
+        "color-fill": false,
         "internal-names": false,
         selectable: true,
         // restricted-selectable can take an array of predetermined
