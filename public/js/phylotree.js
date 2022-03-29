@@ -1438,8 +1438,17 @@
     "tree-scale-bar": "tree-scale-bar",
     node: "node",
     "internal-node": "internal-node",
-    "test1" : "test1",
-    "test2" : "test2",
+    "n01" : "n01",
+    "n02" : "n02",
+    "n03" : "n03",
+    "n04" : "n04",
+    "n05" : "n05",
+    "n06" : "n06",
+    "n07" : "n07",
+    "n08" : "n08",
+    "n09" : "n09",
+    "n10" : "n10",
+    "n1" : "n1",
     "tagged-node": "node-tagged",
     "selected-node": "node-selected",
     "collapsed-node": "node-collapsed",
@@ -1848,17 +1857,80 @@
 
     if (node.hasOwnProperty('newick_string')) {
       if (node.nodes.score != undefined) {
-        if (node.nodes.score >= 0.5) {
-          class_var = css_classes["test1"];
-        } else { class_var = css_classes["test2"]; }
+        if (node.nodes.score <0.1) {
+          class_var = css_classes["n01"];
+        } 
+        else if (node.nodes.score <0.2){
+          class_var = css_classes["n02"];
+        }
+        else if (node.nodes.score <0.3){
+          class_var = css_classes["n03"];
+        }
+        else if (node.nodes.score <0.4){
+          class_var = css_classes["n04"];
+        }
+        else if (node.nodes.score <0.5){
+          class_var = css_classes["n05"];
+        }
+        else if (node.nodes.score <0.6){
+          class_var = css_classes["n06"];
+        }
+        else if (node.nodes.score <0.7){
+          class_var = css_classes["n07"];
+        }
+        else if (node.nodes.score <0.8){
+          class_var = css_classes["n08"];
+        }
+        else if (node.nodes.score <0.9){
+          class_var = css_classes["n09"];
+        }
+        else if (node.nodes.score <1.0){
+          class_var = css_classes["n10"];
+        }
+        else if (node.nodes.score == 1.0){
+          class_var = css_classes["n1"]; 
+        }
       }
     } else {
+      //Nodes will be on gradient from orange to red to purple
       if (node.score != undefined) {
-        if (node.score >= 0.5) {
-          class_var = css_classes["test1"];
-        } else { class_var = css_classes["test2"]; }
+        if (node.score <0.1) {
+          class_var = css_classes["n01"];
+        }
+        else if (node.score <0.2){
+          class_var = css_classes["n02"];
+        }
+        else if (node.score <0.3){
+          class_var = css_classes["n03"];
+        }
+        else if (node.score <0.4){
+          class_var = css_classes["n04"];
+        }
+        else if (node.score <0.5){
+          class_var = css_classes["n05"];
+        }
+        else if (node.score <0.6){
+          class_var = css_classes["n06"];
+        }
+        else if (node.score <0.7){
+          class_var = css_classes["n07"];
+        }
+        else if (node.score <0.8){
+          class_var = css_classes["n08"];
+        }
+        else if (node.score <0.9){
+          class_var = css_classes["n09"];
+        }
+        else if (node.score <1.0){
+          class_var = css_classes["n10"];
+        }
+        //Nodes will be bright green if they have node score 1
+        else if (node.score == 1.0) {
+           class_var = css_classes["n1"]; 
+        }
       }
     }
+
 
     if (itemTagged(node)) {
       class_var += " " + css_classes["tagged-node"];
@@ -1899,8 +1971,17 @@
     return [
       css_classes["node"],
       css_classes["internal-node"],
-      css_classes["test1"],
-      css_classes["test2"],
+      css_classes["n01"],
+      css_classes["n02"],
+      css_classes["n03"],
+      css_classes["n04"],
+      css_classes["n05"],
+      css_classes["n06"],
+      css_classes["n07"],
+      css_classes["n08"],
+      css_classes["n09"],
+      css_classes["n10"],
+      css_classes["n1"],
       css_classes["collapsed-node"],
       css_classes["tagged-node"],
       css_classes["root-node"]
