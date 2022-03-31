@@ -2495,6 +2495,15 @@
     return "";
   }
 
+  function whichTree(node) {
+    var root = [];
+    while (node) {
+      root = node;
+      node = node.parent;
+    }
+    return root.tree;
+  }
+
   var events = /*#__PURE__*/Object.freeze({
     __proto__: null,
     toggleCollapse: toggleCollapse,
@@ -2562,17 +2571,31 @@
                   menu_object.style("display", "none");
                   node1 = node;
                   node2 = node.BCN;
-                  if (node2.hasOwnProperty('newick_string')) {
-                    tree1.display.modifySelection(
-                      tree1.selectAllDescendants(node1, true, true));
-                    tree2.display.modifySelection(
-                      tree2.selectAllDescendants(node2.nodes, true, true));
-                  }
-                  if (node2.hasOwnProperty('BCN')) {
-                    tree1.display.modifySelection(
-                            tree1.selectAllDescendants(node1, true, true));
-                    tree2.display.modifySelection(
-                            tree2.selectAllDescendants(node2, true, true));
+                  treeNr = whichTree(node1);
+                  if (treeNr == 1) {
+                    if (node2.hasOwnProperty('newick_string')) {
+                      tree1.display.modifySelection(
+                        tree1.selectAllDescendants(node1, true, true));
+                      tree2.display.modifySelection(
+                        tree2.selectAllDescendants(node2.nodes, true, true));
+                    } else if (node2.hasOwnProperty('BCN')) {
+                      tree1.display.modifySelection(
+                        tree1.selectAllDescendants(node1, true, true));
+                      tree2.display.modifySelection(
+                        tree2.selectAllDescendants(node2, true, true));
+                    }
+                  } else if (treeNr == 2) {
+                    if (node2.hasOwnProperty('newick_string')) {
+                      tree2.display.modifySelection(
+                        tree2.selectAllDescendants(node1, true, true));
+                      tree1.display.modifySelection(
+                        tree1.selectAllDescendants(node2.nodes, true, true));
+                    } else if (node2.hasOwnProperty('BCN')) {
+                      tree2.display.modifySelection(
+                        tree2.selectAllDescendants(node1, true, true));
+                      tree1.display.modifySelection(
+                        tree1.selectAllDescendants(node2, true, true));
+                    }
                   }
                 });
                 node1 = [];

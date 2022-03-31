@@ -617,6 +617,8 @@
             //tree2=tree;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
+            tree1.nodes.tree = 1;
+            tree2.nodes.tree = 2;
           
             if (!tree2["json"]) {
               warning_div
@@ -966,7 +968,8 @@
       // });
 
       node1 = [];
-      node2 = [];  
+      node2 = [];
+      treeNr = [];
 
       function default_tree_settings() {
         tree1 = phylotree();
