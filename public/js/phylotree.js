@@ -2562,6 +2562,12 @@
                   menu_object.style("display", "none");
                   node1 = node;
                   node2 = node.BCN;
+                  if (node2.hasOwnProperty('newick_string')) {
+                    tree1.display.modifySelection(
+                      tree1.selectAllDescendants(node1, true, true));
+                    tree2.display.modifySelection(
+                      tree2.selectAllDescendants(node2.nodes, true, true));
+                  }
                   if (node2.hasOwnProperty('BCN')) {
                     tree1.display.modifySelection(
                             tree1.selectAllDescendants(node1, true, true));
@@ -2569,6 +2575,8 @@
                             tree2.selectAllDescendants(node2, true, true));
                   }
                 });
+                node1 = [];
+                node2 = [];
               }
           if (options["selectable"]) {
             menu_object.append("div").attr("class", "dropdown-divider");
