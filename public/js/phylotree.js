@@ -3281,6 +3281,7 @@
         .data([0]);
 
       this.updateCollapsedClades(transitions);
+      
 
       let drawn_links = enclosure
         .selectAll(edgeCssSelectors(css_classes))
@@ -4261,9 +4262,9 @@
           });
         }
 
-        //let nodes = this.enclosure
-        //  .selectAll(inspector.nodeCssSelectors(this.css_classes))
-        //  .attr("class", this.phylotree.reclassNode);
+        let nodes = this.enclosure
+          .selectAll(inspector.nodeCssSelectors(this.css_classes))
+          .attr("class", this.phylotree.reclassNode);
 
         //if (this.node_styler) {
         //  nodes.each(function(d) {

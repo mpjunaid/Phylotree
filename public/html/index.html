@@ -660,16 +660,25 @@
               update_selection_names();
 
               $("#newick_modal").modal("hide");
-
+              
               $(tree2.display.container).empty();
               $(tree2.display.container).html(tree2.display.show());
+              tree1.render({
+                container: "#tree_container1",
+                "draw-size-bubbles": false,
+                "left-right-spacing": "fixed-step",
+                "node-styler": node_colorizer,
+                "edge-styler": edge_colorizer
+              });
+              $(tree1.display.container).empty();
+              $(tree1.display.container).html(tree1.display.show());
             }
           };
 
-          $("#newick-dropdown").dropdown("toggle");
-          reader.readAsText(f);
-          
-          $("#newick-dropdown").dropdown("toggle");
+        $("#newick-dropdown").dropdown("toggle");
+         reader.readAsText(f);
+
+        $("#newick-dropdown").dropdown("toggle");
           reader.readAsText(f);
         }
       });
