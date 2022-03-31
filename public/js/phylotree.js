@@ -293,7 +293,8 @@
     assignAttributes: assignAttributes,
     isLeafNode: isLeafNode,
     updateKeyName: updateKeyName,
-    clearInternalNodes: clearInternalNodes
+    clearInternalNodes: clearInternalNodes,
+    selectAllDescendants: selectAllDescendants
   });
 
   /**
@@ -2534,7 +2535,8 @@
           Boolean(node.menu_items),
           options["hide"],
           options["selectable"],
-          options["collapsible"]
+          options["collapsible"],
+          options["showBCN"]
         ]) ||
         !options["show-menu"]
       )
@@ -2550,6 +2552,24 @@
               menu_object.style("display", "none");
               this.toggleCollapse(node).update();
             });
+            if (options["showBCN"]) {
+              menu_object
+              .append("a")
+              .attr("class", "dropdown-item")
+              .attr("tabindex", "-1")
+              .text("Compare nodes")
+              .on("click", function(d) {
+                  menu_object.style("display", "none");
+                  node1 = node;
+                  node2 = node.BCN;
+                  if (node2.hasOwnProperty('BCN')) {
+                    tree1.display.modifySelection(
+                            tree1.selectAllDescendants(node1, true, true));
+                    tree2.display.modifySelection(
+                            tree2.selectAllDescendants(node2, true, true));
+                  }
+                });
+              }
           if (options["selectable"]) {
             menu_object.append("div").attr("class", "dropdown-divider");
             menu_object
@@ -2558,6 +2578,8 @@
               .text("Toggle selection");
           }
         }
+
+        
 
         if (options["selectable"]) {
           menu_object
@@ -2692,6 +2714,7 @@
           options["hide"],
           options["selectable"],
           options["collapsible"],
+          options["showBCN"],
         ];
 
         if (___namespace.some(show_divider_options)) {
@@ -3024,6 +3047,7 @@
         // branches
         "restricted-selectable": false,
         collapsible: true,
+        showBCN : true,
         "left-right-spacing": "fixed-step", //'fit-to-size',
         "top-bottom-spacing": "fixed-step",
         "left-offset": 0,
