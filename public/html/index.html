@@ -475,7 +475,16 @@
               >
                 <i class="fa fa-align-right"></i>
               </button>
+
             </div>
+          <button
+          type = "button"
+          class="button1"
+          id = "new-function"
+          title = "new-function"
+          >
+          new
+          </button>
           </div>
         </div>
 
@@ -498,7 +507,7 @@
       <tbody>
       <tr>
         <th>
-          <div id="tree_container" class="tree-widget" style="display: block,width: 10%,padding:0px;"></div>
+          <div id="tree_container1" class="tree-widget" style="display: block,width: 10%,padding:0px;"></div>
         </th>
         <th>
           <div id="tree_container2" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
@@ -516,8 +525,6 @@
       }
 
       var phylotree_extensions = new Object();
-      tree_1=[];
-      tree_2=[];
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
           tree1.getNewick(function(node) {
@@ -535,8 +542,8 @@
         );
       });
       
-      tree1=[]
-      tree2=[]
+      //tree1=[]
+      //tree2=[]
 
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
@@ -550,12 +557,12 @@
               .select("#main_display")
               .insert("div", ":first-child");
 
-            tree = new phylotree.phylotree(res);
+            tree1 = new phylotree.phylotree(res);
 
-            global_tree = tree;
+            //global_tree = tree;
             
-            tree1=tree;
-            if (!tree["json"]) {
+            //tree1 = tree;
+            if (!tree1["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -566,7 +573,7 @@
                 );
             } else {
               tree1.render({
-                container: "#tree_container",
+                container: "#tree_container1",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
                 "node-styler": node_colorizer,
@@ -613,12 +620,13 @@
               .select("#main_display")
               .insert("div", ":first-child");
 
-            tree = new phylotree.phylotree(res);
-            global_tree = tree;
-            tree2=tree;
+            tree2 = new phylotree.phylotree(res);
+            //global_tree = tree;
+            //tree2=tree;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
-            if (!tree["json"]) {
+          
+            if (!tree2["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -653,11 +661,14 @@
 
               $("#newick_modal").modal("hide");
 
-              $(tree.display.container).empty();
-              $(tree.display.container).html(tree.display.show());
+              $(tree2.display.container).empty();
+              $(tree2.display.container).html(tree2.display.show());
             }
           };
 
+          $("#newick-dropdown").dropdown("toggle");
+          reader.readAsText(f);
+          
           $("#newick-dropdown").dropdown("toggle");
           reader.readAsText(f);
         }
@@ -720,6 +731,10 @@
         }
       });
 
+      $("#new-function").on("click", function(e){
+        
+      });
+
       function sort_nodes(asc, tree) {
         tree.resortChildren(function(a, b) {
           return (b.height - a.height || b.value - a.value) * (asc ? 1 : -1);
@@ -733,6 +748,8 @@
         tree2.resortChildren(function(a, b) {
           return a["original_child_order"] - b["original_child_order"];
         });
+        tree1.update();
+        tree2.update();
       });
 
       $("#sort_ascending").on("click", function(e) {
@@ -1176,7 +1193,7 @@
 
       var test_string =
         "(((EELA:0.150276,CONGERA:0.213019):0.230956,(EELB:0.263487,CONGERB:0.202633):0.246917):0.094785,((CAVEFISH:0.451027,(GOLDFISH:0.340495,ZEBRAFISH:0.390163):0.220565):0.067778,((((((NSAM:0.008113,NARG:0.014065):0.052991,SPUN:0.061003,(SMIC:0.027806,SDIA:0.015298,SXAN:0.046873):0.046977):0.009822,(NAUR:0.081298,(SSPI:0.023876,STIE:0.013652):0.058179):0.091775):0.073346,(MVIO:0.012271,MBER:0.039798):0.178835):0.147992,((BFNKILLIFISH:0.317455,(ONIL:0.029217,XCAU:0.084388):0.201166):0.055908,THORNYHEAD:0.252481):0.061905):0.157214,LAMPFISH:0.717196,((SCABBARDA:0.189684,SCABBARDB:0.362015):0.282263,((VIPERFISH:0.318217,BLACKDRAGON:0.109912):0.123642,LOOSEJAW:0.397100):0.287152):0.140663):0.206729):0.222485,(COELACANTH:0.558103,((CLAWEDFROG:0.441842,SALAMANDER:0.299607):0.135307,((CHAMELEON:0.771665,((PIGEON:0.150909,CHICKEN:0.172733):0.082163,ZEBRAFINCH:0.099172):0.272338):0.014055,((BOVINE:0.167569,DOLPHIN:0.157450):0.104783,ELEPHANT:0.166557):0.367205):0.050892):0.114731):0.295021)myroot";
-      var container_id = "#tree_container";
+      var container_id = "#tree_container1";
 
 
       var example_controls = d3.select("#controls_form").append("form");
@@ -1388,7 +1405,7 @@
         tree1 = new phylotree.phylotree(test_string);
 
         tree1.render({
-          container: "#tree_container",
+          container: "#tree_container1",
           "draw-size-bubbles": false,
           "left-right-spacing" : "fixed-step",
           "node-styler": node_colorizer,
@@ -1409,13 +1426,14 @@
         if (tree1.parsed_tags.length) {
           selection_set = tree1.parsed_tags;
         }
-        //update_selection_names();
+        update_selection_names();
 
         $(tree1.display.container).empty();
         $(tree1.display.container).html(tree1.display.show());
 
         $("#save_image").on("click", function(e) {
-          datamonkey_save_image("svg", "#tree_container");
+          datamonkey_save_image("svg", "#tree_container1");
+          datamonkey_save_image("svg", "#tree_container2");
         });
       });
     </script>
