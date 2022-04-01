@@ -1,4 +1,5 @@
-function preprocess_tree(tree){
+/* Go over all nodes in the tree and assign for every node a list of the leaf names */
+function preprocess_tree(tree) {
     if (tree.hasOwnProperty('newick_string')) {
         if (tree.nodes.hasOwnProperty('children')) {
             leaf = []
@@ -17,130 +18,131 @@ function preprocess_tree(tree){
             preprocess_tree(tree.children[i]); 
         }
     }
-    return tree;
 }
-      
-function getleaf(tree) {
-    if (tree.hasOwnProperty('newick_string')) {
-        if (tree.nodes.hasOwnProperty('children')) {
-            const len=tree.nodes.children.length;
-            for (let i=0;i<len;i=i+1) {
-              getleaf(tree.nodes.children[i]);
+
+/* Return list of leave names for a node */      
+function getleaf(node) {
+    if (node.hasOwnProperty('newick_string')) {
+        if (node.nodes.hasOwnProperty('children')) {
+            const len = node.nodes.children.length;
+            for (let i = 0; i < len; i++) {
+              getleaf(node.nodes.children[i]);
             }
+        } else {
+            leaf.push(node.nodes.data.name);
         }
-        else {
-            leaf.push(tree.nodes.data.name);
-        }
-    }
-    else if (tree.hasOwnProperty('children')) {
-        const len=tree.children.length;
-        for (let i=0;i<len;i=i+1) {
-            getleaf(tree.children[i]);
+    } else if (node.hasOwnProperty('children')) {
+        const len = node.children.length;
+        for (let i = 0; i < len; i++) {
+            getleaf(node.children[i]);
         }
     } else {
-        leaf.push(tree.data.name);
+        leaf.push(node.data.name);
     }
     return leaf;
 }
-      
-function preprocess_BCN(v, tree) {
-    v = preprocess_tree(v);
-    tree = preprocess_tree(tree);
-    if (v.hasOwnProperty('newick_string')) {
-        if (v.nodes.hasOwnProperty('children')) {
-            getBCN(v, tree);
-            const len=v.nodes.children.length;
-            for (let i=0;i<len;i=i+1) {      
-              preprocess_BCN(v.nodes.children[i], tree); 
+
+/* Go over all nodes in the tree and assign for every node the node score and BCN */
+function preprocess_BCN(tree, tree_ref) {
+    preprocess_tree(tree);
+    preprocess_tree(tree_ref);
+    if (tree.hasOwnProperty('newick_string')) {
+        if (tree.nodes.hasOwnProperty('children')) {
+            getBCN(tree, tree_ref);
+            const len = tree.nodes.children.length;
+            for (let i = 0; i < len; i++) {      
+              preprocess_BCN(tree.nodes.children[i], tree_ref); 
             }
         }
-    } else if (v.hasOwnProperty('children')) {
-        getBCN(v, tree);
-        const len=v.children.length;
-        for (let i=0;i<len;i=i+1) {      
-            preprocess_BCN(v.children[i], tree); 
+    } else if (tree.hasOwnProperty('children')) {
+        getBCN(tree, tree_ref);
+        const len = tree.children.length;
+        for (let i = 0; i < len; i++) {      
+            preprocess_BCN(tree.children[i], tree_ref); 
         }
     }
 }
-      
-function getBCN(v, tree) {
+
+/* Calculate the nodescore and BCN for a node and its reference tree */
+function getBCN(node, tree_ref) {
     var elementBCNNode = null;
     var maxElementS = 0;
-    var spanningTree = getSpanningTree(tree, v);
+    var spanningTree = getSpanningTree(node, tree_ref); 
     for (var i = 0; i < spanningTree.length; i++) {
-        var x = getElementS(v, spanningTree[i]);
+        var x = getElementS(node, spanningTree[i]);
         if (x > maxElementS) {
             maxElementS = x;
             elementBCNNode = spanningTree[i];
         }
     } 
-    if (v.hasOwnProperty('newick_string')) {
-        v.nodes.BCN = elementBCNNode;
-        v.nodes.score = maxElementS;
+    if (node.hasOwnProperty('newick_string')) {
+        node.nodes.BCN = elementBCNNode;
+        node.nodes.score = maxElementS;
     } else {
-        v.BCN = elementBCNNode;
-        v.score = maxElementS;
+        node.BCN = elementBCNNode;
+        node.score = maxElementS;
     }
 }
-      
-function getSpanningTree(tree, node) {
+
+/* Return list of nodes of the reference tree who have leaves in common with the node */
+function getSpanningTree(node, tree_ref) {
     var nodes = [];
-    if (tree.hasOwnProperty('newick_string') && node.hasOwnProperty('newick_string')) {
-        if(tree.nodes.hasOwnProperty('children')) {
-            len = tree.nodes.leaves.length;
+    if (node.hasOwnProperty('newick_string') && tree_ref.hasOwnProperty('newick_string')) {
+        if (tree_ref.nodes.hasOwnProperty('children')) {
+            len = tree_ref.nodes.leaves.length;
         } else { len = 0;}
         for (var i = 0; i < len; i++) {
-            var test = $.inArray(tree.nodes.leaves[i], node.nodes.leaves);
+            var test = $.inArray(tree_ref.nodes.leaves[i], node.nodes.leaves);
             if (test > -1) {
-                nodes.push(tree);
-                var children = tree.nodes.children;
+                nodes.push(tree_ref);
+                var children = tree_ref.nodes.children;
               for (var j = 0; j < children.length; j++) {
-                  nodes = nodes.concat(getSpanningTree(children[j], node));
+                  nodes = nodes.concat(getSpanningTree(node, children[j]));
                 }
                 return nodes;
             }
         }
-    } else if (tree.hasOwnProperty('newick_string')) {
-        if(tree.nodes.hasOwnProperty('children')) {
-            len = tree.nodes.leaves.length;
+    } else if (tree_ref.hasOwnProperty('newick_string')) {
+        if (tree_ref.nodes.hasOwnProperty('children')) {
+            len = tree_ref.nodes.leaves.length;
         } else { len = 0;}
         for (var i = 0; i < len; i++) {
-            var test = $.inArray(tree.nodes.leaves[i], node.leaves);
+            var test = $.inArray(tree_ref.nodes.leaves[i], node.leaves);
             if (test > -1) {
-                nodes.push(tree);
-                var children = tree.nodes.children;
+                nodes.push(tree_ref);
+                var children = tree_ref.nodes.children;
                 for (var j = 0; j < children.length; j++) {
-                    nodes = nodes.concat(getSpanningTree(children[j], node));
+                    nodes = nodes.concat(getSpanningTree(node, children[j]));
                 }
                 return nodes;
             }
         }
     } else if (node.hasOwnProperty('newick_string')) {
-        if(tree.hasOwnProperty('children')) {
-            len = tree.leaves.length;
+        if (tree_ref.hasOwnProperty('children')) {
+            len = tree_ref.leaves.length;
         } else { len = 0;}
         for (var i = 0; i < len; i++) {
-            var test = $.inArray(tree.leaves[i], node.nodes.leaves);
+            var test = $.inArray(tree_ref.leaves[i], node.nodes.leaves);
             if (test > -1) {
-                nodes.push(tree);
-                var children = tree.children;
+                nodes.push(tree_ref);
+                var children = tree_ref.children;
                 for (var j = 0; j < children.length; j++) {
-                    nodes = nodes.concat(getSpanningTree(children[j], node));
+                    nodes = nodes.concat(getSpanningTree(node, children[j]));
                 }
                 return nodes;
             }
         }
     } else {
-        if (tree.hasOwnProperty('children')) {
-            len = tree.leaves.length;
+        if (tree_ref.hasOwnProperty('children')) {
+            len = tree_ref.leaves.length;
         } else { len = 0;}
         for (var i = 0; i < len; i++) {
-            var test = $.inArray(tree.leaves[i], node.leaves);
+            var test = $.inArray(tree_ref.leaves[i], node.leaves);
             if (test > -1) {
-                nodes.push(tree);
-                var children = tree.children;
+                nodes.push(tree_ref);
+                var children = tree_ref.children;
                 for (var j = 0; j < children.length; j++) {
-                    nodes = nodes.concat(getSpanningTree(children[j], node));
+                    nodes = nodes.concat(getSpanningTree(node, children[j]));
                 }
                 return nodes;
             }
@@ -148,7 +150,8 @@ function getSpanningTree(tree, node) {
     }
     return nodes;
 }
-      
+
+/* Get the node score between two nodes */
 function getElementS(v, n) {
     if (v.hasOwnProperty('newick_string') && n.hasOwnProperty('newick_string')) {
         var lv = v.nodes.leaves;
@@ -168,6 +171,3 @@ function getElementS(v, n) {
     var intersect = _.intersection(lv, ln).length;
     return intersect / (lvlen + lnlen - intersect);
 }
-
-
-
