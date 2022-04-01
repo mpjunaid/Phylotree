@@ -59,7 +59,6 @@
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
-    <script src="../js/phyloiobcn.js" type="module"></script>
     <link href="../css/phylotree.css" rel="stylesheet" />
 
     <style>
@@ -151,113 +150,6 @@
             </div>
           </li>
         </ul>
-
-        <!-- <ul class="nav navbar-nav mx-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Tag
-            </a>
-            <div
-              class="dropdown-menu"
-              aria-labelledby="navbarDropdown"
-              id="selection_name_dropdown"
-            >
-              <a id="selection_new" class="dropdown-item" href="#"
-                >New selection set</a
-              >
-              <a id="selection_delete" class="dropdown-item" href="#"
-                >Delete selection set</a
-              >
-              <a id="selection_rename" class="dropdown-item" href="#"
-                >Rename selection set</a
-              >
-              <div class="dropdown-divider"></div>
-            </div>
-          </li> -->
-<!-- 
-          <li>
-            <form class="form-inline my-2 my-lg-0">
-              <input
-                type="text"
-                id="selection_name_box"
-                class="form-control mr-sm-2"
-                value="Foreground"
-                disabled
-                size="40"
-              />
-            </form>
-          </li>
-
-          <li id="save_selection_name" style="display:none;" class="my-auto">
-            <a href="#"
-              ><button id="cancel_selection_button" class="btn btn-info btn-sm">
-                Cancel
-              </button></a
-            >
-            <a href="#"
-              ><button id="save_selection_button" class="btn btn-info btn-sm">
-                Save
-              </button></a
-            >
-          </li> -->
-<!-- 
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Selection
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a id="filter_add" class="dropdown-item" href="#"
-                >Add filtered nodes to selection</a
-              >
-              <a id="filter_remove" class="dropdown-item" href="#"
-                >Select all but filtered nodes</a
-              >
-              <div class="dropdown-divider"></div>
-              <a id="select_all" class="dropdown-item" href="#">Select all</a>
-              <a id="select_all_internal" class="dropdown-item" href="#"
-                >Select all internal nodes</a
-              >
-              <a id="select_all_leaves" class="dropdown-item" href="#"
-                >Select all leaf nodes</a
-              >
-              <a id="clear_internal" class="dropdown-item" href="#"
-                >Clear all internal nodes</a
-              >
-              <a id="clear_leaves" class="dropdown-item" href="#"
-                >Clear all leaves</a
-              >
-              <a id="select_none" class="dropdown-item" href="#"
-                >Clear selection</a
-              >
-              <div class="dropdown-divider"></div>
-              <a id="mp_label" class="dropdown-item" href="#"
-                >Label internal nodes using maximum parsimony</a
-              >
-              <a id="and_label" class="dropdown-item" href="#"
-                >Label internal nodes using conjunction (AND)</a
-              >
-              <a id="or_label" class="dropdown-item" href="#"
-                >Label internal nodes using disjunction (OR)</a
-              >
-            </div>
-          </li>
-        </ul> -->
 
         <ul class="navbar-nav ml-auto">
           <li>
@@ -487,23 +379,10 @@
           </button>
           </div>
         </div>
-
-        <!-- <div class="col-md-4">
-          <label class="pull-right"
-            ><b>Selected</b>
-            <span class="badge badge-secondary" id="selected_branch_counter"
-              >0</span
-            >
-            <b>branches with current label</b></label
-          >
-        </div> -->
       </div>
-
-      
-      
     </div>
-    <table align ="left">
-        
+
+    <table align ="left">    
       <tbody>
       <tr>
         <th>
@@ -541,9 +420,6 @@
           })
         );
       });
-      
-      //tree1=[]
-      //tree2=[]
 
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
@@ -558,10 +434,6 @@
               .insert("div", ":first-child");
 
             tree1 = new phylotree.phylotree(res);
-
-            //global_tree = tree;
-            
-            //tree1 = tree;
             if (!tree1["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -621,8 +493,6 @@
               .insert("div", ":first-child");
 
             tree2 = new phylotree.phylotree(res);
-            //global_tree = tree;
-            //tree2=tree;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
@@ -928,56 +798,8 @@
         }, "tag");
       });
 
-      // $("#validate_newick").on("click", function(e) {
-      //   let test_string = $('textarea[id$="nwk_spec"]').val();
-
-      //   tree1 = new phylotree.phylotree(test_string);
-      //   global_tree = tree;
-      //   tree_2 = tree;
-      //   if (!tree1["json"]) {
-      //     var warning_div = d3
-      //       .select("#newick_body")
-      //       .selectAll("div  .alert-danger")
-      //       .data([res["error"]]);
-      //     warning_div.enter().append("div");
-      //     warning_div
-      //       .html(function(d) {
-      //         return d;
-      //       })
-      //       .attr("class", "alert-danger");
-      //   } else {
-      //     tree1.render({
-      //       container: "#tree_container",
-      //       "draw-size-bubbles": false,
-      //       "node-styler": node_colorizer,
-      //       zoom: false,
-      //       "edge-styler": edge_colorizer
-      //     });
-
-      //     tree1.display.selectionLabel(current_selection_name);
-
-      //     tree1.display.countHandler(count => {
-      //       $("#selected_branch_counter").text(function(d) {
-      //         return count[current_selection_name];
-      //       });
-      //     });
-
-      //     // Get selection set names from parsed newick
-      //     if (tree1.parsed_tags.length) {
-      //       selection_set = tree1.parsed_tags;
-      //     }
-
-      //     update_selection_names();
-
-      //     $("#newick_modal").modal("hide");
-      //     $(tree1.display.container).html(tree1.display.show());
-      //   }
-      //   console.log((compareTree(tree_1,tree_2)))
-      // });
-
       node1 = [];
       node2 = [];
-      treeNr = [];
 
       function default_tree_settings() {
         tree1 = phylotree();
@@ -1049,46 +871,6 @@
         );
       });
 
-      // $("#selection_rename").on("click", function(e) {
-      //   d3.select("#save_selection_button")
-      //     .classed("disabled", true)
-      //     .on("click", function(e) {
-      //       // save selection handler
-      //       var old_selection_name = current_selection_name;
-      //       selection_set[current_selection_id] = current_selection_name = $(
-      //         "#selection_name_box"
-      //       ).val();
-
-      //       if (old_selection_name != current_selection_name) {
-      //         tree1.update_key_name(old_selection_name, current_selection_name);
-      //         update_selection_names(current_selection_id);
-      //       }
-      //       send_click_event_to_menu_objects(
-      //         new CustomEvent(selection_menu_element_action, {
-      //           detail: ["save", this]
-      //         })
-      //       );
-      //     });
-
-      //   d3.select("#cancel_selection_button")
-      //     .classed("disabled", false)
-      //     .on("click", function(e) {
-      //       // save selection handler
-      //       $("#selection_name_box").val(current_selection_name);
-      //       send_click_event_to_menu_objects(
-      //         new CustomEvent(selection_menu_element_action, {
-      //           detail: ["cancel", this]
-      //         })
-      //       );
-      //     });
-
-      //   send_click_event_to_menu_objects(
-      //     new CustomEvent(selection_menu_element_action, {
-      //       detail: ["rename", this]
-      //     })
-      //   );
-      //   e.preventDefault();
-      // });
 
       $("#selection_delete").on("click", function(e) {
         tree1.display.updateKeyName(selection_set[current_selection_id], null);
