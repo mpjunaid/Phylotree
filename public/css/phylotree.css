@@ -1,3 +1,13 @@
+.tree-selection-brush .extent {
+  fill-opacity: .05;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.tree-scale-bar text {
+  font: sans-serif;
+}
+
 .clade {
   fill: blue;
   opacity: 0.5;
@@ -35,6 +45,17 @@
   stroke-width: 5px;
 }
 
+.branch-selected {
+  stroke: #f00 !important; 
+  stroke-width: 3px;
+  }
+
+  
+.branch-tagged {
+  stroke: #00f;
+  stroke-dasharray: 10,5;
+  stroke-width: 2px;
+  }
 /* Nodescore nodes */
 
 .n01 circle, .n01 ellipse, .n01 rect {
