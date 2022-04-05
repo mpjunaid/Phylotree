@@ -542,14 +542,30 @@
               
               $(tree2.display.container).empty();
               $(tree2.display.container).html(tree2.display.show());
-              // tree1.render({
-              //   container: "#tree_container1",
-              //   "draw-size-bubbles": false,
-              //   "left-right-spacing": "fixed-step",
-              //   "node-styler": node_colorizer,
-              //   "edge-styler": edge_colorizer
-              // });
-              // $(tree1.display.container).empty();
+              tree1.render({
+                container: "#tree_container1",
+                "draw-size-bubbles": false,
+                "left-right-spacing": "fixed-step",
+                "node-styler": node_colorizer,
+                "edge-styler": edge_colorizer
+              });
+              tree1.display.selectionLabel(current_selection_name);
+
+              tree1.display.countHandler(count => {
+                $("#selected_branch_counter").text(function(d) {
+                  return count[current_selection_name];
+                });
+              });
+
+              // Get selection set names from parsed newick
+              if (tree1.parsed_tags.length) {
+                selection_set = tree1.parsed_tags;
+              }
+
+              update_selection_names();
+
+              $("#newick_modal").modal("hide");
+              $(tree1.display.container).empty();
               $(tree1.display.container).html(tree1.display.show());
             }
           };
