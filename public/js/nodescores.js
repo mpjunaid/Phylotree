@@ -78,9 +78,19 @@ function getBCN(node, tree_ref) {
     if (node.hasOwnProperty('newick_string')) {
         node.nodes.BCN = elementBCNNode;
         node.nodes.score = maxElementS;
+        if (elementBCNNode.hasOwnProperty('newick_string')) {
+            node.nodes.BCN_Depth = elementBCNNode.nodes.depth
+        } else {
+            node.nodes.BCN_Depth = elementBCNNode.depth
+        }
     } else {
         node.BCN = elementBCNNode;
         node.score = maxElementS;
+        if (elementBCNNode.hasOwnProperty('newick_string')) {
+            node.BCN_Depth = elementBCNNode.nodes.depth
+        } else {
+            node.BCN_Depth = elementBCNNode.depth
+        }
     }
 }
 
