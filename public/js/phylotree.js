@@ -966,13 +966,14 @@ function drawNode(container, node, transitions) {
     this.node_styler(container, node);
   }
   var sc = node.score
-  var dp = node.depth      
-  if (sc !== undefined && dp !== undefined) {
+  var dp = node.depth
+  var bcn_dp = node.BCN_Depth    
+  if (sc !== undefined && dp !== undefined && bcn_dp !== undefined) {
     var haz_title = container.selectAll("title");
     if (haz_title.empty()) {
       haz_title = container.append("title");
     }
-    haz_title.text("Nodescore = " + sc + "\nDepth = " + dp);
+    haz_title.text("Nodescore = " + sc + "\nDepth = " + dp + "\nDepth BCN = " + bcn_dp);
   } else if (dp !== undefined) {
     var haz_title1 = container.selectAll("title");
     if (haz_title1.empty()) {
@@ -982,7 +983,6 @@ function drawNode(container, node, transitions) {
   } else {
     container.selectAll("title").remove();
   }  
-  
   return node;
 }
 
