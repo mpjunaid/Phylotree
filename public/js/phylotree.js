@@ -695,6 +695,7 @@ function itemSelected(item, tag) {
 const css_classes = {
   "tree-container": "phylotree-container",
   "tree-scale-bar": "tree-scale-bar",
+  "clade": "clade",
   node: "node",
   "internal-node": "internal-node",
   "n01" : "n01",

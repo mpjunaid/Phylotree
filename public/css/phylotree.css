@@ -1,5 +1,9 @@
-/* Default nodes */
+.clade {
+  fill: blue;
+  opacity: 0.5;
+}
 
+/* Default nodes */
 .node circle, .node ellipse, .node rect {
   fill: black;
   stroke: black;
