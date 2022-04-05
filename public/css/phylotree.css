@@ -23,41 +23,37 @@
   font: 10px "Open Sans", sans-serif;
 }
 .internal-node circle, .internal-node ellipse, .internal-node rect {
-  fill: black;
-  stroke: black;
-  stroke-width: 1px;
+  fill: rgb(0, 245,0);
+  stroke: rgb(0, 245, 0);
+  stroke-width: 3px;
 }
 .internal-node circle:hover, .internal-node ellipse:hover, .internal-node rect:hover {
-  fill: orange;
-  stroke: orange;
-  stroke-width: 5px;
+  fill: rgb(0, 245,0);
+  stroke: rgb(0, 245, 0);
+  stroke-width: 10px;
 }
 
 /* Default branches */
-
 .branch {
   fill: none;
-  stroke: black;
+  stroke: rgb(0, 245, 0);
   stroke-width: 2px;
 }
 .branch:hover {
-  stroke: blue;
-  stroke-width: 5px;
+  stroke: rgb(0, 245, 0);
+  stroke-width: 10px;
 }
-
 .branch-selected {
   stroke: #f00 !important; 
   stroke-width: 3px;
   }
-
-  
 .branch-tagged {
   stroke: #00f;
   stroke-dasharray: 10,5;
   stroke-width: 2px;
   }
-/* Nodescore nodes */
 
+/* Nodescore nodes */
 .n01 circle, .n01 ellipse, .n01 rect {
   fill: rgb(245, 141, 6);
   stroke: rgb(245, 141, 6);
