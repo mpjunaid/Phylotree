@@ -22,7 +22,7 @@ http://localhost:3000
 # Our Application looks the following when two trees are loaded
 
 Linear view
-<img src="./picture.png" alt="My cool logo"/>
+<img src="./picture.jpg" alt="My cool logo"/>
 
 Radial view
  
