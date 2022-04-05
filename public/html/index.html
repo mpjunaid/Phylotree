@@ -500,6 +500,7 @@
               .insert("div", ":first-child");
 
             tree2 = new phylotree.phylotree(res);
+            window.tree3 = undefined;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
@@ -607,6 +608,10 @@
           $(".phylotree-layout-mode").toggleClass("active");
           tree2.display.radial(!tree2.display.radial()).update();
         }
+        if (tree3.display.radial() != ($(this).data("mode") == "radial")) {
+          $(".phylotree-layout-mode").toggleClass("active");
+          tree3.display.radial(!tree3.display.radial()).update();
+        }
       });
 
       $("#toggle_animation").on("click", function(e) {
@@ -698,8 +703,8 @@
               .select("#main_display")
               .insert("div", ":first-child");
             console.log(res)
-            let tree1 = new phylotree.phylotree(res);
-            if (!tree1["json"]) {
+            window.tree3 = new phylotree.phylotree(res);
+            if (!tree3["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
                 .html(
@@ -709,7 +714,7 @@
                     res["error"]
                 );
             } else {
-              tree1.render({
+              tree3.render({
                 container: "#tree_container3",
                 "draw-size-bubbles": false,
                 "left-right-spacing": "fixed-step",
@@ -717,25 +722,25 @@
                 "edge-styler": edge_colorizer
               });
 
-              tree1.display.selectionLabel(current_selection_name);
+              tree3.display.selectionLabel(current_selection_name);
 
-              tree1.display.countHandler(count => {
+              tree3.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
 
               // Get selection set names from parsed newick
-              if (tree1.parsed_tags.length) {
-                selection_set = tree1.parsed_tags;
+              if (tree3.parsed_tags.length) {
+                selection_set = tree3.parsed_tags;
               }
 
               update_selection_names();
 
               $("#newick_modal").modal("hide");
 
-              $(tree1.display.container).empty();
-              $(tree1.display.container).html(tree1.display.show());
+              $(tree3.display.container).empty();
+              $(tree3.display.container).html(tree3.display.show());
             }
       
 

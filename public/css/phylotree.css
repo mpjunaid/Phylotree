@@ -50,12 +50,13 @@
   stroke-width: 3px;
   }
 
-  
 .branch-tagged {
   stroke: #00f;
   stroke-dasharray: 10,5;
   stroke-width: 2px;
   }
+
+
 /* Nodescore nodes */
 
 .n01 circle, .n01 ellipse, .n01 rect {
