@@ -964,17 +964,25 @@ function drawNode(container, node, transitions) {
   }
   if (this.node_styler) {
     this.node_styler(container, node);
-  }  
-  var sc = node.score    
-  if (sc !== undefined) {
+  }
+  var sc = node.score
+  var dp = node.depth      
+  if (sc !== undefined && dp !== undefined) {
     var haz_title = container.selectAll("title");
     if (haz_title.empty()) {
       haz_title = container.append("title");
     }
-    haz_title.text("Node score = " + sc);
+    haz_title.text("Nodescore = " + sc + "\nDepth = " + dp);
+  } else if (dp !== undefined) {
+    var haz_title1 = container.selectAll("title");
+    if (haz_title1.empty()) {
+      haz_title1 = container.append("title");
+    }
+    haz_title1.text("Depth = " + dp);
   } else {
     container.selectAll("title").remove();
-  }
+  }  
+  
   return node;
 }
 
