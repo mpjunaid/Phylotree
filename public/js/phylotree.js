@@ -695,7 +695,7 @@ function itemSelected(item, tag) {
 const css_classes = {
   "tree-container": "phylotree-container",
   "tree-scale-bar": "tree-scale-bar",
-  "clade": "clade",
+  clade: "clade",
   node: "node",
   "internal-node": "internal-node",
   "n01" : "n01",
@@ -1005,60 +1005,30 @@ function showInternalName(node) {
 
 function reclassNode(node) {
   let class_var = css_classes[isLeafNode(node) ? "node" : "internal-node"];
-  if (node.hasOwnProperty('newick_string')) {
-    if (node.nodes.score != undefined) {
-      if (node.nodes.score <0.1) {
-        class_var = css_classes["n01"];
-      } else if (node.nodes.score <0.2){
-        class_var = css_classes["n02"];
-      } else if (node.nodes.score <0.3){
-        class_var = css_classes["n03"];
-      } else if (node.nodes.score <0.4){
-        class_var = css_classes["n04"];
-      } else if (node.nodes.score <0.5){
-        class_var = css_classes["n05"];
-      } else if (node.nodes.score <0.6){
-        class_var = css_classes["n06"];
-      } else if (node.nodes.score <0.7){
-        class_var = css_classes["n07"];
-      } else if (node.nodes.score <0.8){
-        class_var = css_classes["n08"];
-      } else if (node.nodes.score <0.9){
-        class_var = css_classes["n09"];
-      } else if (node.nodes.score <1.0){
-        class_var = css_classes["n10"];
-      } else if (node.nodes.score == 1.0){
-        class_var = css_classes["n1"]; 
-      }
-    }
-  } else {
-    //Nodes will be on gradient from orange to red to purple
-    if (node.score != undefined) {
-      if (node.score <0.1) {
-        class_var = css_classes["n01"];
-      } else if (node.score <0.2){
-        class_var = css_classes["n02"];
-      } else if (node.score <0.3){
-        class_var = css_classes["n03"];
-      } else if (node.score <0.4){
-        class_var = css_classes["n04"];
-      } else if (node.score <0.5){
-        class_var = css_classes["n05"];
-      } else if (node.score <0.6){
-        class_var = css_classes["n06"];
-      } else if (node.score <0.7){
-        class_var = css_classes["n07"];
-      } else if (node.score <0.8){
-        class_var = css_classes["n08"];
-      } else if (node.score <0.9){
-        class_var = css_classes["n09"];
-      } else if (node.score <1.0){
-        class_var = css_classes["n10"];
-      } //Nodes will be bright green if they have node score 1
-      else if (node.score == 1.0) {
-        class_var = css_classes["n1"]; 
-      }
-    }
+  //Nodes will be on gradient from orange to red to purple
+  if (node.score <0.1) {
+    class_var = css_classes["n01"];
+  } else if (node.score <0.2){
+    class_var = css_classes["n02"];
+  } else if (node.score <0.3){
+    class_var = css_classes["n03"];
+  } else if (node.score <0.4){
+    class_var = css_classes["n04"];
+  } else if (node.score <0.5){
+    class_var = css_classes["n05"];
+  } else if (node.score <0.6){
+    class_var = css_classes["n06"];
+  } else if (node.score <0.7){
+    class_var = css_classes["n07"];
+  } else if (node.score <0.8){
+    class_var = css_classes["n08"];
+  } else if (node.score <0.9){
+    class_var = css_classes["n09"];
+  } else if (node.score <1.0){
+    class_var = css_classes["n10"];
+  } //Nodes will be bright green if they have node score 1
+  else if (node.score == 1.0) {
+    class_var = css_classes["n1"]; 
   }
   return class_var;
 }
