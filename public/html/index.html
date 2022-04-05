@@ -157,8 +157,9 @@
               <input
                 type="text"
                 id="branch_filter"
-                class="form-control"
-                placeholder="Search"
+                class="form-control mr-sm-2"
+                placeholder="Filter branches on"
+                onkeypress="return event.keyCode != 13"
               />
             </form>
           </li>
@@ -439,7 +440,6 @@
             var warning_div = d3
               .select("#main_display")
               .insert("div", ":first-child");
-            console.log(res)
             tree1 = new phylotree.phylotree(res);
             if (!tree1["json"]) {
               warning_div
@@ -504,9 +504,7 @@
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
             tree2.nodes.tree = 2;
-            console.log(tree2)
             const val_123=create_intersection(tree2)
-            console.log(val_123)
             display_intersection(val_123)
             if (!tree2["json"]) {
               warning_div
@@ -914,9 +912,9 @@
 
       $("#branch_filter").on("input propertychange", function(e) {
         var filter_value = $(this).val();
-
+        console.log(filter_value)
         var rx = new RegExp(filter_value, "i");
-
+        console.log(rx)
         tree1.display.modifySelection(n => {
           if (!n.target.data.name) {
             return false;
@@ -1371,7 +1369,7 @@
       });
     </script>
 
-    <script>
+    <!-- <script>
       var _warn = console.warn;
 
       console.warn = function() {
@@ -1385,7 +1383,7 @@
         }
         return _warn.apply(console, arguments);
       };
-    </script>
+    </script> -->
 
   </body>
 </html>
