@@ -397,19 +397,18 @@
         <th>
           <div id="tree_container2" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
         </th>
+        <th>
+          <div id="tree_container3" class="tree-widget" style="display: block,width: 5%,padding:0px;"></div>
+        </th>
         
       </tr>
     </tbody>
     </table>
     <!--
 ###############################################################################################################################
--->
-
+-->   
     <script>
-      if('function' === typeof importScripts) {
-        importScripts('../js/underscore.js');
-      }
-
+      
       var phylotree_extensions = new Object();
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
@@ -427,7 +426,8 @@
           })
         );
       });
-
+      
+      
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
 
@@ -439,7 +439,7 @@
             var warning_div = d3
               .select("#main_display")
               .insert("div", ":first-child");
-
+            console.log(res)
             tree1 = new phylotree.phylotree(res);
             if (!tree1["json"]) {
               warning_div
@@ -504,7 +504,10 @@
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
             tree2.nodes.tree = 2;
-          
+            console.log(tree2)
+            const val_123=create_intersection(tree2)
+            console.log(val_123)
+            display_intersection(val_123)
             if (!tree2["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
@@ -573,6 +576,7 @@
         $("#newick-dropdown").dropdown("toggle");
          reader.readAsText(f);
         }
+        
       });
 
       $("#display_tree").on("click", function(e) {
@@ -631,6 +635,121 @@
           tree2.display.update();
         }
       });
+      var newick=""
+      // var tree1=[]
+      // var previous_node_score=1
+      function new_tree(tree){
+            if (tree.hasOwnProperty('children')) {
+
+                const len=tree.children.length;
+                if(tree.score==1)
+                          { 
+                            newick+="("
+                            for (let i=0;i<len;i=i+1){
+                              if(tree.children[i].hasOwnProperty('children'))
+                              {
+
+                              }
+                              else{
+                                newick+=tree.children[i].data.name
+                                if(i!=len)
+                                  {newick+=","}
+                              }
+
+                            }
+                            // newick.slice(0, -1)
+                            
+                          }
+                for (let i=0;i<len;i=i+1) {
+                      new_tree(tree.children[i]); 
+                }
+                      
+                if(tree.score==1)
+                          { last = newick.charAt(newick.length - 1);
+                            if(last==','){
+                              newick=newick.slice(0, -1)
+                            }
+                            newick+=")"
+                            newick+=","
+                            
+                          }
+          
+        }
+        // else{
+        //   if(previous_node_score==1)
+        //         newick+=tree.data.name
+        // }
+        // previous_node_score=tree.score
+
+        return newick
+      }
+      function create_intersection(tree)
+      {   let intersection='('
+          intersection+=new_tree(tree.nodes)
+          intersection=intersection.slice(0, -1)
+          intersection+=");"
+         
+          return intersection
+
+      }
+
+      function display_intersection(res)
+      {     
+            console.log(res)
+            var warning_div = d3
+              .select("#main_display")
+              .insert("div", ":first-child");
+            console.log(res)
+            let tree1 = new phylotree.phylotree(res);
+            if (!tree1["json"]) {
+              warning_div
+                .attr("class", "alert alert-danger alert-dismissable")
+                .html(
+                  "<strong>Newick parser error for file " +
+                    f.name +
+                    ": </strong> In file " +
+                    res["error"]
+                );
+            } else {
+              tree1.render({
+                container: "#tree_container3",
+                "draw-size-bubbles": false,
+                "left-right-spacing": "fixed-step",
+                "node-styler": node_colorizer,
+                "edge-styler": edge_colorizer
+              });
+
+              tree1.display.selectionLabel(current_selection_name);
+
+              tree1.display.countHandler(count => {
+                $("#selected_branch_counter").text(function(d) {
+                  return count[current_selection_name];
+                });
+              });
+
+              // Get selection set names from parsed newick
+              if (tree1.parsed_tags.length) {
+                selection_set = tree1.parsed_tags;
+              }
+
+              update_selection_names();
+
+              $("#newick_modal").modal("hide");
+
+              $(tree1.display.container).empty();
+              $(tree1.display.container).html(tree1.display.show());
+            }
+      
+
+          $("#newick-dropdown").dropdown("toggle");
+        //  reader.readAsText(f);
+        }
+      //  });
+    //  }
+
+      if('function' === typeof importScripts) {
+        importScripts('../js/underscore.js');
+      }
 
 
       function sort_nodes(asc, tree) {
