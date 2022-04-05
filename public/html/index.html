@@ -921,7 +921,7 @@
           }
           m = n.target.data.name.search(rx);
           return filter_value.length && m != -1;
-        }, "tag");
+        });
 
         tree2.display.modifySelection(n => {
           if (!n.target.data.name) {
@@ -929,7 +929,7 @@
           }
           m = n.target.data.name.search(rx);
           return filter_value.length && m != -1;
-        }, "tag");
+        });
       });
 
       node1 = [];
