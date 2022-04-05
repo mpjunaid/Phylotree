@@ -1,13 +1,13 @@
 {
   "name": "phylotree",
-  "version": "1.0.0",
-  "description": "university project",
+  "version": "2.0.0",
+  "description": "University project at TU/e for course 2IMV10--All files used here are just for educational purpose only",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "author": "Junaid",
+  "author": "Junaid,Lotte, Judith",
   "license": "ISC",
   "dependencies": {
     "ejs": "^3.1.6",
