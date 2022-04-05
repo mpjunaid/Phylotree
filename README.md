@@ -25,5 +25,5 @@ Linear view
 <img src="./picture.jpg" alt="My cool logo"/>
 
 Radial view
- 
+<img src="./radial.jpg" alt="My cool logo"/>
 
