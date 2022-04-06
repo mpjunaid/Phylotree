@@ -44,7 +44,7 @@
   stroke-width: 10px;
 }
 .branch-selected {
-  stroke: #f00 !important; 
+  stroke: orange; 
   stroke-width: 3px;
   }
 .branch-tagged {
@@ -52,9 +52,6 @@
   stroke-dasharray: 10,5;
   stroke-width: 2px;
   }
-
-
-/* Nodescore nodes */
 
 /* Nodescore nodes */
 .n01 circle, .n01 ellipse, .n01 rect {

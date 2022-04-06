@@ -4,7 +4,6 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.phylotree = global.phylotree || {}, global.d3, global._, global._$1));
 }(this, (function (exports, d3, _, _$1) { 'use strict';
 
-
 function _interopNamespace(e) {
   if (e && e.__esModule) return e;
   var n = Object.create(null);
@@ -27,71 +26,7 @@ function _interopNamespace(e) {
 
 var d3__namespace = /*#__PURE__*/_interopNamespace(d3);
 var ___namespace = /*#__PURE__*/_interopNamespace(_);
-var ___namespace$1 = /*#__PURE__*/_interopNamespace(_$1);
-var nexml_parser = function(xml_string, options) {
-  var trees;
-  parseString(xml_string, function(error, xml) {
-    trees = xml["nex:nexml"].trees[0].tree.map(function(nexml_tree) {
-      var node_list = nexml_tree.node.map(d => d.$),
-      node_hash = node_list.reduce(function(a, b) {
-        b.edges = [];
-        b.name = b.id;
-        a[b.id] = b;
-        return a;
-      }, {}),
-      roots = node_list.filter(d => d.root),
-      root_id = roots > 0 ? roots[0].id : node_list[0].id;
-      node_hash[root_id].name = "root";
-      
-      nexml_tree.edge.map(d => d.$).forEach(function(edge) {
-        node_hash[edge.source].edges.push(edge);
-      });
-      function parseNexml(node, index) {
-        if (node.edges) {
-          var targets = ___namespace.pluck(node.edges, "target");
-          node.children = ___namespace.values(___namespace.pick(node_hash, targets));
-          node.children.forEach(function(child, i) {
-            child.attribute = node.edges[i].length || "";
-          });
-          node.children.forEach(parseNexml);
-          node.annotation = "";
-        }
-      }
-      parseNexml(node_hash[root_id]);
-      return node_hash[root_id];
-    });
-  });
-  return trees;
-};
 
-/* These methods are part of the Phylotree object */
-
-/**
-  * Get the tips of the tree
-  * @returns {Array} Nodes in the current ``phylotree``.
-*/
-function getTips() {
-  // get all nodes that have no nodes
-  return ___namespace.filter(this.nodes.descendants(), n => {
-    return !___namespace.has(n, "children");
-  });
-}
-
-/**
-  * Get the root node.
-  *
-  * @returns the current root node of the ``phylotree``.
-*/
-function getRootNode() {
-  return this.nodes;
-}
-
-/**
-  * Determine if a given node is a leaf node.
-  *
-  * @param {Node} A node in a tree.
-  * @returns {Bool} Whether or not the node is a leaf node.
-*/
 function isLeafNode(node) {
   return !___namespace.has(node, "children")
 }
@@ -112,25 +47,11 @@ function clearInternalNodes(respect) {
 
 var node_operations = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  getTips: getTips,
-  getRootNode: getRootNode,
   isLeafNode: isLeafNode,
   clearInternalNodes: clearInternalNodes,
   selectAllDescendants: selectAllDescendants
 });
 
-/**
-  * Parses a Newick string into an equivalent JSON representation that is
-  * suitable for consumption by ``hierarchy``.
-  *
-  * Optionally accepts bootstrap values. Currently supports Newick strings with or without branch lengths,
-  * as well as tagged trees such as
-  *  ``(a,(b{TAG},(c{TAG},d{ANOTHERTAG})))``
-  *
-  * @param {String} nwk_str - A string representing a phylogenetic tree in Newick format.
-  * @param {Object} bootstrap_values.
-  * @returns {Object} An object with keys ``json`` and ``error``.
-*/
 function newickParser(nwk_str, options={}) {
   const int_or_float = /^-?\d+(\.\d+)?$/;
   let left_delimiter = options.left_delimiter ||  '{',
@@ -314,13 +235,6 @@ function newickParser(nwk_str, options={}) {
   };
 }
 
-/**
-  * Return Newick string representation of a phylotree.
-  *
-  * @param {Function} annotator - Function to apply to each node, determining
-  * what label is written (optional).
-  * @returns {String} newick - Phylogenetic tree serialized as a Newick string.
-*/
 function getNewick(annotator) {
   let self = this;
   if (!annotator) annotator = d => '';
@@ -350,16 +264,11 @@ function getNewick(annotator) {
   return element_array.join("")+";";
 }
 
-/* 
-  * A parser must have two fields, the object and
-  * options
-*/
 var format_registry = {
   nwk: newickParser,
   nhx: newickParser,
 };
  
-
 function preOrder(node, callback, backtrack) {
   let nodes = [node],
     children,
@@ -377,11 +286,6 @@ function preOrder(node, callback, backtrack) {
   return node;
 }
 
-/**
-  * Returns T/F whether every branch in the tree has a branch length
-  *
-  * @returns {Object} true if  every branch in the tree has a branch length
-*/
 function hasBranchLengths() {
   let bl = this.branch_length;
   if (bl) {
@@ -415,49 +319,12 @@ function defBranchLengthAccessor(_node, new_length) {
   return undefined;
 }
 
-/**
-  * Get or set branch length accessor.
-  *
-  * @param {Function} attr Empty if getting, or new branch length accessor if setting.
-  * @returns {Object} The branch length accessor if getting, or the current this if setting.
-*/
 function setBranchLength(attr) {
   if (!arguments.length) return this.branch_length_accessor;
   this.branch_length_accessor = attr ? attr : defBranchLengthAccessor;
   return this;
 }
 
-/**
-  * Normalizes branch lengths
-*/
-function normalize(attr) {
-  let bl = this.branch_length;
-  let branch_lengths = ___namespace.map(this.nodes.descendants(), function(node) {
-    if(bl(node)) {
-      return bl(node);
-    } else {
-      return null;
-    }
-  });
-  const max_bl = ___namespace.max(branch_lengths);
-  const min_bl = ___namespace.min(branch_lengths);
-  let scaler = function (x) {
-    return (x - min_bl)/(max_bl - min_bl);
-  };
-  ___namespace.each(this.nodes.descendants(), (node) => {
-    let len = bl(node);
-    if(len) {
-      bl(node, scaler(len));
-    }     
-  });
-  return this;
-}
-
-/**
-  * Scales branch lengths
-  *
-  * @param {Function} function that scales the branches
-*/  
 function scale(scale_by) {
   let bl = this.branch_length;
   ___namespace.each(this.nodes.descendants(), (node) => {
@@ -469,26 +336,6 @@ function scale(scale_by) {
   return this;
 }
 
-/**
-  * Get or set branch name accessor.
-  *
-  * @param {Function} attr (Optional) If setting, a function that accesses a branch name
-  * from a node.
-  * @returns The ``nodeLabel`` accessor if getting, or the current ``this`` if setting.
-*/
-function branchName(attr) {
-  if (!arguments.length) return this.nodeLabel;
-  this.nodeLabel = attr;
-  return this;
-}
-
-/**
-  * Reroot the tree on the given node.
-  *
-  * @param {Node} node Node to reroot on.
-  * @param {fraction} if specified, partition the branch not into 0.5 : 0.5, but according to the specified fraction
-  * @returns {Phylotree} The current ``phylotree``.
-*/
 function reroot(node, fraction) {
   if(!(node instanceof d3__namespace.hierarchy)) {
     throw new Error('node needs to be an instance of a d3.hierarchy node!');
@@ -621,15 +468,14 @@ function cartesianToPolar(
   radial_root_offset,
   radial_center,
   scales,
-  size
-) {
-  node.radius = radius * (node.radius + radial_root_offset);
-  node.angle = 2 * Math.PI * node.x * scales[0] / size[0];
-  let radial = radialMapper(node.radius, node.angle, radial_center);
-  node.x = radial.x;
-  node.y = radial.y;
-  return node;
-}
+  size) {
+    node.radius = radius * (node.radius + radial_root_offset);
+    node.angle = 2 * Math.PI * node.x * scales[0] / size[0];
+    let radial = radialMapper(node.radius, node.angle, radial_center);
+    node.x = radial.x;
+    node.y = radial.y;
+    return node;
+  }
 
 function drawArc(radial_center, points) {
   var start = radialMapper(points[0].radius, points[0].angle, radial_center),
@@ -692,6 +538,10 @@ function itemSelected(item, tag) {
   return item[tag] || false;
 }
 
+/** Adjustment:
+ * Nodes get a different color based on nodescores.
+ * Branches get a different color based on nodescores.
+ *  */ 
 const css_classes = {
   "tree-container": "phylotree-container",
   "tree-scale-bar": "tree-scale-bar",
@@ -743,25 +593,12 @@ function alignTips(attr) {
   return this;
 }
 
-/**
-  * Return the bubble size of the current node.
-  *
-  * @param {Node} A node in the phylotree.
-  * @returns {Float} The size of the bubble associated to this node.
-*/
 function nodeBubbleSize(node) {
   return this.options["draw-size-bubbles"]
   ? this.relative_nodeSpan(node) * this.scales[0] * 0.25
   : 0;
 }
 
-/**
-  * Getter/setter for the selection label. Useful when allowing
-  * users to make multiple selections.
-  *
-  * @param {String} attr (Optional) If setting, the new selection label.
-  * @returns The current selection label if getting, or the current ``phylotree`` if setting.
-*/
 function selectionLabel(attr) {
   if (!arguments.length) return this.selection_attribute_name;
   this.selection_attribute_name = attr;
@@ -769,7 +606,6 @@ function selectionLabel(attr) {
   return this;
 }
 
-// List of all selecters that can be used with the restricted-selectable option
 var predefined_selecters = {
   all: d => {
     return true;
@@ -810,6 +646,12 @@ function shiftTip(d) {
   return [this.right_most_leaf - d.screen_x, 0];
 }
 
+/** Adjustment:
+ * Nodes show the following information when hovering over them:
+ * * Node score
+ * * Depth
+ * * Depth BCN
+ *  */ 
 function drawNode(container, node, transitions) {
   container = d3__namespace.select(container);
   var is_leaf = isLeafNode(node);
@@ -1011,6 +853,9 @@ function showInternalName(node) {
   return false;
 }
 
+/** Adjustment:
+ * Reclass the css_classes based on the nodescore
+ *  */
 function reclassNode(node) {
   let class_var = css_classes[isLeafNode(node) ? "node" : "internal-node"];
   //Nodes will be on gradient from orange to red to purple
@@ -1057,6 +902,9 @@ function isNodeCollapsed(node) {
   return node.collapsed || false;
 }
 
+/** Adjustment:
+ * Added new css_classes based on the nodescore
+ *  */
 function nodeCssSelectors(css_classes) {
   return [
     css_classes["node"],
@@ -1269,6 +1117,9 @@ function drawEdge(container, edge, transition) {
   return this.phylotree;
 }
 
+/** Adjustment:
+ * Reclass the css_classes based on the nodescore
+ *  */
 function reclassEdge(edge) {
   let class_var = css_classes["branch"];
   if (edge.source.score < 0.1) {
@@ -1335,6 +1186,9 @@ function edgeVisible(edge) {
   return !(edge.target.hidden || edge.target.notshown || false);
 }
 
+/** Adjustment:
+ * Added new css_classes based on the nodescore
+ *  */
 function edgeCssSelectors(css_classes) {
   return [
     css_classes["b01"],
@@ -1368,14 +1222,6 @@ var render_edges = /*#__PURE__*/Object.freeze({
 
 let d3_layout_phylotree_event_id = "phylotree.event";
 
-/**
-  * Toggle collapsed view of a given node. Either collapses a clade into
-  * a smaller blob for viewing large trees, or expands a node that was
-  * previously collapsed.
-  *
-  * @param {Node} node The node to toggle.
-  * @returns {Phylotree} The current ``phylotree``.
-*/
 function toggleCollapse(node) {
   if (node.collapsed) {
     node.collapsed = false;
@@ -1518,6 +1364,9 @@ var events = /*#__PURE__*/Object.freeze({
 
 let d3_layout_phylotree_context_menu_id = "d3_layout_phylotree_context_menu";
 
+/** Adjustment:
+ * New option in dropdown menu to compare the nodes
+ *  */
 function nodeDropdownMenu(node, container, phylotree, options) {
   let menu_object = d3__namespace
     .select(container)
@@ -1543,1960 +1392,1535 @@ function nodeDropdownMenu(node, container, phylotree, options) {
         options["showBCN"]
       ]) ||
       !options["show-menu"]
-    )
-    return;
-  if (!isLeafNode(node)) {
-    if (options["collapsible"]) {
-      menu_object
-        .append("a")
-        .attr("class", "dropdown-item")
-        .attr("tabindex", "-1")
-        .text(isNodeCollapsed(node) ? "Expand Subtree" : "Collapse Subtree")
-        .on("click", d => {
-          menu_object.style("display", "none");
-          this.toggleCollapse(node).update();
-        });
-      if (options["showBCN"]) {
+    ) return;
+    if (!isLeafNode(node)) {
+      if (options["collapsible"]) {
         menu_object
           .append("a")
           .attr("class", "dropdown-item")
           .attr("tabindex", "-1")
-          .text("Compare nodes")
+          .text(isNodeCollapsed(node) ? "Expand Subtree" : "Collapse Subtree")
+          .on("click", d => {
+            menu_object.style("display", "none");
+            this.toggleCollapse(node).update();
+          });
+          if (options["showBCN"]) {
+            menu_object
+              .append("a")
+              .attr("class", "dropdown-item")
+              .attr("tabindex", "-1")
+              .text("Compare nodes")
+              .on("click", function(d) {
+                menu_object.style("display", "none");
+                var node1 = node;
+                var node2 = node.BCN;
+                var search_node = node1;
+                while (search_node) {
+                  var root = search_node;
+                  search_node = search_node.parent;
+                }
+                if (root.tree == 1) {
+                  if (node2.hasOwnProperty('newick_string')) {
+                    tree1.display.modifySelection(
+                      tree1.selectAllDescendants(node1, true, true));
+                    tree2.display.modifySelection(
+                      tree2.selectAllDescendants(node2.nodes, true, true));
+                  } else if (node2.hasOwnProperty('BCN')) {
+                    tree1.display.modifySelection(
+                      tree1.selectAllDescendants(node1, true, true));
+                    tree2.display.modifySelection(
+                      tree2.selectAllDescendants(node2, true, true));
+                  }
+                } else if (root.tree == 2) {
+                  if (node2.hasOwnProperty('newick_string')) {
+                    tree2.display.modifySelection(
+                      tree2.selectAllDescendants(node1, true, true));
+                    tree1.display.modifySelection(
+                      tree1.selectAllDescendants(node2.nodes, true, true));
+                  } else if (node2.hasOwnProperty('BCN')) {
+                    tree2.display.modifySelection(
+                      tree2.selectAllDescendants(node1, true, true));
+                    tree1.display.modifySelection(
+                      tree1.selectAllDescendants(node2, true, true));
+                  }
+                }
+              });
+              node1 = [];
+              node2 = [];
+          }
+          if (options["selectable"]) {
+            menu_object.append("div").attr("class", "dropdown-divider");
+            menu_object
+              .append("h6")
+              .attr("class", "dropdown-header")
+              .text("Toggle selection");
+          }
+      }
+      if (options["selectable"]) {
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("All descendant branches")
           .on("click", function(d) {
             menu_object.style("display", "none");
-            node1 = node;
-            node2 = node.BCN;
-            var search_node = node1;
-            while (search_node) {
-              var root = search_node;
-              search_node = search_node.parent;
-            }
-            if (root.tree == 1) {
-              if (node2.hasOwnProperty('newick_string')) {
-                tree1.display.modifySelection(
-                  tree1.selectAllDescendants(node1, true, true));
-                tree2.display.modifySelection(
-                  tree2.selectAllDescendants(node2.nodes, true, true));
-              } else if (node2.hasOwnProperty('BCN')) {
-                tree1.display.modifySelection(
-                  tree1.selectAllDescendants(node1, true, true));
-                tree2.display.modifySelection(
-                  tree2.selectAllDescendants(node2, true, true));
-              }
-            } else if (root.tree == 2) {
-              if (node2.hasOwnProperty('newick_string')) {
-                tree2.display.modifySelection(
-                  tree2.selectAllDescendants(node1, true, true));
-                tree1.display.modifySelection(
-                  tree1.selectAllDescendants(node2.nodes, true, true));
-              } else if (node2.hasOwnProperty('BCN')) {
-                tree2.display.modifySelection(
-                  tree2.selectAllDescendants(node1, true, true));
-                tree1.display.modifySelection(
-                  tree1.selectAllDescendants(node2, true, true));
-              }
-            }
+            phylotree.modifySelection(
+              phylotree.selectAllDescendants(node, true, true)
+            );
           });
-          node1 = [];
-          node2 = [];
-        }
-        if (options["selectable"]) {
-          menu_object.append("div").attr("class", "dropdown-divider");
-          menu_object
-          .append("h6")
-          .attr("class", "dropdown-header")
-          .text("Toggle selection");
-        }
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("All terminal branches")
+          .on("click", function(d) {
+            menu_object.style("display", "none");
+            phylotree.modifySelection(
+              phylotree.selectAllDescendants(node, true, false)
+            );
+          });
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("All internal branches")
+          .on("click", function(d) {
+            menu_object.style("display", "none");
+            phylotree.modifySelection(
+              phylotree.selectAllDescendants(node, false, true)
+            );            
+          });
+      }
     }
-    if (options["selectable"]) {
-       menu_object
-        .append("a")
-        .attr("class", "dropdown-item")
-        .attr("tabindex", "-1")
-        .text("All descendant branches")
-        .on("click", function(d) {
-          menu_object.style("display", "none");
-          phylotree.modifySelection(
-            phylotree.selectAllDescendants(node, true, true)
-          );
-        });
-      menu_object
-        .append("a")
-        .attr("class", "dropdown-item")
-        .attr("tabindex", "-1")
-        .text("All terminal branches")
-        .on("click", function(d) {
-          menu_object.style("display", "none");
-          phylotree.modifySelection(
-            phylotree.selectAllDescendants(node, true, false)
-          );
-        });
-      menu_object
-        .append("a")
-        .attr("class", "dropdown-item")
-        .attr("tabindex", "-1")
-        .text("All internal branches")
-        .on("click", function(d) {
-          menu_object.style("display", "none");
-          phylotree.modifySelection(
-            phylotree.selectAllDescendants(node, false, true)
-          );            
-        });
-    }
-    }
-      if (node.parent) {
-        if (options["selectable"]) {
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text("Incident branch")
-            .on("click", function(d) {
-              menu_object.style("display", "none");
-              phylotree.modifySelection([node]);
-            });
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text("Path to root")
-            .on("click", d => {
-              menu_object.style("display", "none");
-              this.modifySelection(this.phylotree.pathToRoot(node));
-            });
+    if (node.parent) {
+      if (options["selectable"]) {
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("Incident branch")
+          .on("click", function(d) {
+            menu_object.style("display", "none");
+            phylotree.modifySelection([node]);
+          });
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("Path to root")
+          .on("click", d => {
+            menu_object.style("display", "none");
+            this.modifySelection(this.phylotree.pathToRoot(node));
+          });
           if (options["reroot"] || options["hide"]) {
             menu_object.append("div").attr("class", "dropdown-divider");
           }
-        }
-        if (options["reroot"]) {
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text("Reroot on this node")
-            .on("click", d => {
-              menu_object.style("display", "none");
-              this.phylotree.reroot(node);
-              this.update();
-            });
-        }
-        if (options["hide"]) {
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text("Hide this " + (isLeafNode(node) ? "node" : "subtree"))
-            .on("click", d => {
-              menu_object.style("display", "none");
-              this.modifySelection([node], "notshown", true, true)
-                .updateHasHiddenNodes()
-                .update();
-            });
-        }
       }
-      if (hasHiddenNodes(node)) {
+      if (options["reroot"]) {
         menu_object
           .append("a")
           .attr("class", "dropdown-item")
           .attr("tabindex", "-1")
-          .text("Show all descendant nodes")
-          .on("click", function(d) {
+          .text("Reroot on this node")
+          .on("click", d => {
             menu_object.style("display", "none");
-            phylotree
-              .modifySelection(
-                phylotree.selectAllDescendants(node, true, true),
-                "notshown",
-                true,
-                true,
-                "false"
-              )
-              .updateHasHiddenNodes()
-              .update();
+            this.phylotree.reroot(node);
+            this.update();
           });
       }
-      var has_user_elements = [];
-      if ("menu_items" in node && typeof node["menu_items"] === "object") {
-        node["menu_items"].forEach(function(d) {
-          if (d.length == 3) {
-            if (!d[2] || d[2](node)) {
-              has_user_elements.push([d[0], d[1]]);
-            }
-          }
-        });
+      if (options["hide"]) {
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text("Hide this " + (isLeafNode(node) ? "node" : "subtree"))
+          .on("click", d => {
+            menu_object.style("display", "none");
+            this.modifySelection([node], "notshown", true, true)
+                .updateHasHiddenNodes()
+                .update();
+          });
       }
-      if (has_user_elements.length) {
-        const show_divider_options = [
-          options["hide"],
-          options["selectable"],
-          options["collapsible"],
-          options["showBCN"],
-        ];
-
-        if (___namespace.some(show_divider_options)) {
-          menu_object.append("div").attr("class", "dropdown-divider");
-        }
-
-        has_user_elements.forEach(function(d) {
-          menu_object
-            .append("a")
-            .attr("class", "dropdown-item")
-            .attr("tabindex", "-1")
-            .text(constant(d[0])(node)) // eslint-disable-line
-            .on("click", ___namespace.partial(d[1], node));
-        });
-      }
-      let tree_container = $(container); // eslint-disable-line
-      let coordinates = d3__namespace.mouse(tree_container[0]);
-      menu_object
-        .style("position", "absolute")
-        .style("left", "" + (coordinates[0] + tree_container.position().left) + "px")
-        .style("top", "" + (coordinates[1] + tree_container.position().top) + "px")
-        .style("display", "block");
-    } else {
-      menu_object.style("display", "none");
     }
+    if (hasHiddenNodes(node)) {
+      menu_object
+        .append("a")
+        .attr("class", "dropdown-item")
+        .attr("tabindex", "-1")
+        .text("Show all descendant nodes")
+        .on("click", function(d) {
+          menu_object.style("display", "none");
+          phylotree
+            .modifySelection(
+              phylotree.selectAllDescendants(node, true, true),
+              "notshown",
+              true,
+              true,
+              "false"
+            )
+            .updateHasHiddenNodes()
+            .update();
+        });
+    }
+    var has_user_elements = [];
+    if ("menu_items" in node && typeof node["menu_items"] === "object") {
+      node["menu_items"].forEach(function(d) {
+        if (d.length == 3) {
+          if (!d[2] || d[2](node)) {
+            has_user_elements.push([d[0], d[1]]);
+          }
+        }
+      });
+    }
+    if (has_user_elements.length) {
+      const show_divider_options = [
+        options["hide"],
+        options["selectable"],
+        options["collapsible"],
+        options["showBCN"],
+      ];
+      if (___namespace.some(show_divider_options)) {
+        menu_object.append("div").attr("class", "dropdown-divider");
+      }
+      has_user_elements.forEach(function(d) {
+        menu_object
+          .append("a")
+          .attr("class", "dropdown-item")
+          .attr("tabindex", "-1")
+          .text(constant(d[0])(node)) // eslint-disable-line
+          .on("click", ___namespace.partial(d[1], node));
+      });
+    }
+    let tree_container = $(container); // eslint-disable-line
+    let coordinates = d3__namespace.mouse(tree_container[0]);
+    menu_object
+      .style("position", "absolute")
+      .style("left", "" + (coordinates[0] + tree_container.position().left) + "px")
+      .style("top", "" + (coordinates[1] + tree_container.position().top) + "px")
+      .style("display", "block");
+  } else {
+    menu_object.style("display", "none");
+  }
 }
 
-  /**
-   *
-   * Modify the current selection, via functional programming.
-   *
-   * @param {Function} node_selecter A function to apply to each node, which
-   * determines whether they become part of the current selection. Alternatively,
-   * if ``restricted-selectable`` mode is enabled, a string describing one of
-   * the pre-defined restricted-selectable options.
-   * @param {String} attr (Optional) The selection attribute to modify.
-   * @param {Boolean} place (Optional) Whether or not ``placenodes`` should be called.
-   * @param {Boolean} skip_refresh (Optional) Whether or not a refresh is called.
-   * @param {String} mode (Optional) Can be ``"toggle"``, ``"true"``, or ``"false"``.
-   * @returns The current ``this``.
-   *
-   */
-  function modifySelection(
-    node_selecter,
-    attr,
-    place,
-    skip_refresh,
-    mode
+function modifySelection(
+  node_selecter,
+  attr,
+  place,
+  skip_refresh,
+  mode
+) {
+  attr = attr || this.selection_attribute_name;
+  mode = mode || "toggle";
+  // check if node_selecter is a value of pre-defined selecters
+  if (this.options["restricted-selectable"].length) {
+    // the selection must be from a list of pre-determined selections
+    if (___namespace.contains(___namespace.keys(predefined_selecters), node_selecter)) {
+      node_selecter = predefined_selecters[node_selecter];
+    } else { return; }
+  }
+  if (
+    (this.options["restricted-selectable"] || this.options["selectable"]) &&
+    !this.options["binary-selectable"]
   ) {
-    attr = attr || this.selection_attribute_name;
-    mode = mode || "toggle";
-    // check if node_selecter is a value of pre-defined selecters
-    if (this.options["restricted-selectable"].length) {
-      // the selection must be from a list of pre-determined selections
-      if (___namespace.contains(___namespace.keys(predefined_selecters), node_selecter)) {
-        node_selecter = predefined_selecters[node_selecter];
-      } else {
-        return;
+    var do_refresh = false;
+    if (typeof node_selecter === "function") {
+      this.links.forEach(function(d) {
+        let select_me = node_selecter(d);
+        d[attr] = d[attr] || false;
+        if (d[attr] != select_me) {
+          d[attr] = select_me;
+          do_refresh = true;
+          d.target[attr] = select_me;
+        }
+      });
+    } else {
+      node_selecter.forEach(function(d) {
+        var new_value;
+        switch (mode) {
+          case "true":
+            new_value = true;
+            break;
+          case "false":
+            new_value = false;
+            break;
+          default:
+            new_value = !d[attr];
+            break;
+        }
+        if (d[attr] != new_value) {
+          d[attr] = new_value;
+          do_refresh = true;
+        }
+      });
+      this.links.forEach(function(d) {
+        d[attr] = d.target[attr];
+      });
+    }
+    var counts;
+    if (do_refresh) {
+      if (!skip_refresh) {
+        triggerRefresh(this);
+      }
+      if (this.countHandler) {
+        counts = {};
+        counts[attr] = this.links.reduce(function(p, c) {
+          return p + (c[attr] ? 1 : 0);
+        }, 0);
+        countUpdate(this, counts, this.countHandler);
+      }
+      if (place) {
+        this.placenodes();
       }
     }
-    if (
-      (this.options["restricted-selectable"] || this.options["selectable"]) &&
-      !this.options["binary-selectable"]
-    ) {
-      var do_refresh = false;
-      if (typeof node_selecter === "function") {
-        this.links.forEach(function(d) {
-          let select_me = node_selecter(d);
-          d[attr] = d[attr] || false;
-          if (d[attr] != select_me) {
-            d[attr] = select_me;
-            do_refresh = true;
-            d.target[attr] = select_me;
+  } else if (this.options["binary-selectable"]) {
+    if (typeof node_selecter === "function") {
+      this.links.forEach(function(d) {
+        var select_me = node_selecter(d);
+        d[attr] = d[attr] || false;
+        if (d[attr] != select_me) {
+          d[attr] = select_me;
+          do_refresh = true;
+          d.target[attr] = select_me;
+        }
+        this.options["attribute-list"].forEach(function(type) {
+          if (type != attr && d[attr] === true) {
+            d[type] = false;
+            d.target[type] = false;
           }
         });
-      } else {
-        node_selecter.forEach(function(d) {
-          var new_value;
-          switch (mode) {
-            case "true":
-              new_value = true;
-              break;
-            case "false":
-              new_value = false;
-              break;
-            default:
-              new_value = !d[attr];
-              break;
-          }
-          if (d[attr] != new_value) {
-            d[attr] = new_value;
-            do_refresh = true;
+      });
+    } else {
+      node_selecter.forEach(function(d) {
+        var new_value;
+        new_value = !d[attr];
+        if (d[attr] != new_value) {
+          d[attr] = new_value;
+          do_refresh = true;
+        }
+      });
+      this.links.forEach(function(d) {
+        d[attr] = d.target[attr];
+        this.options["attribute-list"].forEach(function(type) {
+          if (type != attr && d[attr] !== true) {
+            d[type] = false;
+            d.target[type] = false;
           }
         });
-        this.links.forEach(function(d) {
-          d[attr] = d.target[attr];
-        });
+      });
+    }
+    if (do_refresh) {
+      if (!skip_refresh) {
+        triggerRefresh(this);
       }
-      var counts;
-      if (do_refresh) {
-        if (!skip_refresh) {
-          triggerRefresh(this);
-        }
-        if (this.countHandler) {
-          counts = {};
-          counts[attr] = this.links.reduce(function(p, c) {
-            return p + (c[attr] ? 1 : 0);
-          }, 0);
-          countUpdate(this, counts, this.countHandler);
-        }
-        if (place) {
-          this.placenodes();
-        }
+      if (this.countHandler()) {
+        counts = {};
+        counts[attr] = this.links.reduce(function(p, c) {
+          return p + (c[attr] ? 1 : 0);
+        }, 0);
+        this.countUpdate(this, counts, this.countHandler());
       }
-    } else if (this.options["binary-selectable"]) {
-      if (typeof node_selecter === "function") {
-        this.links.forEach(function(d) {
-          var select_me = node_selecter(d);
-          d[attr] = d[attr] || false;
-
-          if (d[attr] != select_me) {
-            d[attr] = select_me;
-            do_refresh = true;
-            d.target[attr] = select_me;
-          }
-          this.options["attribute-list"].forEach(function(type) {
-            if (type != attr && d[attr] === true) {
-              d[type] = false;
-              d.target[type] = false;
-            }
-          });
-        });
-      } else {
-        node_selecter.forEach(function(d) {
-          var new_value;
-          new_value = !d[attr];
-
-          if (d[attr] != new_value) {
-            d[attr] = new_value;
-            do_refresh = true;
-          }
-        });
-        this.links.forEach(function(d) {
-          d[attr] = d.target[attr];
-          this.options["attribute-list"].forEach(function(type) {
-            if (type != attr && d[attr] !== true) {
-              d[type] = false;
-              d.target[type] = false;
-            }
-          });
-        });
-      }
-      if (do_refresh) {
-        if (!skip_refresh) {
-          triggerRefresh(this);
-        }
-        if (this.countHandler()) {
-          counts = {};
-          counts[attr] = this.links.reduce(function(p, c) {
-            return p + (c[attr] ? 1 : 0);
-          }, 0);
-          this.countUpdate(this, counts, this.countHandler());
-        }
-        if (place) {
-          this.placenodes();
-        }
+      if (place) {
+        this.placenodes();
       }
     }
-    if (this.selectionCallback && attr != "tag") {
-      this.selectionCallback(this.getSelection());
-    }
-    this.refresh();
-    this.update();
-    return this;
   }
-
-  /**
-   * Get nodes which are currently selected.
-   *
-   * @returns {Array} An array of nodes that match the current selection.
-   */
-  function getSelection() {
-    return this.nodes.filter(d => {
-      return d[this.selection_attribute_name];
-    });
+  if (this.selectionCallback && attr != "tag") {
+    this.selectionCallback(this.getSelection());
   }
+  this.refresh();
+  this.update();
+  return this;
+}
 
-  /**
-   * Select all descendents of a given node, with options for selecting
-   * terminal/internal nodes.
-   *
-   * @param {Node} node The node whose descendents should be selected.
-   * @param {Boolean} terminal Whether to include terminal nodes.
-   * @param {Boolean} internal Whther to include internal nodes.
-   * @returns {Array} An array of selected nodes.
-   */
-  function selectAllDescendants(node, terminal, internal) {
-    let selection = [];
-    function sel(d) {
-      if (isLeafNode(d)) {
-        if (terminal) {
-          if (d != node) selection.push(d);
-        }
-      } else {
-        if (internal) {
-          if (d != node) selection.push(d);
-        }
-        d.children.forEach(sel);
-      }
-    }
-    sel(node);
-    return selection;
-  }
-
-  /**
-   * Getter/setter for the selection callback. This function is called
-   * every time the current selection is modified, and its argument is
-   * an array of nodes that make up the current selection.
-   *
-   * @param {Function} callback (Optional) The selection callback function.
-   * @returns The current ``selectionCallback`` if getting, or the current ``this`` if setting.
-   */
-  function selectionCallback(callback) {
-    if (!callback) return this.selectionCallback;
-    this.selectionCallback = callback;
-    return this;
-  }
-
-  var menus = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    nodeDropdownMenu: nodeDropdownMenu,
-    modifySelection: modifySelection,
-    getSelection: getSelection,
-    selectAllDescendants: selectAllDescendants,
-    selectionCallback: selectionCallback
+function getSelection() {
+  return this.nodes.filter(d => {
+    return d[this.selection_attribute_name];
   });
+}
 
-  // replacement for d3.functor
-  function constant$1(x) {
-    return function() {
-      return x;
-    };
+function selectAllDescendants(node, terminal, internal) {
+  let selection = [];
+  function sel(d) {
+    if (isLeafNode(d)) {
+      if (terminal) {
+        if (d != node) selection.push(d);
+      }
+    } else {
+      if (internal) {
+        if (d != node) selection.push(d);
+      }
+      d.children.forEach(sel);
+    }
   }
+  sel(node);
+  return selection;
+}
 
-  class TreeRender {
-    constructor(phylotree, options = {}) {
-      this.css_classes = css_classes;
-      this.phylotree = phylotree;
-      this.container = options.container;
-      this.separation = function(_node, _previous) {
-        return 0;
-      };
-      this._nodeLabel = this.defNodeLabel;
-      this.svg = null;
-      this.selectionCallback = null;
-      this.scales = [1, 1];
-      this.size = [1, 1];
-      this.fixed_width = [14, 30];
-      this.font_size = 12;
-      this.scale_bar_font_size = 12;
-      this.offsets = [0, this.font_size / 2];
-      this.draw_branch = draw_line;
-      this.draw_scale_bar = null;
-      this.edge_placer = lineSegmentPlacer;
-      this.count_listener_handler = function() {};
-      this.layout_listener_handler = function() {};
-      this.node_styler = undefined;
-      this.edge_styler = undefined;
-      this.shown_font_size = this.font_size;
-      this.selection_attribute_name = "selected";
-      this.right_most_leaf = 0;
-      this.label_width = 0;
-      this.radial_center = 0;
-      this.radius = 1;
-      this.radius_pad_for_bubbles = 0;
-      this.rescale_nodeSpan = 1;
-      this.relative_nodeSpan = function(_node) {
-        return this.nodeSpan(_node) / this.rescale_nodeSpan;
-      };
-      let default_options = {
-        layout: "left-to-right",
-        logger: console,
-        branches: "step",
-        scaling: true,
-        bootstrap: false,
-        "color-fill": false,
-        "internal-names": false,
-        selectable: true,
-        // restricted-selectable can take an array of predetermined
-        // selecters that are defined in phylotree.predefined_selecters
-        // only the defined functions will be allowed when selecting
-        // branches
-        "restricted-selectable": false,
-        collapsible: true,
-        showBCN : true,
-        "left-right-spacing": "fixed-step", //'fit-to-size',
-        "top-bottom-spacing": "fixed-step",
-        "left-offset": 0,
-        "show-scale": "top",
-        // currently not implemented to support any other positioning
-        "draw-size-bubbles": false,
-        "binary-selectable": false,
-        "is-radial": false,
-        "attribute-list": [],
-        "max-radius": 768,
-        "annular-limit": 0.38196601125010515,
-        compression: 0.2,
-        "align-tips": false,
-        "maximum-per-node-spacing": 100,
-        "minimum-per-node-spacing": 2,
-        "maximum-per-level-spacing": 100,
-        "minimum-per-level-spacing": 10,
-        node_circle_size: constant$1(3),
-        transitions: null,
-        brush: true,
-        reroot: true,
-        hide: true,
-        "label-nodes-with-name": false,
-        zoom: false,
-        "show-menu": true,
-        "show-labels": true,
-        "node-styler": null,
-        "edge-styler": null,
-        "node-span": null
-      };
-      this.ensure_size_is_in_px = function(value) {
-        return typeof value === "number" ? value + "px" : value;
-      };
-      this.options = ___namespace.defaults(options, default_options);
-      this.width = this.options.width || 800;
-      this.height = this.options.height || 600;
-      this.node_styler = this.options['node-styler'];
-      this.edge_styler = this.options['edge-styler'];
-      this.nodeSpan = this.options['node-span'];
-      if(!this.nodeSpan) {
-        this.nodeSpan = function(_node) {
-          return 1;
-        };
-      }
-      this.rescale_nodeSpan =
-        this.phylotree.nodes.children
-          .map(d => {
-            if (isLeafNode(d) || this.showInternalName(d))
-              return this.nodeSpan(d);
-          })
-          .reduce(function(p, c) {
-            return Math.min(c, p || 1e200);
-          }, null) || 1;
-      this.initialize_svg(this.container);
-      this.links = this.phylotree.nodes.links();
-      this.initializeEdgeLabels();
-      this.update();
-      d3PhylotreeAddEventListener();
-    }
-    pad_height() {
-      if (this.draw_scale_bar) {
-        return this.scale_bar_font_size + 25;
-      }
+function selectionCallback(callback) {
+  if (!callback) return this.selectionCallback;
+  this.selectionCallback = callback;
+  return this;
+}
+
+var menus = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  nodeDropdownMenu: nodeDropdownMenu,
+  modifySelection: modifySelection,
+  getSelection: getSelection,
+  selectAllDescendants: selectAllDescendants,
+  selectionCallback: selectionCallback
+});
+
+function constant$1(x) {
+  return function() {
+    return x;
+  };
+}
+
+class TreeRender {
+  constructor(phylotree, options = {}) {
+    this.css_classes = css_classes;
+    this.phylotree = phylotree;
+    this.container = options.container;
+    this.separation = function(_node, _previous) {
       return 0;
+    };
+    this._nodeLabel = this.defNodeLabel;
+    this.svg = null;
+    this.selectionCallback = null;
+    this.scales = [1, 1];
+    this.size = [1, 1];
+    this.fixed_width = [14, 30];
+    this.font_size = 12;
+    this.scale_bar_font_size = 12;
+    this.offsets = [0, this.font_size / 2];
+    this.draw_branch = draw_line;
+    this.draw_scale_bar = null;
+    this.edge_placer = lineSegmentPlacer;
+    this.count_listener_handler = function() {};
+    this.layout_listener_handler = function() {};
+    this.node_styler = undefined;
+    this.edge_styler = undefined;
+    this.shown_font_size = this.font_size;
+    this.selection_attribute_name = "selected";
+    this.right_most_leaf = 0;
+    this.label_width = 0;
+    this.radial_center = 0;
+    this.radius = 1;
+    this.radius_pad_for_bubbles = 0;
+    this.rescale_nodeSpan = 1;
+    this.relative_nodeSpan = function(_node) {
+      return this.nodeSpan(_node) / this.rescale_nodeSpan;
+    };
+    let default_options = {
+      layout: "left-to-right",
+      logger: console,
+      branches: "step",
+      scaling: true,
+      bootstrap: false,
+      "color-fill": false,
+      "internal-names": false,
+      selectable: true,
+      // restricted-selectable can take an array of predetermined
+      // selecters that are defined in phylotree.predefined_selecters
+      // only the defined functions will be allowed when selecting
+      // branches
+      "restricted-selectable": false,
+      collapsible: true,
+      showBCN : true,
+      "left-right-spacing": "fixed-step", //'fit-to-size',
+      "top-bottom-spacing": "fixed-step",
+      "left-offset": 0,
+      "show-scale": "top",
+      // currently not implemented to support any other positioning
+      "draw-size-bubbles": false,
+      "binary-selectable": false,
+      "is-radial": false,
+      "attribute-list": [],
+      "max-radius": 768,
+      "annular-limit": 0.38196601125010515,
+      compression: 0.2,
+      "align-tips": false,
+      "maximum-per-node-spacing": 100,
+      "minimum-per-node-spacing": 2,
+      "maximum-per-level-spacing": 100,
+      "minimum-per-level-spacing": 10,
+      node_circle_size: constant$1(3),
+      transitions: null,
+      brush: true,
+      reroot: true,
+      hide: true,
+      "label-nodes-with-name": false,
+      zoom: false,
+      "show-menu": true,
+      "show-labels": true,
+      "node-styler": null,
+      "edge-styler": null,
+      "node-span": null
+    };
+    this.ensure_size_is_in_px = function(value) {
+      return typeof value === "number" ? value + "px" : value;
+    };
+    this.options = ___namespace.defaults(options, default_options);
+    this.width = this.options.width || 800;
+    this.height = this.options.height || 600;
+    this.node_styler = this.options['node-styler'];
+    this.edge_styler = this.options['edge-styler'];
+    this.nodeSpan = this.options['node-span'];
+    if(!this.nodeSpan) {
+      this.nodeSpan = function(_node) {
+        return 1;
+      };
     }
-    pad_width() {
-      // reset label_width
-      this.label_width = this._label_width(this.shown_font_size);
-
-      const _label_width = this.options["show-labels"] ? this.label_width : 0;
-      return this.offsets[1] + this.options["left-offset"] + _label_width;
+    this.rescale_nodeSpan =
+      this.phylotree.nodes.children
+        .map(d => {
+          if (isLeafNode(d) || this.showInternalName(d))
+            return this.nodeSpan(d);
+        })
+        .reduce(function(p, c) {
+          return Math.min(c, p || 1e200);
+        }, null) || 1;
+    this.initialize_svg(this.container);
+    this.links = this.phylotree.nodes.links();
+    this.initializeEdgeLabels();
+    this.update();
+    d3PhylotreeAddEventListener();
+  }
+  pad_height() {
+    if (this.draw_scale_bar) {
+      return this.scale_bar_font_size + 25;
     }
-
-    /**
-     * Collapses a given node.
-     *
-     * @param {Node} node A node to be collapsed.
-     */
-    collapse_node(n) {
-      if (!isNodeCollapsed(n)) {
-        n.collapsed = true;
-      }
+    return 0;
+  }
+  pad_width() {
+    // reset label_width
+    this.label_width = this._label_width(this.shown_font_size);
+    const _label_width = this.options["show-labels"] ? this.label_width : 0;
+    return this.offsets[1] + this.options["left-offset"] + _label_width;
+  }
+  collapse_node(n) {
+    if (!isNodeCollapsed(n)) {
+      n.collapsed = true;
     }
-
-    /**
-     * Get or set the size of tree in pixels.
-     *
-     * @param {Array} attr (optional) An array of the form ``[height, width]``.
-     * @returns {Phylotree} The current ``size`` array if getting, or the current ``phylotree``
-     * if setting.
-     */
-    set_size(attr) {
-      if (!arguments.length) {
-        return this.size;
-      }
-
-      let phylo_attr = attr;
-
-      if (this.options["top-bottom-spacing"] != "fixed-step") {
-        this.size[0] = phylo_attr[0];
-      }
-      if (this.options["left-right-spacing"] != "fixed-step") {
-        this.size[1] = phylo_attr[1];
-      }
-
-      return this;
+  }
+  set_size(attr) {
+    if (!arguments.length) {
+      return this.size;
     }
-
-    /**
-     * Getter/setter for the SVG element for the Phylotree to be rendered in.
-     *
-     * @param {d3-selection} svg_element (Optional) SVG element to render within, selected by D3.
-     * @returns The selected SVG element if getting, or the current ``phylotree`` if setting.`
-     */
-    initialize_svg(svg_element) {
-      //if (!arguments.length) return this.svg;
-
-      if (this.svg !== svg_element) {
-        d3__namespace.select(svg_element)
-          .select("svg")
-          .remove();
-
-        this.svg = d3__namespace
-          .create("svg")
-          .attr("width", this.width)
-          .attr("height", this.height);
-
-        this.set_size([this.height, this.width]);
-
-        if (this.css_classes["tree-container"] == "phylotree-container") {
-          this.svg.selectAll("*").remove();
-          this.svg.append("defs");
-        }
-
-        d3__namespace.select(this.container).on(
-          "click",
-          d => {
-            this.handle_node_click(null);
-          },
-          true
-        );
-      }
-
-      return this;
+    let phylo_attr = attr;
+    if (this.options["top-bottom-spacing"] != "fixed-step") {
+      this.size[0] = phylo_attr[0];
     }
-
-    update_layout(new_json, do_hierarchy) {
-      if (do_hierarchy) {
-        this.nodes = d3__namespace.hierarchy(new_json);
-        this.nodes.each(function(d) {
-          d.id = null;
-        });
-      }
-
-      this.update();
-      this.syncEdgeLabels();
+    if (this.options["left-right-spacing"] != "fixed-step") {
+      this.size[1] = phylo_attr[1];
     }
-
-    /**
-     * Update the current phylotree, i.e., alter the svg
-     * elements.
-     *
-     * @param {Boolean} transitions (Optional) Toggle whether transitions should be shown.
-     * @returns The current ``phylotree``.
-     */
-    update(transitions) {
-
-      var self = this;
-
-      //if (!this.svg) return this;
-
-      this.placenodes();
-
-      transitions = this.transitions(transitions);
-
-      let node_id = 0;
-
-      let enclosure = this.svg
-        .selectAll("." + css_classes["tree-container"])
+    return this;
+  }
+  initialize_svg(svg_element) {
+    if (this.svg !== svg_element) {
+      d3__namespace.select(svg_element)
+        .select("svg")
+        .remove();
+      this.svg = d3__namespace
+        .create("svg")
+        .attr("width", this.width)
+        .attr("height", this.height);
+      this.set_size([this.height, this.width]);
+      if (this.css_classes["tree-container"] == "phylotree-container") {
+        this.svg.selectAll("*").remove();
+        this.svg.append("defs");
+      }
+      d3__namespace.select(this.container).on(
+        "click",
+        d => {
+          this.handle_node_click(null);
+        },
+        true
+      );
+    }
+    return this;
+  }
+  update_layout(new_json, do_hierarchy) {
+    if (do_hierarchy) {
+      this.nodes = d3__namespace.hierarchy(new_json);
+      this.nodes.each(function(d) {
+        d.id = null;
+      });
+    }
+    this.update();
+    this.syncEdgeLabels();
+  }
+  update(transitions) {
+    var self = this;
+    this.placenodes();
+    transitions = this.transitions(transitions);
+    let node_id = 0;
+    let enclosure = this.svg
+      .selectAll("." + css_classes["tree-container"])
+      .data([0]);
+    enclosure = enclosure
+      .enter()
+      .append("g")
+      .attr("class", css_classes["tree-container"])
+      .merge(enclosure)
+      .attr("transform", d => {
+        return this.d3PhylotreeSvgTranslate([
+          this.offsets[1] + this.options["left-offset"],
+          this.pad_height()
+        ]);
+      });
+    if (this.draw_scale_bar) {
+      let scale_bar = this.svg
+        .selectAll("." + css_classes["tree-scale-bar"])
         .data([0]);
-
-      enclosure = enclosure
+      scale_bar
         .enter()
         .append("g")
-        .attr("class", css_classes["tree-container"])
-        .merge(enclosure)
+        .attr("class", css_classes["tree-scale-bar"])
+        .style("font-size", this.ensure_size_is_in_px(this.scale_bar_font_size))
+        .merge(scale_bar)
         .attr("transform", d => {
           return this.d3PhylotreeSvgTranslate([
             this.offsets[1] + this.options["left-offset"],
-            this.pad_height()
-          ]);
-        });
-
-      if (this.draw_scale_bar) {
-        let scale_bar = this.svg
-          .selectAll("." + css_classes["tree-scale-bar"])
-          .data([0]);
-
-        scale_bar
-          .enter()
-          .append("g")
-          .attr("class", css_classes["tree-scale-bar"])
-          .style("font-size", this.ensure_size_is_in_px(this.scale_bar_font_size))
-          .merge(scale_bar)
-          .attr("transform", d => {
-            return this.d3PhylotreeSvgTranslate([
-              this.offsets[1] + this.options["left-offset"],
-              this.pad_height() - 10
-            ]);
-          })
-          .call(this.draw_scale_bar);
-
-        scale_bar.selectAll("text").style("text-anchor", "end");
-      } else {
-        this.svg.selectAll("." + css_classes["tree-scale-bar"]).remove();
-      }
-
-      enclosure = this.svg
-        .selectAll("." + css_classes["tree-container"])
-        .data([0]);
-
-      this.updateCollapsedClades(transitions);
-      
-
-      let drawn_links = enclosure
-        .selectAll(edgeCssSelectors(css_classes))
-        .data(this.links.filter(edgeVisible), d => {
-          return d.target.id || (d.target.id = ++node_id);
-        });
-
-      if (transitions) {
-        drawn_links.exit().remove();
-      } else {
-        drawn_links.exit().remove();
-      }
-
-      drawn_links = drawn_links
-        .enter()
-        .insert("path", ":first-child")
-        .merge(drawn_links)
-        .each(function(d) {
-          self.drawEdge(this, d, transitions);
-        });
-
-      let drawn_nodes = enclosure
-        .selectAll(nodeCssSelectors(css_classes))
-        .data(
-          this.phylotree.nodes.descendants().filter(nodeVisible),
-          d => {
-            return d.id || (d.id = ++node_id);
-          }
-        );
-
-      drawn_nodes.exit().remove();
-
-      drawn_nodes = drawn_nodes
-        .enter()
-        .append("g")
-        .attr("class", this.reclassNode)
-        .merge(drawn_nodes)
-        .attr("transform", d => {
-          const should_shift =
-            this.options["layout"] == "right-to-left" && isLeafNode(d);
-
-          d.screen_x = xCoord(d);
-          d.screen_y = yCoord(d);
-
-          return this.d3PhylotreeSvgTranslate([
-            should_shift ? 0 : d.screen_x,
-            d.screen_y
+            this.pad_height() - 10
           ]);
         })
-        .each(function(d) {
-          self.drawNode(this, d, transitions);
-        })
-        .attr("transform", d => {
-          if (!___namespace.isUndefined(d.screen_x) && !___namespace.isUndefined(d.screen_y)) {
-            return "translate(" + d.screen_x + "," + d.screen_y + ")";
-          }
-        });
-
-      if (this.options["label-nodes-with-name"]) {
-        drawn_nodes = drawn_nodes.attr("id", d => {
-          return "node-" + d.name;
-        });
-      }
-
-      this.resizeSvg(this.phylotree, this.svg, transitions);
-
-      if (this.options["brush"]) {
-        var brush = enclosure
-          .selectAll("." + css_classes["tree-selection-brush"])
-          .data([0])
-          .enter()
-          .insert("g", ":first-child")
-          .attr("class", css_classes["tree-selection-brush"]);
-
-        var brush_object = d3__namespace
-          .brush()
-          .on("brush", d => {
-            var extent = d3__namespace.event.selection,
-              shown_links = this.links.filter(edgeVisible);
-            var selected_links = shown_links
-                .filter((d, i) => {
-                  return (
-                    d.source.screen_x >= extent[0][0] &&
-                    d.source.screen_x <= extent[1][0] &&
-                    d.source.screen_y >= extent[0][1] &&
-                    d.source.screen_y <= extent[1][1] &&
-                    d.target.screen_x >= extent[0][0] &&
-                    d.target.screen_x <= extent[1][0] &&
-                    d.target.screen_y >= extent[0][1] &&
-                    d.target.screen_y <= extent[1][1]
-                  );
-                })
-                .map(d => {
-                  return d.target;
-                });
-
-            this.modifySelection(
-
-              this.phylotree.links.map(d => {
-                return d.target;
-              }),
-              "tag",
-              false,
-              selected_links.length > 0,
-              "false"
-            );
-
-            this.modifySelection(selected_links, "tag", false, false, "true");
-
-          })
-          .on("end", () => {
-            //brush.call(d3.event.target.clear());
-          });
-
-        brush.call(brush_object);
-      }
-
-      this.syncEdgeLabels();
-
-      if (this.options["zoom"]) {
-        let zoom = d3__namespace
-          .zoom()
-          .scaleExtent([0.1, 10])
-          .on("zoom", () => {
-
-            d3__namespace.select("." + css_classes["tree-container"]).attr("transform", d => {
-              let toTransform = d3__namespace.event.transform;
-              return toTransform;
-            });
-
-            // Give some extra room
-            d3__namespace.select("." + css_classes["tree-scale-bar"]).attr("transform", d => {
-              let toTransform = d3__namespace.event.transform;
-              toTransform.y -= 10; 
-              return toTransform;
-            });
-            
-          });
-
-        this.svg.call(zoom);
-      }
-
-      return this;
+        .call(this.draw_scale_bar);
+      scale_bar.selectAll("text").style("text-anchor", "end");
+    } else {
+      this.svg.selectAll("." + css_classes["tree-scale-bar"]).remove();
     }
-
-    _handle_single_node_layout(
-      a_node
-    ) {
-      let _nodeSpan = this.nodeSpan(a_node) / this.rescale_nodeSpan;
-      // compute the relative size of nodes (0,1)
-      // sum over all nodes is 1
-      this.x = a_node.x =
-        this.x +
-        this.separation(this.last_node, a_node) +
-        (this.last_span + _nodeSpan) * 0.5;
-        
-   
-      // separation is a user-settable callback to add additional spacing on nodes
-      this._extents[1][1] = Math.max(this._extents[1][1], a_node.y);
-      this._extents[1][0] = Math.min(
-        this._extents[1][0],
-        a_node.y - _nodeSpan * 0.5
-      );
-      
-
-      if (this.is_under_collapsed_parent) {
-         this._extents[0][1] = Math.max(
-          this._extents[0][1],
-          this.save_x +
-            (a_node.x - this.save_x) * this.options["compression"] +
-            this.save_span +
-            (_nodeSpan * 0.5 + this.separation(this.last_node, a_node)) *
-              this.options["compression"]
-        );      
-      } else {
-        this._extents[0][1] = Math.max(
-          this._extents[0][1],
-          this.x + _nodeSpan * 0.5 + this.separation(this.last_node, a_node)
-        );
-      }
-
-
-      this.last_node = a_node;
-      this.last_span = _nodeSpan;
-      
-    }
-
-    tree_layout(a_node) {
-      /**
-              for each node: 
-                  y: the y coordinate is root to tip
-                      (left to right in cladogram layout, radius is radial layout
-                  x : the x coordinate is top-most to bottom-most 
-                      (top to bottom in cladogram layout, angle in radial layout)
-                  
-                  
-           @return the x-coordinate of a_node or undefined in the node is not displayed
-                   (hidden or under a collapsed node)
-          */
-
-
-      // do not layout hidden nodes
-      if (nodeNotshown(a_node)) {
-        return undefined;
-      }
-
-      let is_leaf = isLeafNode(a_node);
-
-      // the next four members are radial layout options
-      a_node.text_angle = null; // the angle at which text is being laid out
-      a_node.text_align = null; // css alignment option for node labels
-      a_node.radius = null; // radial layout radius
-      a_node.angle = null; // radial layout angle (in radians)
-
-      /** determine the root-to-tip location of this node;
-              
-        the root node receives the co-ordinate of 0
-        
-        if the tree has branch lengths, then the placement of each node is simply the 
-        total branch length to the root
-        
-        if the tree has no branch lengths, all leaves get the same depth ("number of internal nodes on the deepest path")
-        and all internal nodes get the depth in integer units of the # of internal nodes on the path to the root + 1
-          
-      */
-
-      let undef_BL = false;
-
-      /** _extents computes a bounding box for the tree (initially NOT in screen 
-              coordinates)
-
-          all account for node sizes
-
-          _extents [1][0] -- the minimum x coordinate (breadth)
-          _extents [1][1] -- the maximum y coordinate (breadth)
-          _extents [1][0] -- the minimum y coordinate (root-to-tip, or depthwise)
-          _extents [1][1] -- the maximum y coordinate (root-to-tip, or depthwise)
-
-      */
-
-
-      // last node laid out in the top bottom hierarchy
-
-      if (a_node["parent"]) {
-        if (this.do_scaling) {
-          if (undef_BL) {
-            return 0;
-          }
-
-          a_node.y = this.phylotree.branch_length_accessor(a_node);
-
-          if (typeof a_node.y === "undefined") {
-            undef_BL = true;
-            return 0;
-          }
-          a_node.y += a_node.parent.y;
-        } else {
-          a_node.y = is_leaf ? this.max_depth : a_node.depth;
-        }
-      } else {
-        this.x = 0.0;
-        // the span of the last node laid out in the top to bottom hierarchy
-        a_node.y = 0.0;
-        this.last_node = null;
-        this.last_span = 0.0;
-        this._extents = [[0, 0], [0, 0]];
-      }
-
-      /** the next block has to do with top-to-bottom spacing of nodes **/
-
-      if (is_leaf) {
-        // displayed internal nodes are handled in `process_internal_node`
-        this._handle_single_node_layout(
-          a_node
-        );
-      }
-
-      if (!is_leaf) {
-        // for internal nodes
-        if (
-          isNodeCollapsed(a_node) &&
-          !this.is_under_collapsed_parent
-        ) {
-          // collapsed node
-          this.save_x = this.x;
-          this.save_span = this.last_span * 0.5;
-          this.is_under_collapsed_parent = true;
-          this.process_internal_node(a_node);
-          this.is_under_collapsed_parent = false;
-   
-          if (typeof a_node.x === "number") {
-            a_node.x =
-              this.save_x +
-              (a_node.x -this.save_x) * this.options["compression"] +
-              this.save_span;
-
-            a_node.collapsed = [[a_node.x, a_node.y]];
-
-            var map_me = n => {
-              n.hidden = true;
-
-              if (isLeafNode(n)) {            
-                this.x = n.x =
-                  this.save_x +
-                  (n.x - this.save_x) * this.options["compression"] +
-                  this.save_span;
-
-                a_node.collapsed.push([n.x, n.y]);             
-              } else {
-                n.children.map(map_me);
-              }
-            };
-
-            this.x = this.save_x;
-            map_me(a_node);
-           
-
-            a_node.collapsed.splice(1, 0, [this.save_x, a_node.y]);
-            a_node.collapsed.push([this.x, a_node.y]);
-            a_node.collapsed.push([a_node.x, a_node.y]);
-            a_node.hidden = false;
-          }
-        } else {
-          // normal node, or under a collapsed parent
-          this.process_internal_node(a_node);
-        }
-      }
-
-      return a_node.x;
-    }
-
-    process_internal_node(a_node) {
-      /** 
-              decide if the node will be shown, and compute its top-to-bottom (breadthwise)
-              placement 
-          */
-
-      let count_undefined = 0;
-
-      if (this.showInternalName(a_node)) {
-        // do in-order traversal to allow for proper internal node spacing
-        // (x/2) >> 0 is integer division
-        let half_way = (a_node.children.length / 2) >> 0;
-        let displayed_children = 0;
-        let managed_to_display = false;
-
-        for (let child_id = 0; child_id < a_node.children.length; child_id++) {
-          let child_x = this.tree_layout(a_node.children[child_id]);//.bind(this);
-
-          if (typeof child_x == "number") {
-            displayed_children++;
-          }
-
-          if (displayed_children >= half_way && !managed_to_display) {
-            this._handle_single_node_layout(a_node);
-            managed_to_display = true;
-          }
-        }
-
-        if (displayed_children == 0) {
-          a_node.notshown = true;
-          a_node.x = undefined;
-        } else {
-          if (!managed_to_display) {
-            this._handle_single_node_layout(a_node);
-          }
-        }
-      } else {
-        // postorder layout
-        a_node.x = a_node.children
-          .map(this.tree_layout.bind(this))
-          .reduce((a, b) => {
-            if (typeof b == "number") return a + b;
-            count_undefined += 1;
-            return a;
-          }, 0.0);
-
-        if (count_undefined == a_node.children.length) {
-          a_node.notshown = true;
-          a_node.x = undefined;
-        } else {
-          a_node.x /= a_node.children.length - count_undefined;
-        }
-      }
-    }
-
-    do_lr(at_least_one_dimension_fixed) {
-      if (this.radial() && at_least_one_dimension_fixed) {
-        this.offsets[1] = 0;
-      }
-
-      if (this.options["left-right-spacing"] == "fixed-step") {
-        this.size[1] = this.max_depth * this.fixed_width[1];
-
-        this.scales[1] = 
-          (this.size[1] - this.offsets[1] - this.options["left-offset"]) /
-          this._extents[1][1];
-
-        this.label_width = this._label_width(this.shown_font_size);
-
-        if (this.radial()) {
-          this.label_width *= 2;
-        }
-      } else {
-        this.label_width = this._label_width(this.shown_font_size);
-
-        at_least_one_dimension_fixed = true;
-
-        let available_width =
-          this.size[1] - this.offsets[1] - this.options["left-offset"];
-
-        if (available_width * 0.5 < this.label_width) {
-          this.shown_font_size *= (available_width * 0.5) / this.label_width;
-          this.label_width = available_width * 0.5;
-        }
-
-        this.scales[1] =
-          (this.size[1] -
-            this.offsets[1] -
-            this.options["left-offset"] -
-            this.label_width) /
-          this._extents[1][1];
-      }
-    }
-
-    /**
-     * Place the current nodes, i.e., determine their coordinates based
-     * on current settings.
-     *
-     * @returns The current ``phylotree``.
-     */
-    placenodes() {
-      this._extents = [
-        [0, 0],
-        [0, 0]
-      ];
-
-      this.x = 0.0;
-      this.last_span = 0.0;
-      //let x = 0.0,
-      //  last_span = 0;
-      
-      this.last_node = null;
-      this.last_span = 0.0;
-
-      (this.save_x = this.x), (this.save_span = this.last_span * 0.5);
-
-      this.do_scaling = this.options["scaling"];
-      let undef_BL = false;
-
-      this.is_under_collapsed_parent = false;
-      this.max_depth = 1;
-      
-      // Set initial x
-      this.phylotree.nodes.x = this.tree_layout(
-        this.phylotree.nodes,
-        this.do_scaling
-      );
-
-      this.max_depth = d3__namespace.max(this.phylotree.nodes.descendants(), n => {
-        return n.depth;
+    enclosure = this.svg
+      .selectAll("." + css_classes["tree-container"])
+      .data([0]);
+    this.updateCollapsedClades(transitions);  
+    let drawn_links = enclosure
+      .selectAll(edgeCssSelectors(css_classes))
+      .data(this.links.filter(edgeVisible), d => {
+        return d.target.id || (d.target.id = ++node_id);
       });
-
-      if (this.do_scaling && undef_BL) {
-        // requested scaling, but some branches had no branch lengths
-        // redo layout without branch lengths
-        this.do_scaling = false;
-        this.phylotree.nodes.x = this.tree_layout(this.phylotree.nodes);
-      }
-
-      let at_least_one_dimension_fixed = false;
-
-      this.draw_scale_bar = this.options["show-scale"] && this.do_scaling;
-
-      // this is a hack so that phylotree.pad_height would return ruler spacing
-      this.offsets[1] = Math.max(
-        this.font_size,
-        -this._extents[1][0] * this.fixed_width[0]
+    if (transitions) {
+      drawn_links.exit().remove();
+    } else {
+      drawn_links.exit().remove();
+    }
+    drawn_links = drawn_links
+      .enter()
+      .insert("path", ":first-child")
+      .merge(drawn_links)
+      .each(function(d) {
+        self.drawEdge(this, d, transitions);
+      });
+    let drawn_nodes = enclosure
+      .selectAll(nodeCssSelectors(css_classes))
+      .data(
+        this.phylotree.nodes.descendants().filter(nodeVisible),
+        d => {
+          return d.id || (d.id = ++node_id);
+        }
       );
-
-      if (this.options["top-bottom-spacing"] == "fixed-step") {
-        this.size[0] = this._extents[0][1] * this.fixed_width[0];
-        this.scales[0] = this.fixed_width[0];
-      } else {
-        this.scales[0] = (this.size[0] - this.pad_height()) / this._extents[0][1];
-        at_least_one_dimension_fixed = true;
-      }
-
-      this.shown_font_size = Math.min(this.font_size, this.scales[0]);
-
-      if (this.radial()) {
-        // map the nodes to polar coordinates
-        this.draw_branch = ___namespace.partial(drawArc, this.radial_center);
-        this.edge_placer = arcSegmentPlacer;
-
-        let last_child_angle = null,
-          last_circ_position = null,
-          last_child_radius = null,
-          min_radius = 0,
-          effective_span = this._extents[0][1] * this.scales[0];
-
-        let compute_distance = function(r1, r2, a1, a2, annular_shift) {
-          annular_shift = annular_shift || 0;
-          return Math.sqrt(
-            (r2 - r1) * (r2 - r1) +
-              2 *
-                (r1 + annular_shift) *
-                (r2 + annular_shift) *
-                (1 - Math.cos(a1 - a2))
-          );
-        };
-
-        let max_r = 0;
-
-        this.phylotree.nodes.each(d => {
-          let my_circ_position = d.x * this.scales[0];
-          d.angle = (2 * Math.PI * my_circ_position) / effective_span;
-          d.text_angle = d.angle - Math.PI / 2;
-          d.text_angle = d.text_angle > 0 && d.text_angle < Math.PI;
-          d.text_align = d.text_angle ? "end" : "start";
-          d.text_angle = (d.text_angle ? 180 : 0) + (d.angle * 180) / Math.PI;
-        });
-
-        this.do_lr(at_least_one_dimension_fixed);
-
-        this.phylotree.nodes.each(d => {
-          d.radius = (d.y * this.scales[1]) / this.size[1];
-          max_r = Math.max(d.radius, max_r);
-        });
-
-        let annular_shift = 0;
-
-        this.phylotree.nodes.each(d => {
-          if (!d.children) {
-            let my_circ_position = d.x * this.scales[0];
-            if (last_child_angle !== null) {
-              let required_spacing = my_circ_position - last_circ_position,
-                radial_dist = compute_distance(
-                  d.radius,
-                  last_child_radius,
-                  d.angle,
-                  last_child_angle,
-                  annular_shift
-                );
-
-              let local_mr =
-                radial_dist > 0
-                  ? required_spacing / radial_dist
-                  : 10 * this.options["max-radius"];
-
-              if (local_mr > this.options["max-radius"]) {
-                // adjust the annular shift
-                let dd = required_spacing / this.options["max-radius"],
-                  b = d.radius + last_child_radius,
-                  c =
-                    d.radius * last_child_radius -
-                    (dd * dd -
-                      (last_child_radius - d.radius) *
-                        (last_child_radius - d.radius)) /
-                      2 /
-                      (1 - Math.cos(last_child_angle - d.angle)),
-                  st = Math.sqrt(b * b - 4 * c);
-
-                annular_shift = Math.min(
-                  this.options["annular-limit"] * max_r,
-                  (-b + st) / 2
-                );
-                min_radius = this.options["max-radius"];
-              } else {
-                min_radius = Math.max(min_radius, local_mr);
-              }
-            }
-
-            last_child_angle = d.angle;
-            last_circ_position = my_circ_position;
-            last_child_radius = d.radius;
-          }
-        });
-
-        this.radius = Math.min(
-          this.options["max-radius"],
-          Math.max(effective_span / 2 / Math.PI, min_radius)
-        );
-
-        if (at_least_one_dimension_fixed) {
-          this.radius = Math.min(
-            this.radius,
-            (Math.min(effective_span, this._extents[1][1] * this.scales[1]) -
-              this.label_width) *
-              0.5 -
-              this.radius * annular_shift
-          );
-        }
-
-        this.radial_center = this.radius_pad_for_bubbles = this.radius;
-        this.draw_branch = ___namespace.partial(drawArc, this.radial_center);
-
-        let scaler = 1;
-
-        if (annular_shift) {
-          scaler = max_r / (max_r + annular_shift);
-          this.radius *= scaler;
-        }
-
-        this.phylotree.nodes.each(d => {
-          cartesianToPolar(
-            d,
-            this.radius,
-            annular_shift,
-            this.radial_center,
-            this.scales,
-            this.size
-          );
-
-          max_r = Math.max(max_r, d.radius);
-
-          if (this.options["draw-size-bubbles"]) {
-            this.radius_pad_for_bubbles = Math.max(
-              this.radius_pad_for_bubbles,
-              d.radius + this.nodeBubbleSize(d)
-            );
-          } else {
-            this.radius_pad_for_bubbles = Math.max(
-              this.radius_pad_for_bubbles,
-              d.radius
-            );
-          }
-
-          if (d.collapsed) {
-            d.collapsed = d.collapsed.map(p => {
-              let z = {};
-              z.x = p[0];
-              z.y = p[1];
-              z = cartesianToPolar(
-                z,
-                this.radius,
-                annular_shift,
-                this.radial_center,
-                this.scales,
-                this.size
-              );
-              return [z.x, z.y];
-            });
-
-            let last_point = d.collapsed[1];
-
-            d.collapsed = d.collapsed.filter(function(p, i) {
-              if (i < 3 || i > d.collapsed.length - 4) return true;
-              if (
-                Math.sqrt(
-                  Math.pow(p[0] - last_point[0], 2) +
-                    Math.pow(p[1] - last_point[1], 2)
-                ) > 3
-              ) {
-                last_point = p;
-                return true;
-              }
-              return false;
-            });
-          }
-        });
-
-        this.size[0] = this.radial_center + this.radius / scaler;
-        this.size[1] = this.radial_center + this.radius / scaler;
-      } else {
-  this.do_lr();
-
-        this.draw_branch = draw_line;
-        this.edge_placer = lineSegmentPlacer;
-        this.right_most_leaf = 0;
-
-        this.phylotree.nodes.each(d => {
-
-          d.x *= this.scales[0];
-          d.y *= this.scales[1]*.8;
-
-          if (this.options["layout"] == "right-to-left") {   
-            d.y = this._extents[1][1] * this.scales[1] - d.y;
-          }
-
-
-          if (isLeafNode(d)) {
-            this.right_most_leaf = Math.max(
-              this.right_most_leaf,
-              d.y + this.nodeBubbleSize(d)
-            );
-          }
-
-          if (d.collapsed) {
-            d.collapsed.forEach(p => {
-              p[0] *= this.scales[0];
-              p[1] *= this.scales[1]*.8;
-            });
-
-            let last_x = d.collapsed[1][0];
-
-            d.collapsed = d.collapsed.filter(function(p, i) {
-              if (i < 3 || i > d.collapsed.length - 4) return true;
-              if (p[0] - last_x > 3) {
-                last_x = p[0];
-                return true;
-              }
-              return false;
-            });
-          }
-        });
-      }
-
-      if (this.draw_scale_bar) {
-        let domain_limit, range_limit;
-
-        if (this.radial()) {
-          range_limit = Math.min(this.radius / 5, 50);
-          domain_limit = Math.pow(
-            10,
-            Math.ceil(
-              Math.log((this._extents[1][1] * range_limit) / this.radius) /
-                Math.log(10)
-            )
-          );
-          
-
-          range_limit = domain_limit * (this.radius / this._extents[1][1]);
-
-          if (range_limit < 30) {
-            let stretch = Math.ceil(30 / range_limit);
-            range_limit *= stretch;
-            domain_limit *= stretch;
-          }
-        } else {
-          domain_limit = this._extents[1][1];
-
-          range_limit =
-            this.size[1] - this.offsets[1] - this.options["left-offset"] - this.shown_font_size;
-       }
-
-        let scale = d3__namespace
-            .scaleLinear()
-            .domain([0, domain_limit])
-            .range([0, range_limit]),
-           
-            scaleTickFormatter = d3__namespace.format(".2f");
-
-        this.draw_scale_bar = d3__namespace
-          .axisTop()
-          .scale(scale)
-          .tickFormat(function(d) {
-            if (d === 0) {
-              return "";
-            }
-            return scaleTickFormatter(d);
-          });
-
-        if (this.radial()) {
-          this.draw_scale_bar.tickValues([domain_limit]);
-        } else {
-          let round = function(x, n) {
-            return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
-          };
-
-          let my_ticks = scale.ticks();
-          my_ticks = my_ticks.length > 1 ? my_ticks[1] : my_ticks[0];
-
-          this.draw_scale_bar.ticks(
-            Math.min(
-              10,
-              round(
-                range_limit /
-                  (this.shown_font_size *
-                    scaleTickFormatter(my_ticks).length *
-                    2),
-                0
-              )
-            )
-          );
-        }
-      } else {
-        this.draw_scale_bar = null;
-      }
-
-      return this;
-    }
-
-    /**
-     * Get or set spacing in the x-direction.
-     *
-     * @param {Number} attr (Optional), the new spacing value if setting.
-     * @param {Boolean} skip_render (Optional), whether or not a refresh should be performed.
-     * @returns The current ``spacing_x`` value if getting, or the current ``phylotree`` if setting.
-     */
-    spacing_x(attr, skip_render) {
-      if (!arguments.length) return this.fixed_width[0];
-
-      if (
-        this.fixed_width[0] != attr &&
-        attr >= this.options["minimum-per-node-spacing"] &&
-        attr <= this.options["maximum-per-node-spacing"]
-      ) {
-        this.fixed_width[0] = attr;
-        if (!skip_render) {
-          this.placenodes();
-        }
-      }
-
-      return this;
-    }
-
-    /**
-     * Get or set spacing in the y-direction.
-     *
-     * @param {Number} attr (Optional), the new spacing value if setting.
-     * @param {Boolean} skip_render (Optional), whether or not a refresh should be performed.
-     * @returns The current ``spacing_y`` value if getting, or the current ``phylotree`` if setting.
-     */
-    spacing_y(attr, skip_render) {
-      if (!arguments.length) return this.fixed_width[1];
-
-      if (
-        this.fixed_width[1] != attr &&
-        attr >= this.options["minimum-per-level-spacing"] &&
-        attr <= this.options["maximum-per-level-spacing"]
-      ) {
-        this.fixed_width[1] = attr;
-        if (!skip_render) {
-          this.placenodes();
-        }
-      }
-      return this;
-    }
-
-    _label_width(_font_size) {
-      _font_size = _font_size || this.shown_font_size;
-      let width = 0;
-
-      this.phylotree.nodes
-        .descendants()
-        .filter(nodeVisible)
-        .forEach(node => {
-          let node_width = 12 + this._nodeLabel(node).length * _font_size * 0.8;
-
-          if (node.angle !== null) {
-            node_width *= Math.max(
-              Math.abs(Math.cos(node.angle)),
-              Math.abs(Math.sin(node.angle))
-            );
-          }
-          width = Math.max(node_width, width);
-        });
-
-      return width;
-    }
-
-    /**
-     * Get or set font size.
-     *
-     * @param {Function} attr Empty if getting, or new font size if setting.
-     * @returns The current ``font_size`` accessor if getting, or the current ``phylotree`` if setting.
-     */
-    font_size(attr) {
-      if (!arguments.length) return this.font_size;
-      this.font_size = attr === undefined ? 12 : attr;
-      return this;
-    }
-
-    scale_bar_font_size(attr) {
-      if (!arguments.length) return this.scale_bar_font_size;
-      this.scale_bar_font_size = attr === undefined ? 12 : attr;
-      return this;
-    }
-
-    node_circle_size(attr, attr2) {
-      if (!arguments.length) return this.options["node_circle_size"];
-      this.options["node_circle_size"] = constant$1(attr === undefined ? 3 : attr);
-      return this;
-    }
-
-    css(opt) {
-      if (arguments.length === 0) return this.css_classes;
-
-      if (arguments.length > 2) {
-        var arg = {};
-        arg[opt[0]] = opt[1];
-        return this.css(arg);
-      }
-
-      for (var key in css_classes) {
-        if (key in opt && opt[key] != css_classes[key]) {
-          css_classes[key] = opt[key];
-        }
-      }
-
-      return this;
-    }
-
-    transitions(arg) {
-      if (arg !== undefined) {
-        return arg;
-      }
-
-      if (this.options["transitions"] !== null) {
-        return this.options["transitions"];
-      }
-
-      return this.phylotree.nodes.descendants().length <= 300;
-    }
-
-    /**
-     * Get or set CSS classes.
-     *
-     * @param {Object} opt Keys are the CSS class to toggle and values are
-     * the parameters for that CSS class.
-     * @param {Boolean} run_update (optional) Whether or not the tree should update.
-     * @returns The current ``phylotree``.
-     */
-    css_classes(opt, run_update) {
-      if (!arguments.length) return this.css_classes;
-
-      let do_update = false;
-
-      for (var key in css_classes) {
-        if (key in opt && opt[key] != this.css_classes[key]) {
-          do_update = true;
-          this.css_classes[key] = opt[key];
-        }
-      }
-
-      if (run_update && do_update) {
-        this.layout();
-      }
-
-      return this;
-    }
-
-    /**
-     * Lay out the tree within the SVG.
-     *
-     * @param {Boolean} transitions Specify whether or not transitions should occur.
-     * @returns The current ``phylotree``.
-     */
-    layout(transitions) {
-      if (this.svg) {
-        this.svg.selectAll(
-          "." +
-            this.css_classes["tree-container"] +
-            ",." +
-            this.css_classes["tree-scale-bar"] +
-            ",." +
-            this.css_classes["tree-selection-brush"]
-        );
-
-        //.remove();
-        this.d3PhylotreeTriggerLayout(this);
-        return this.update();
-      }
-
-      this.d3PhylotreeTriggerLayout(this);
-      return this;
-    }
-
-    handle_node_click(node) {
-      this.nodeDropdownMenu(node, this.container, this, this.options);
-    }
-
-    refresh() {
-      if (this.svg) {
-        // for re-entrancy
-        let enclosure = this.svg.selectAll(
-          "." + this.css_classes["tree-container"]
-        );
-
-        let edges = enclosure
-          .selectAll(edgeCssSelectors(this.css_classes))
-          .attr("class", this.reclassEdge.bind(this));
-
-        if (this.edge_styler) {
-          edges.each(d => {
-            this.edge_styler(d3__namespace.select(this), d);
-          });
-        }
-
-    //    let nodes = this.enclosure
-    //      .selectAll(inspector.nodeCssSelectors(this.css_classes))
-    //     .attr("class", this.phylotree.reclassNode);
-
-        //if (this.node_styler) {
-        //  nodes.each(function(d) {
-        //    this.node_styler(d3.select(this), d);
-        //  });
-        //}
-      }
-
-      return this;
-    }
-
-    countHandler(attr) {
-      if (!arguments.length) return this.count_listener_handler;
-      this.count_listener_handler = attr;
-      return this;
-    }
-
-    /**
-     * Get or set node styler. If setting, pass a function of two arguments,
-     * ``element`` and ``data``. ``data`` exposes the underlying node so that
-     * its attributes can be referenced. These can be used to apply styles to
-     * ``element``, which will be a D3 selection corresponding to the SVG element
-     * that makes up the current node.
-     * ``transition`` is the third argument which indicates that there is an ongoing
-     * d3 transition in progress
-     *
-     * @param {Function} attr - Optional; if setting, the node styler function to be set.
-     * @returns The ``node_styler`` function if getting, or the current ``phylotree`` if setting.
-     */
-    style_nodes(attr) {
-      if (!arguments.length) return this.node_styler;
-      this.node_styler = attr;
-      return this;
-    }
-
-    /**
-     * Get or set edge styler. If setting, pass a function of two arguments,
-     * ``element`` and ``data``. ``data`` exposes the underlying edge so that
-     * its attributes can be referenced. These can be used to apply styles to
-     * ``element``, which will be a D3 selection corresponding to the SVG element
-     * that makes up the current edge.
-     *
-     * Note that, in accordance with the D3 hierarchy layout, edges will have
-     * a ``source`` and ``target`` field, corresponding to the nodes that make up
-     * up the associated branch.
-     *
-     * @param {Function} attr - Optional; if setting, the node styler function to be set.
-     * @returns The ``edge_styler`` function if getting, or the current ``phylotree`` if setting.
-     */
-    style_edges(attr) {
-      if (!arguments.length) return this.edge_styler;
-      this.edge_styler = attr.bind(this);
-      return this;
-    }
-
-    itemSelected(item, tag) {
-      return item[tag] || false;
-    }
-
-    show() {
-      return this.svg.node()
-    }
-
-  }
-
-  ___namespace.extend(TreeRender.prototype, clades);
-  ___namespace.extend(TreeRender.prototype, render_nodes);
-  ___namespace.extend(TreeRender.prototype, render_edges);
-  ___namespace.extend(TreeRender.prototype, events);
-  ___namespace.extend(TreeRender.prototype, menus);
-  ___namespace.extend(TreeRender.prototype, opt);
-
-  function resortChildren(comparator, start_node, filter) {
-    // ascending
-    this.nodes
-      .sum(function(d) {
-        return d.value;
+    drawn_nodes.exit().remove();
+    drawn_nodes = drawn_nodes
+      .enter()
+      .append("g")
+      .attr("class", this.reclassNode)
+      .merge(drawn_nodes)
+      .attr("transform", d => {
+        const should_shift =
+          this.options["layout"] == "right-to-left" && isLeafNode(d);
+        d.screen_x = xCoord(d);
+        d.screen_y = yCoord(d);
+        return this.d3PhylotreeSvgTranslate([
+          should_shift ? 0 : d.screen_x,
+          d.screen_y
+        ]);
       })
-      .sort(comparator);
-    // if a tree is rendered in the DOM
-    if (this.display) {
-      this.display.update_layout(this.nodes);
-      this.display.update();
+      .each(function(d) {
+        self.drawNode(this, d, transitions);
+      })
+      .attr("transform", d => {
+        if (!___namespace.isUndefined(d.screen_x) && !___namespace.isUndefined(d.screen_y)) {
+          return "translate(" + d.screen_x + "," + d.screen_y + ")";
+        }
+      });
+    if (this.options["label-nodes-with-name"]) {
+      drawn_nodes = drawn_nodes.attr("id", d => {
+        return "node-" + d.name;
+      });
+    }
+    this.resizeSvg(this.phylotree, this.svg, transitions);
+    if (this.options["brush"]) {
+      var brush = enclosure
+        .selectAll("." + css_classes["tree-selection-brush"])
+        .data([0])
+        .enter()
+        .insert("g", ":first-child")
+        .attr("class", css_classes["tree-selection-brush"]);
+      var brush_object = d3__namespace
+        .brush()
+        .on("brush", d => {
+          var extent = d3__namespace.event.selection,
+            shown_links = this.links.filter(edgeVisible);
+            var selected_links = shown_links
+              .filter((d, i) => {
+                return (
+                  d.source.screen_x >= extent[0][0] &&
+                  d.source.screen_x <= extent[1][0] &&
+                  d.source.screen_y >= extent[0][1] &&
+                  d.source.screen_y <= extent[1][1] &&
+                  d.target.screen_x >= extent[0][0] &&
+                  d.target.screen_x <= extent[1][0] &&
+                  d.target.screen_y >= extent[0][1] &&
+                  d.target.screen_y <= extent[1][1]
+                );
+              })
+              .map(d => {
+                return d.target;
+              });
+          this.modifySelection(
+            this.phylotree.links.map(d => {
+              return d.target;
+            }),
+            "tag",
+            false,
+            selected_links.length > 0,
+            "false"
+          );
+          this.modifySelection(selected_links, "tag", false, false, "true");
+        })
+        .on("end", () => {
+        });
+      brush.call(brush_object);
+    }
+    this.syncEdgeLabels();
+    if (this.options["zoom"]) {
+      let zoom = d3__namespace
+        .zoom()
+        .scaleExtent([0.1, 10])
+        .on("zoom", () => {
+          d3__namespace.select("." + css_classes["tree-container"]).attr("transform", d => {
+            let toTransform = d3__namespace.event.transform;
+            return toTransform;
+          });
+          d3__namespace.select("." + css_classes["tree-scale-bar"]).attr("transform", d => {
+            let toTransform = d3__namespace.event.transform;
+            toTransform.y -= 10; 
+            return toTransform;
+          });  
+        });
+      this.svg.call(zoom);
     }
     return this;
   }
-
-  /**
-   * An instance of a phylotree. Sets event listeners, parses tags, and creates links
-   * that represent branches.
-   *
-   * @param {Object} nwk - A Newick string, PhyloXML string, or hierarchical JSON representation of a phylogenetic tree.
-   * @param {Object} options
-   * - boostrap_values
-   * - type - format type
-   * @returns {Phylotree} phylotree - itself, following the builder pattern.
-   */
-  let Phylotree = class {
-    constructor(nwk, options = {}) {
-      this.newick_string = "";
-      this.nodes = [];
-      this.links = [];
-      this.parsed_tags = [];
-      this.partitions = [];
-      this.branch_length_accessor = defBranchLengthAccessor;
-      this.branch_length = defBranchLengthAccessor;
-      this.logger = options.logger || console;
-      this.selection_attribute_name = "selected";
-      // initialization
-      var type = options.type || undefined,
-        _node_data = [],
-        self = this;
-      // If the type is a string, check the parser_registry
-      if (___namespace.isString(type)) {
-        if (type in format_registry) {
-          _node_data = format_registry[type](nwk, options);
+  _handle_single_node_layout(
+    a_node
+  ) {
+    let _nodeSpan = this.nodeSpan(a_node) / this.rescale_nodeSpan;
+    // compute the relative size of nodes (0,1)
+    // sum over all nodes is 1
+    this.x = a_node.x =
+      this.x +
+      this.separation(this.last_node, a_node) +
+      (this.last_span + _nodeSpan) * 0.5;  
+    // separation is a user-settable callback to add additional spacing on nodes
+    this._extents[1][1] = Math.max(this._extents[1][1], a_node.y);
+    this._extents[1][0] = Math.min(
+      this._extents[1][0],
+      a_node.y - _nodeSpan * 0.5
+    );  
+    if (this.is_under_collapsed_parent) {
+      this._extents[0][1] = Math.max(
+        this._extents[0][1],
+        this.save_x +
+          (a_node.x - this.save_x) * this.options["compression"] +
+          this.save_span +
+          (_nodeSpan * 0.5 + this.separation(this.last_node, a_node)) *
+            this.options["compression"]
+      );      
+    } else {
+      this._extents[0][1] = Math.max(
+        this._extents[0][1],
+        this.x + _nodeSpan * 0.5 + this.separation(this.last_node, a_node)
+      );
+    }
+    this.last_node = a_node;
+    this.last_span = _nodeSpan;  
+  }
+  tree_layout(a_node) {
+    // do not layout hidden nodes
+    if (nodeNotshown(a_node)) {
+      return undefined;
+    }
+    let is_leaf = isLeafNode(a_node);
+    // the next four members are radial layout options
+    a_node.text_angle = null; // the angle at which text is being laid out
+    a_node.text_align = null; // css alignment option for node labels
+    a_node.radius = null; // radial layout radius
+    a_node.angle = null; // radial layout angle (in radians)
+    let undef_BL = false;
+    // last node laid out in the top bottom hierarchy
+    if (a_node["parent"]) {
+      if (this.do_scaling) {
+        if (undef_BL) {
+          return 0;
+        }
+        a_node.y = this.phylotree.branch_length_accessor(a_node);
+        if (typeof a_node.y === "undefined") {
+          undef_BL = true;
+          return 0;
+        }
+        a_node.y += a_node.parent.y;
+      } else {
+        a_node.y = is_leaf ? this.max_depth : a_node.depth;
+      }
+    } else {
+      this.x = 0.0;
+      // the span of the last node laid out in the top to bottom hierarchy
+      a_node.y = 0.0;
+      this.last_node = null;
+      this.last_span = 0.0;
+      this._extents = [[0, 0], [0, 0]];
+    }
+    if (is_leaf) {
+      // displayed internal nodes are handled in `process_internal_node`
+      this._handle_single_node_layout(
+        a_node
+      );
+    }
+    if (!is_leaf) {
+      // for internal nodes
+      if (
+        isNodeCollapsed(a_node) &&
+        !this.is_under_collapsed_parent
+      ) {
+        // collapsed node
+        this.save_x = this.x;
+        this.save_span = this.last_span * 0.5;
+        this.is_under_collapsed_parent = true;
+        this.process_internal_node(a_node);
+        this.is_under_collapsed_parent = false;
+        if (typeof a_node.x === "number") {
+          a_node.x =
+            this.save_x +
+            (a_node.x -this.save_x) * this.options["compression"] +
+            this.save_span;
+          a_node.collapsed = [[a_node.x, a_node.y]];
+          var map_me = n => {
+            n.hidden = true;
+            if (isLeafNode(n)) {            
+              this.x = n.x =
+                this.save_x +
+                (n.x - this.save_x) * this.options["compression"] +
+                this.save_span;
+                a_node.collapsed.push([n.x, n.y]);             
+            } else {
+              n.children.map(map_me);
+            }
+          };
+          this.x = this.save_x;
+          map_me(a_node); 
+          a_node.collapsed.splice(1, 0, [this.save_x, a_node.y]);
+          a_node.collapsed.push([this.x, a_node.y]);
+          a_node.collapsed.push([a_node.x, a_node.y]);
+          a_node.hidden = false;
+        }
+      } else {
+        // normal node, or under a collapsed parent
+        this.process_internal_node(a_node);
+      }
+    }
+    return a_node.x;
+  }
+  process_internal_node(a_node) {
+    let count_undefined = 0;
+    if (this.showInternalName(a_node)) {
+      // do in-order traversal to allow for proper internal node spacing
+      // (x/2) >> 0 is integer division
+      let half_way = (a_node.children.length / 2) >> 0;
+      let displayed_children = 0;
+      let managed_to_display = false;
+      for (let child_id = 0; child_id < a_node.children.length; child_id++) {
+        let child_x = this.tree_layout(a_node.children[child_id]);//.bind(this);
+        if (typeof child_x == "number") {
+          displayed_children++;
+        }
+        if (displayed_children >= half_way && !managed_to_display) {
+          this._handle_single_node_layout(a_node);
+          managed_to_display = true;
+        }
+      }
+      if (displayed_children == 0) {
+        a_node.notshown = true;
+        a_node.x = undefined;
+      } else {
+        if (!managed_to_display) {
+          this._handle_single_node_layout(a_node);
+        }
+      }
+    } else {
+      // postorder layout
+      a_node.x = a_node.children
+        .map(this.tree_layout.bind(this))
+        .reduce((a, b) => {
+          if (typeof b == "number") return a + b;
+          count_undefined += 1;
+          return a;
+        }, 0.0);
+      if (count_undefined == a_node.children.length) {
+        a_node.notshown = true;
+        a_node.x = undefined;
+      } else {
+        a_node.x /= a_node.children.length - count_undefined;
+      }
+    }
+  }
+  do_lr(at_least_one_dimension_fixed) {
+    if (this.radial() && at_least_one_dimension_fixed) {
+      this.offsets[1] = 0;
+    }
+    if (this.options["left-right-spacing"] == "fixed-step") {
+      this.size[1] = this.max_depth * this.fixed_width[1];
+      this.scales[1] = 
+        (this.size[1] - this.offsets[1] - this.options["left-offset"]) /
+        this._extents[1][1];
+      this.label_width = this._label_width(this.shown_font_size);
+      if (this.radial()) {
+        this.label_width *= 2;
+      }
+    } else {
+      this.label_width = this._label_width(this.shown_font_size);
+      at_least_one_dimension_fixed = true;
+      let available_width =
+        this.size[1] - this.offsets[1] - this.options["left-offset"];
+      if (available_width * 0.5 < this.label_width) {
+        this.shown_font_size *= (available_width * 0.5) / this.label_width;
+        this.label_width = available_width * 0.5;
+      }
+      this.scales[1] =
+        (this.size[1] -
+          this.offsets[1] -
+          this.options["left-offset"] -
+          this.label_width) /
+        this._extents[1][1];
+    }
+  }
+  placenodes() {
+    this._extents = [
+      [0, 0],
+      [0, 0]
+    ];
+    this.x = 0.0;
+    this.last_span = 0.0;      
+    this.last_node = null;
+    this.last_span = 0.0;
+    (this.save_x = this.x), (this.save_span = this.last_span * 0.5);
+    this.do_scaling = this.options["scaling"];
+    let undef_BL = false;
+    this.is_under_collapsed_parent = false;
+    this.max_depth = 1;  
+    // Set initial x
+    this.phylotree.nodes.x = this.tree_layout(
+      this.phylotree.nodes,
+      this.do_scaling
+    );
+    this.max_depth = d3__namespace.max(this.phylotree.nodes.descendants(), n => {
+      return n.depth;
+    });
+    if (this.do_scaling && undef_BL) {
+      // requested scaling, but some branches had no branch lengths
+      // redo layout without branch lengths
+      this.do_scaling = false;
+      this.phylotree.nodes.x = this.tree_layout(this.phylotree.nodes);
+    }
+    let at_least_one_dimension_fixed = false;
+    this.draw_scale_bar = this.options["show-scale"] && this.do_scaling;
+    // this is a hack so that phylotree.pad_height would return ruler spacing
+    this.offsets[1] = Math.max(
+      this.font_size,
+      -this._extents[1][0] * this.fixed_width[0]
+    );
+    if (this.options["top-bottom-spacing"] == "fixed-step") {
+      this.size[0] = this._extents[0][1] * this.fixed_width[0];
+      this.scales[0] = this.fixed_width[0];
+    } else {
+      this.scales[0] = (this.size[0] - this.pad_height()) / this._extents[0][1];
+      at_least_one_dimension_fixed = true;
+    }
+    this.shown_font_size = Math.min(this.font_size, this.scales[0]);
+    if (this.radial()) {
+      // map the nodes to polar coordinates
+      this.draw_branch = ___namespace.partial(drawArc, this.radial_center);
+      this.edge_placer = arcSegmentPlacer;
+      let last_child_angle = null,
+        last_circ_position = null,
+        last_child_radius = null,
+        min_radius = 0,
+        effective_span = this._extents[0][1] * this.scales[0];
+      let compute_distance = function(r1, r2, a1, a2, annular_shift) {
+        annular_shift = annular_shift || 0;
+        return Math.sqrt(
+          (r2 - r1) * (r2 - r1) +
+            2 *
+              (r1 + annular_shift) *
+              (r2 + annular_shift) *
+              (1 - Math.cos(a1 - a2))
+        );
+      };
+      let max_r = 0;
+      this.phylotree.nodes.each(d => {
+        let my_circ_position = d.x * this.scales[0];
+        d.angle = (2 * Math.PI * my_circ_position) / effective_span;
+        d.text_angle = d.angle - Math.PI / 2;
+        d.text_angle = d.text_angle > 0 && d.text_angle < Math.PI;
+        d.text_align = d.text_angle ? "end" : "start";
+        d.text_angle = (d.text_angle ? 180 : 0) + (d.angle * 180) / Math.PI;
+      });
+      this.do_lr(at_least_one_dimension_fixed);
+      this.phylotree.nodes.each(d => {
+        d.radius = (d.y * this.scales[1]) / this.size[1];
+        max_r = Math.max(d.radius, max_r);
+      });
+      let annular_shift = 0;
+      this.phylotree.nodes.each(d => {
+        if (!d.children) {
+          let my_circ_position = d.x * this.scales[0];
+          if (last_child_angle !== null) {
+            let required_spacing = my_circ_position - last_circ_position,
+              radial_dist = compute_distance(
+                d.radius,
+                last_child_radius,
+                d.angle,
+                last_child_angle,
+                annular_shift
+              );
+            let local_mr =
+              radial_dist > 0
+                ? required_spacing / radial_dist
+                : 10 * this.options["max-radius"];
+            if (local_mr > this.options["max-radius"]) {
+              // adjust the annular shift
+              let dd = required_spacing / this.options["max-radius"],
+                b = d.radius + last_child_radius,
+                c =
+                  d.radius * last_child_radius -
+                  (dd * dd -
+                    (last_child_radius - d.radius) *
+                      (last_child_radius - d.radius)) /
+                    2 /
+                    (1 - Math.cos(last_child_angle - d.angle)),
+                st = Math.sqrt(b * b - 4 * c);
+              annular_shift = Math.min(
+                this.options["annular-limit"] * max_r,
+                (-b + st) / 2
+              );
+              min_radius = this.options["max-radius"];
+            } else {
+              min_radius = Math.max(min_radius, local_mr);
+            }
+          }
+          last_child_angle = d.angle;
+          last_circ_position = my_circ_position;
+          last_child_radius = d.radius;
+        }
+      });
+      this.radius = Math.min(
+        this.options["max-radius"],
+        Math.max(effective_span / 2 / Math.PI, min_radius)
+      );
+      if (at_least_one_dimension_fixed) {
+        this.radius = Math.min(
+          this.radius,
+          (Math.min(effective_span, this._extents[1][1] * this.scales[1]) -
+            this.label_width) *
+            0.5 -
+            this.radius * annular_shift
+        );
+      }
+      this.radial_center = this.radius_pad_for_bubbles = this.radius;
+      this.draw_branch = ___namespace.partial(drawArc, this.radial_center);
+      let scaler = 1;
+      if (annular_shift) {
+        scaler = max_r / (max_r + annular_shift);
+        this.radius *= scaler;
+      }
+      this.phylotree.nodes.each(d => {
+        cartesianToPolar(
+          d,
+          this.radius,
+          annular_shift,
+          this.radial_center,
+          this.scales,
+          this.size
+        );
+        max_r = Math.max(max_r, d.radius);
+        if (this.options["draw-size-bubbles"]) {
+          this.radius_pad_for_bubbles = Math.max(
+            this.radius_pad_for_bubbles,
+            d.radius + this.nodeBubbleSize(d)
+          );
         } else {
-          // Hard failure
-          self.logger.error(
-            "type " +
-              type +
-              " not in registry! Available types are " +
-              ___namespace.keys(format_registry)
+          this.radius_pad_for_bubbles = Math.max(
+            this.radius_pad_for_bubbles,
+            d.radius
           );
         }
-      } else if (___namespace.isFunction(type)) {
-        // If the type is a function, try executing the function
-        try {
-          _node_data = type(nwk, options);
-        } catch (e) {
-          // Hard failure
-          self.logger.error("Could not parse custom format!");
-        }
-      } else {
-        // this builds children and links;
-        if (nwk.name == "root") {
-          // already parsed by phylotree.js
-          _node_data = { json: nwk, error: null };
-        } else if (typeof nwk != "string") {
-          // old default
-          _node_data = nwk;
-        } else if (nwk.contentType == "application/xml") {
-          // xml
-          _node_data = phyloxml_parser(nwk);
-        } else {
-          // newick string
-          this.newick_string = nwk;
-          _node_data = newickParser(nwk, options);
-        }
-      }
-      if (!_node_data["json"]) {
-        self.nodes = [];
-      } else {
-        self.nodes = d3__namespace.hierarchy(_node_data.json);
-        // Parse tags
-        let _parsed_tags = {};
-        self.nodes.each(node => {
-          if (node.data.annotation) {
-            _parsed_tags[node.data.annotation] = true;
-          }
-        });
-        self.parsed_tags = Object.keys(_parsed_tags);
-      }
-      self.links = self.nodes.links();
-      // If no branch lengths are supplied, set all to 1
-      if(!this.hasBranchLengths()) {
-        console.warn("Phylotree User Warning : NO BRANCH LENGTHS DETECTED, SETTING ALL LENGTHS TO 1");
-        this.setBranchLength(x => 1);
-      }
-      return self;
-    }
-    /*
-      Export the nodes of the tree with all local keys to JSON
-      The return will be an array of nodes in the specified traversal_type
-      ('post-order' : default, 'pre-order', or 'in-order')
-      with parents and children referring to indices in that array
-
-    */
-    json(traversal_type) {
-      var index = 0;
-      this.traverse_and_compute(function(n) {
-        n.json_export_index = index++;
-      }, traversal_type);
-      var node_array = new Array(index);
-      index = 0;
-      this.traverse_and_compute(function(n) {
-        let node_copy = ___namespace.clone(n);
-        delete node_copy.json_export_index;
-        if (n.parent) {
-          node_copy.parent = n.parent.json_export_index;
-        }
-        if (n.children) {
-          node_copy.children = ___namespace.map(n.children, function(c) {
-            return c.json_export_index;
+        if (d.collapsed) {
+          d.collapsed = d.collapsed.map(p => {
+            let z = {};
+            z.x = p[0];
+            z.y = p[1];
+            z = cartesianToPolar(
+              z,
+              this.radius,
+              annular_shift,
+              this.radial_center,
+              this.scales,
+              this.size
+            );
+            return [z.x, z.y];
+          });
+          let last_point = d.collapsed[1];
+          d.collapsed = d.collapsed.filter(function(p, i) {
+            if (i < 3 || i > d.collapsed.length - 4) return true;
+            if (
+              Math.sqrt(
+                Math.pow(p[0] - last_point[0], 2) +
+                  Math.pow(p[1] - last_point[1], 2)
+              ) > 3
+            ) {
+              last_point = p;
+              return true;
+            }
+            return false;
           });
         }
-        node_array[index++] = node_copy;
-      }, traversal_type);
-      this.traverse_and_compute(function(n) {
-        delete n.json_export_index;
-      }, traversal_type);
-      return JSON.stringify(node_array);
-    }
-    /*
-     * Traverse the tree in a prescribed order, and compute a value at each node.
-     *
-     * @param {Function} callback A function to be called on each node.
-     * @param {String} traversal_type Either ``"pre-order"`` or ``"post-order"`` or ``"in-order"``.
-     * @param {Node} root_node start traversal here, if provided, otherwise start at root
-     * @param {Function} backtrack ; if provided, then at each node n, backtrack (n) will be called,
-                                     and if it returns TRUE, traversal will NOT continue past into this
-                                     node and its children
-     */
-    traverse_and_compute(callback, traversal_type, root_node, backtrack) {
-      traversal_type = traversal_type || "post-order";
-
-      function post_order(node) {
-        if (___namespace.isUndefined(node)) {
-          return;
+      });
+      this.size[0] = this.radial_center + this.radius / scaler;
+      this.size[1] = this.radial_center + this.radius / scaler;
+    } else {
+      this.do_lr();
+      this.draw_branch = draw_line;
+      this.edge_placer = lineSegmentPlacer;
+      this.right_most_leaf = 0;
+      this.phylotree.nodes.each(d => {
+        d.x *= this.scales[0];
+        d.y *= this.scales[1]*.8;
+        if (this.options["layout"] == "right-to-left") {   
+          d.y = this._extents[1][1] * this.scales[1] - d.y;
         }
-        postOrder(node, callback, backtrack);
-      }
-      if (traversal_type == "pre-order") {
-        traversal_type = pre_order;
+        if (isLeafNode(d)) {
+          this.right_most_leaf = Math.max(
+            this.right_most_leaf,
+            d.y + this.nodeBubbleSize(d)
+          );
+        }
+        if (d.collapsed) {
+          d.collapsed.forEach(p => {
+            p[0] *= this.scales[0];
+            p[1] *= this.scales[1]*.8;
+          });
+          let last_x = d.collapsed[1][0];
+          d.collapsed = d.collapsed.filter(function(p, i) {
+            if (i < 3 || i > d.collapsed.length - 4) return true;
+            if (p[0] - last_x > 3) {
+              last_x = p[0];
+              return true;
+            }
+            return false;
+          });
+        }
+      });
+    }
+    if (this.draw_scale_bar) {
+      let domain_limit, range_limit;
+      if (this.radial()) {
+        range_limit = Math.min(this.radius / 5, 50);
+        domain_limit = Math.pow(
+          10,
+          Math.ceil(
+            Math.log((this._extents[1][1] * range_limit) / this.radius) /
+              Math.log(10)
+          )
+        );  
+        range_limit = domain_limit * (this.radius / this._extents[1][1]);
+        if (range_limit < 30) {
+          let stretch = Math.ceil(30 / range_limit);
+          range_limit *= stretch;
+          domain_limit *= stretch;
+        }
       } else {
-        if (traversal_type == "in-order") {
-          traversal_type = in_order;
-        } else {
-          traversal_type = post_order;
+        domain_limit = this._extents[1][1];
+        range_limit =
+          this.size[1] - this.offsets[1] - this.options["left-offset"] - this.shown_font_size;
+      }
+      let scale = d3__namespace
+          .scaleLinear()
+          .domain([0, domain_limit])
+          .range([0, range_limit]), 
+          scaleTickFormatter = d3__namespace.format(".2f");
+      this.draw_scale_bar = d3__namespace
+        .axisTop()
+        .scale(scale)
+        .tickFormat(function(d) {
+          if (d === 0) {
+            return "";
+          }
+          return scaleTickFormatter(d);
+        });
+      if (this.radial()) {
+        this.draw_scale_bar.tickValues([domain_limit]);
+      } else {
+        let round = function(x, n) {
+          return n ? Math.round(x * (n = Math.pow(10, n))) / n : Math.round(x);
+        };
+        let my_ticks = scale.ticks();
+        my_ticks = my_ticks.length > 1 ? my_ticks[1] : my_ticks[0];
+        this.draw_scale_bar.ticks(
+          Math.min(
+            10,
+            round(
+              range_limit /
+                (this.shown_font_size *
+                  scaleTickFormatter(my_ticks).length *
+                  2),
+              0
+            )
+          )
+        );
+      }
+    } else {
+      this.draw_scale_bar = null;
+    }
+    return this;
+  }
+  spacing_x(attr, skip_render) {
+    if (!arguments.length) return this.fixed_width[0];
+    if (
+      this.fixed_width[0] != attr &&
+      attr >= this.options["minimum-per-node-spacing"] &&
+      attr <= this.options["maximum-per-node-spacing"]
+    ) {
+      this.fixed_width[0] = attr;
+      if (!skip_render) {
+        this.placenodes();
+      }
+    }
+    return this;
+  }
+  spacing_y(attr, skip_render) {
+    if (!arguments.length) return this.fixed_width[1];
+    if (
+      this.fixed_width[1] != attr &&
+      attr >= this.options["minimum-per-level-spacing"] &&
+      attr <= this.options["maximum-per-level-spacing"]
+    ) {
+      this.fixed_width[1] = attr;
+      if (!skip_render) {
+        this.placenodes();
+      }
+    }
+    return this;
+  }
+  _label_width(_font_size) {
+    _font_size = _font_size || this.shown_font_size;
+    let width = 0;
+    this.phylotree.nodes
+      .descendants()
+      .filter(nodeVisible)
+      .forEach(node => {
+        let node_width = 12 + this._nodeLabel(node).length * _font_size * 0.8;
+        if (node.angle !== null) {
+          node_width *= Math.max(
+            Math.abs(Math.cos(node.angle)),
+            Math.abs(Math.sin(node.angle))
+          );
         }
+        width = Math.max(node_width, width);
+      });
+    return width;
+  }
+  font_size(attr) {
+    if (!arguments.length) return this.font_size;
+    this.font_size = attr === undefined ? 12 : attr;
+    return this;
+  }
+  scale_bar_font_size(attr) {
+    if (!arguments.length) return this.scale_bar_font_size;
+    this.scale_bar_font_size = attr === undefined ? 12 : attr;
+    return this;
+  }
+  node_circle_size(attr, attr2) {
+    if (!arguments.length) return this.options["node_circle_size"];
+    this.options["node_circle_size"] = constant$1(attr === undefined ? 3 : attr);
+    return this;
+  }
+  css(opt) {
+    if (arguments.length === 0) return this.css_classes;
+    if (arguments.length > 2) {
+      var arg = {};
+      arg[opt[0]] = opt[1];
+      return this.css(arg);
+    }
+    for (var key in css_classes) {
+      if (key in opt && opt[key] != css_classes[key]) {
+        css_classes[key] = opt[key];
       }
-      traversal_type(root_node ? root_node : this.nodes);
-      function pre_order(node) {
-        preOrder(node, callback, backtrack);
+    }
+    return this;
+  }
+  transitions(arg) {
+    if (arg !== undefined) {
+      return arg;
+    }
+    if (this.options["transitions"] !== null) {
+      return this.options["transitions"];
+    }
+    return this.phylotree.nodes.descendants().length <= 300;
+  }
+  css_classes(opt, run_update) {
+    if (!arguments.length) return this.css_classes;
+    let do_update = false;
+    for (var key in css_classes) {
+      if (key in opt && opt[key] != this.css_classes[key]) {
+        do_update = true;
+        this.css_classes[key] = opt[key];
       }
-      return this;
     }
-
-    get_parsed_tags() {
-      return this.parsed_tags;
+    if (run_update && do_update) {
+      this.layout();
     }
-
-    update(json) {
-      // update with new hiearchy layout
-      this.nodes = json;
+    return this;
+  }
+  layout(transitions) {
+    if (this.svg) {
+      this.svg.selectAll(
+        "." +
+          this.css_classes["tree-container"] +
+          ",." +
+          this.css_classes["tree-scale-bar"] +
+          ",." +
+          this.css_classes["tree-selection-brush"]
+      );
+      //.remove();
+      this.d3PhylotreeTriggerLayout(this);
+      return this.update();
     }
-
-    // Warning : Requires DOM!
-    render(options) {
-      this.display = new TreeRender(this, options);
-      return this.display;
+    this.d3PhylotreeTriggerLayout(this);
+    return this;
+  }
+  handle_node_click(node) {
+    this.nodeDropdownMenu(node, this.container, this, this.options);
+  }
+  refresh() {
+    if (this.svg) {
+      // for re-entrancy
+      let enclosure = this.svg.selectAll(
+        "." + this.css_classes["tree-container"]
+      );
+      let edges = enclosure
+        .selectAll(edgeCssSelectors(this.css_classes))
+        .attr("class", this.reclassEdge.bind(this));
+      if (this.edge_styler) {
+        edges.each(d => {
+          this.edge_styler(d3__namespace.select(this), d);
+        });
+      }
     }
-  };
+    return this;
+  }
+  countHandler(attr) {
+    if (!arguments.length) return this.count_listener_handler;
+    this.count_listener_handler = attr;
+    return this;
+  }
+  style_nodes(attr) {
+    if (!arguments.length) return this.node_styler;
+    this.node_styler = attr;
+    return this;
+  }
+  style_edges(attr) {
+    if (!arguments.length) return this.edge_styler;
+    this.edge_styler = attr.bind(this);
+    return this;
+  }
+  itemSelected(item, tag) {
+    return item[tag] || false;
+  }
+  show() {
+    return this.svg.node()
+  }
+}
 
-  Phylotree.prototype.isLeafNode = isLeafNode;
-  Phylotree.prototype.hasBranchLengths = hasBranchLengths;
-  Phylotree.prototype.branchName = branchName;
-  Phylotree.prototype.normalizeBranchLengths = normalize;
-  Phylotree.prototype.scaleBranchLengths = scale;
-  Phylotree.prototype.getNewick = getNewick;
-  Phylotree.prototype.resortChildren = resortChildren;
-  Phylotree.prototype.setBranchLength = setBranchLength;
+___namespace.extend(TreeRender.prototype, clades);
+___namespace.extend(TreeRender.prototype, render_nodes);
+___namespace.extend(TreeRender.prototype, render_edges);
+___namespace.extend(TreeRender.prototype, events);
+___namespace.extend(TreeRender.prototype, menus);
+___namespace.extend(TreeRender.prototype, opt);
 
-  ___namespace.extend(Phylotree.prototype, node_operations);
-  ___namespace.extend(Phylotree.prototype, rooting);
+function resortChildren(comparator, start_node, filter) {
+  // ascending
+  this.nodes
+    .sum(function(d) {
+      return d.value;
+    })
+    .sort(comparator);
+  // if a tree is rendered in the DOM
+  if (this.display) {
+    this.display.update_layout(this.nodes);
+    this.display.update();
+  }
+  return this;
+}
 
-  exports.phylotree = Phylotree;
-  Object.defineProperty(exports, '__esModule', { value: true });
+let Phylotree = class {
+  constructor(nwk, options = {}) {
+    this.newick_string = "";
+    this.nodes = [];
+    this.links = [];
+    this.parsed_tags = [];
+    this.partitions = [];
+    this.branch_length_accessor = defBranchLengthAccessor;
+    this.branch_length = defBranchLengthAccessor;
+    this.logger = options.logger || console;
+    this.selection_attribute_name = "selected";
+    // initialization
+    var type = options.type || undefined,
+      _node_data = [],
+      self = this;
+      // If the type is a string, check the parser_registry
+    if (___namespace.isString(type)) {
+      if (type in format_registry) {
+        _node_data = format_registry[type](nwk, options);
+      } else {
+        // Hard failure
+        self.logger.error(
+          "type " +
+            type +
+            " not in registry! Available types are " +
+            ___namespace.keys(format_registry)
+        );
+      }
+    } else if (___namespace.isFunction(type)) {
+      // If the type is a function, try executing the function
+      try {
+        _node_data = type(nwk, options);
+      } catch (e) {
+        // Hard failure
+        self.logger.error("Could not parse custom format!");
+      }
+    } else {
+      // this builds children and links;
+      if (nwk.name == "root") {
+        // already parsed by phylotree.js
+        _node_data = { json: nwk, error: null };
+      } else if (typeof nwk != "string") {
+        // old default
+        _node_data = nwk;
+      } else if (nwk.contentType == "application/xml") {
+        // xml
+        _node_data = phyloxml_parser(nwk);
+      } else {
+        // newick string
+        this.newick_string = nwk;
+        _node_data = newickParser(nwk, options);
+      }
+    }
+    if (!_node_data["json"]) {
+      self.nodes = [];
+    } else {
+      self.nodes = d3__namespace.hierarchy(_node_data.json);
+      // Parse tags
+      let _parsed_tags = {};
+      self.nodes.each(node => {
+        if (node.data.annotation) {
+          _parsed_tags[node.data.annotation] = true;
+        }
+      });
+      self.parsed_tags = Object.keys(_parsed_tags);
+    }
+    self.links = self.nodes.links();
+    // If no branch lengths are supplied, set all to 1
+    if(!this.hasBranchLengths()) {
+      console.warn("Phylotree User Warning : NO BRANCH LENGTHS DETECTED, SETTING ALL LENGTHS TO 1");
+      this.setBranchLength(x => 1);
+    }
+    return self;
+  }
+  json(traversal_type) {
+    var index = 0;
+    this.traverse_and_compute(function(n) {
+      n.json_export_index = index++;
+    }, traversal_type);
+    var node_array = new Array(index);
+    index = 0;
+    this.traverse_and_compute(function(n) {
+      let node_copy = ___namespace.clone(n);
+      delete node_copy.json_export_index;
+      if (n.parent) {
+        node_copy.parent = n.parent.json_export_index;
+      }
+      if (n.children) {
+        node_copy.children = ___namespace.map(n.children, function(c) {
+          return c.json_export_index;
+        });
+      }
+      node_array[index++] = node_copy;
+    }, traversal_type);
+    this.traverse_and_compute(function(n) {
+      delete n.json_export_index;
+    }, traversal_type);
+    return JSON.stringify(node_array);
+  }
+  traverse_and_compute(callback, traversal_type, root_node, backtrack) {
+    traversal_type = traversal_type || "post-order";
+    function post_order(node) {
+      if (___namespace.isUndefined(node)) {
+        return;
+      }
+      postOrder(node, callback, backtrack);
+    }
+    if (traversal_type == "pre-order") {
+      traversal_type = pre_order;
+    } else {
+      if (traversal_type == "in-order") {
+        traversal_type = in_order;
+      } else {
+        traversal_type = post_order;
+      }
+    }
+    traversal_type(root_node ? root_node : this.nodes);
+    function pre_order(node) {
+      preOrder(node, callback, backtrack);
+    }
+    return this;
+  }
+  get_parsed_tags() {
+    return this.parsed_tags;
+  }
+  update(json) {
+    // update with new hiearchy layout
+    this.nodes = json;
+  }
+  // Warning : Requires DOM!
+  render(options) {
+    this.display = new TreeRender(this, options);
+    return this.display;
+  }
+};
+
+Phylotree.prototype.isLeafNode = isLeafNode;
+Phylotree.prototype.hasBranchLengths = hasBranchLengths;
+Phylotree.prototype.scaleBranchLengths = scale;
+Phylotree.prototype.getNewick = getNewick;
+Phylotree.prototype.resortChildren = resortChildren;
+Phylotree.prototype.setBranchLength = setBranchLength;
+
+___namespace.extend(Phylotree.prototype, node_operations);
+___namespace.extend(Phylotree.prototype, rooting);
+
+exports.phylotree = Phylotree;
+Object.defineProperty(exports, '__esModule', { value: true });
 })));
