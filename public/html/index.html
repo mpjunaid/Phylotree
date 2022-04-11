@@ -465,6 +465,7 @@
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
             tree2.nodes.tree = 2;
+            
             const val_123=create_intersection(tree2)
             display_intersection(val_123)
             if (!tree2["json"]) {
@@ -795,6 +796,9 @@
           return filter_value.length && m != -1;
         });
       });
+
+      node1 = [];
+      node2 = [];
 
       function default_tree_settings() {
         tree1 = phylotree();

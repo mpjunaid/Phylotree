@@ -1412,8 +1412,8 @@ function nodeDropdownMenu(node, container, phylotree, options) {
               .text("Compare nodes")
               .on("click", function(d) {
                 menu_object.style("display", "none");
-                var node1 = node;
-                var node2 = node.BCN;
+                node1 = node;
+                node2 = node.BCN;
                 var search_node = node1;
                 while (search_node) {
                   var root = search_node;
