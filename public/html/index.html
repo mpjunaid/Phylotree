@@ -20,29 +20,24 @@
     <!-- Latest compiled and minified CSS -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-
     <link
       rel="stylesheet"
       href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
-
     <!-- New font -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" 
     rel="stylesheet">
-    
     <link
       href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
       rel="stylesheet"
     />
-
     <!-- Optional theme -->
     <link
       rel="stylesheet"
       href="//stackpath.bootstrapcdn.com/bootswatch/4.1.1/spacelab/bootstrap.min.css"
-    />
-    
+    />    
     <!-- Latest compiled and minified JavaScript -->
     <script
       src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
@@ -54,18 +49,16 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
-
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
     <script src="//d3js.org/d3.v5.js"></script>
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
+    <script src="../js/intersection.js"></script>
     <link href="../css/phylotree.css" rel="stylesheet" />
-
     <style>
       nav {
         margin-bottom: 25px;
       }
-
       .fa-rotate-45 {
         -webkit-transform: rotate(45deg);
         -moz-transform: rotate(45deg);
@@ -73,7 +66,6 @@
         -o-transform: rotate(45deg);
         transform: rotate(45deg);
       }
-
       .fa-rotate-135 {
         -webkit-transform: rotate(135deg);
         -moz-transform: rotate(135deg);
@@ -81,38 +73,31 @@
         -o-transform: rotate(135deg);
         transform: rotate(135deg);
       }
-
       @media (max-width: 1075px) {
         .container {
           padding-top: 50px;
         }
       }
-
       .button {
         height: 30px;
       }
-
       #toolbar {
         display: flex;
         justify-content: space-between;
         width: 550px;
       }
-
       #controls {
         position: fixed;
         left: 5px;
       }
     </style>
   </head>
-
   <body>
     <!--
 ###############################################################################################################################
 -->
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <!-- <a class="navbar-brand" href="#">phylotree.js</a> -->
-
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="navbar-nav">
@@ -151,7 +136,6 @@
             </div>
           </li>
         </ul>
-
         <ul class="navbar-nav ml-auto">
           <li>
             <form class="form-inline my-2 my-lg-0">
@@ -166,11 +150,8 @@
           </li>
         </ul>
       </div>
-
-
       <!-- /.container-fluid -->
     </nav>
-
     <div class="modal" id="newick_modal" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -213,7 +194,6 @@
       <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-
     <div class="modal" id="newick_export_modal" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -241,7 +221,6 @@
       <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-
     <div class="modal" id="progress_model">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -263,11 +242,9 @@
       <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
-
     <div id="controls">
       <form id="controls_form" style="width:200px;"></form>
     </div>
-
     <div class="container" id="main_display" >
       <div class="row">
         <div class="col-md-8">
@@ -369,13 +346,11 @@
               >
                 <i class="fa fa-align-right"></i>
               </button>
-
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <table align ="left">    
       <tbody>
       <tr>
@@ -401,16 +376,14 @@
         </th>
         <th>
           <div id="tree_container3" class="tree-widget" style="display: block; width: 5%; padding:0px; vertical-align: top;"></div>
-        </th>
-        
+        </th>      
       </tr>
     </tbody>
     </table>
     <!--
 ###############################################################################################################################
 -->   
-    <script>
-      
+    <script>      
       var phylotree_extensions = new Object();
       $("#newick_export_modal").on("show.bs.modal", function(e) {
         $('textarea[id$="nwk_export_spec"]').val(
@@ -427,9 +400,7 @@
             return "";
           })
         );
-      });
-      
-      
+      });      
       $("#newick_file").on("change", function(e) {
         var files = e.target.files; // FileList object
 
@@ -459,53 +430,43 @@
                 "node-styler": node_colorizer,
                 "edge-styler": edge_colorizer
               });
-
               tree1.display.selectionLabel(current_selection_name);
-
               tree1.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
-
               // Get selection set names from parsed newick
               if (tree1.parsed_tags.length) {
                 selection_set = tree1.parsed_tags;
               }
-
               update_selection_names();
-
               $("#newick_modal").modal("hide");
-
               $(tree1.display.container).empty();
               $(tree1.display.container).html(tree1.display.show());
             }
           };
-
           $("#newick-dropdown").dropdown("toggle");
           reader.readAsText(f);
         }
       });
-
       $("#newick_file2").on("change", function(e) {
         var files = e.target.files; // FileList object
-
         if (files.length == 1) {
           var f = files[0];
           var reader = new FileReader();
-
           reader.onload = function(e) {
             var res = e.target.result;
             var warning_div = d3
               .select("#main_display")
               .insert("div", ":first-child");
-
             tree2 = new phylotree.phylotree(res);
             window.tree3 = undefined;
             preprocess_BCN(tree1, tree2);
             preprocess_BCN(tree2, tree1);
             tree1.nodes.tree = 1;
             tree2.nodes.tree = 2;
+            
             const val_123=create_intersection(tree2)
             display_intersection(val_123)
             if (!tree2["json"]) {
@@ -525,24 +486,18 @@
                 "node-styler": node_colorizer,
                 "edge-styler": edge_colorizer
               });
-
               tree2.display.selectionLabel(current_selection_name);
-
               tree2.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
-
               // Get selection set names from parsed newick
               if (tree2.parsed_tags.length) {
                 selection_set = tree2.parsed_tags;
               }
-
               update_selection_names();
-
               $("#newick_modal").modal("hide");
-              
               $(tree2.display.container).empty();
               $(tree2.display.container).html(tree2.display.show());
               tree1.render({
@@ -553,37 +508,29 @@
                 "edge-styler": edge_colorizer
               });
               tree1.display.selectionLabel(current_selection_name);
-
               tree1.display.countHandler(count => {
                 $("#selected_branch_counter").text(function(d) {
                   return count[current_selection_name];
                 });
               });
-
               // Get selection set names from parsed newick
               if (tree1.parsed_tags.length) {
                 selection_set = tree1.parsed_tags;
               }
-
               update_selection_names();
-
               $("#newick_modal").modal("hide");
               $(tree1.display.container).empty();
               $(tree1.display.container).html(tree1.display.show());
             }
           };
-
         $("#newick-dropdown").dropdown("toggle");
          reader.readAsText(f);
         }
-        
       });
-
       $("#display_tree").on("click", function(e) {
         tree1.options({ branches: "straight" }, true);
         tree2.options({ branches: "straight" }, true);
       });
-
       $("[data-direction]").on("click", function(e) {
         var which_function =
           $(this).data("direction") == "vertical"
@@ -591,7 +538,6 @@
             : tree1.display.spacing_y.bind(tree1.display)
         which_function(which_function() + +$(this).data("amount")).update();
       });
-
       $("[data-direction]").on("click", function(e) {
         var which_function =
           $(this).data("direction") == "vertical"
@@ -599,7 +545,6 @@
             : tree2.display.spacing_y.bind(tree2.display)
         which_function(which_function() + +$(this).data("amount")).update();
       });
-
       $(".phylotree-layout-mode").on("click", function(e) {
         if (tree1.display.radial() != ($(this).data("mode") == "radial")) {
           $(".phylotree-layout-mode").toggleClass("active");
@@ -614,154 +559,75 @@
           tree3.display.radial(!tree3.display.radial()).update();
         }
       });
-
       $("#toggle_animation").on("click", function(e) {
         var current_mode = $(this).hasClass("active");
         $(this).toggleClass("active");
         tree1.options({ transitions: !current_mode })
         tree2.options({ transitions: !current_mode });
       });
-
       $(".phylotree-align-toggler").on("click", function(e) {
         var button_align = $(this).data("align");
         var tree1_align = tree1.display.options.alignTips;
-
         if (tree1_align != button_align) {
           tree1.display.alignTips(button_align == "right");
           $(".phylotree-align-toggler").toggleClass("active");
           tree1.display.update();
         }
         var tree2_align = tree2.display.options.alignTips;
-
         if (tree2_align != button_align) {
           tree2.display.alignTips(button_align == "right");
           $(".phylotree-align-toggler").toggleClass("active");
           tree2.display.update();
         }
       });
-      var newick=""
-      // var tree1=[]
-      // var previous_node_score=1
-      function new_tree(tree){
-            if (tree.hasOwnProperty('children')) {
-
-                const len=tree.children.length;
-                if(tree.score==1)
-                          { 
-                            newick+="("
-                            for (let i=0;i<len;i=i+1){
-                              if(tree.children[i].hasOwnProperty('children'))
-                              {
-
-                              }
-                              else{
-                                newick+=tree.children[i].data.name
-                                if(i!=len)
-                                  {newick+=","}
-                              }
-
-                            }
-                            // newick.slice(0, -1)
-                            
-                          }
-                for (let i=0;i<len;i=i+1) {
-                      new_tree(tree.children[i]); 
-                }
-                      
-                if(tree.score==1)
-                          { last = newick.charAt(newick.length - 1);
-                            if(last==','){
-                              newick=newick.slice(0, -1)
-                            }
-                            newick+=")"
-                            newick+=","
-                            
-                          }
-          
+      var newick="";      
+      function display_intersection(res) {
+        var warning_div = d3
+          .select("#main_display")
+          .insert("div", ":first-child");
+        window.tree3 = new phylotree.phylotree(res);
+        if (!tree3["json"]) {
+          warning_div
+            .attr("class", "alert alert-danger alert-dismissable")
+            .html(
+              "<strong>Newick parser error for file " +
+              f.name +
+              ": </strong> In file " +
+              res["error"]
+            );
+        } else {
+          tree3.render({
+            container: "#tree_container3",
+            "draw-size-bubbles": false,
+            "left-right-spacing": "fixed-step",
+            "node-styler": node_colorizer,
+            "edge-styler": edge_colorizer
+          });
+          tree3.display.selectionLabel(current_selection_name);
+          tree3.display.countHandler(count => {
+            $("#selected_branch_counter").text(function(d) {
+              return count[current_selection_name];
+            });
+          });
+          // Get selection set names from parsed newick
+          if (tree3.parsed_tags.length) {
+            selection_set = tree3.parsed_tags;
+          }
+          update_selection_names();
+          $("#newick_modal").modal("hide");
+          $(tree3.display.container).empty();
+          $(tree3.display.container).html(tree3.display.show());
         }
-        // else{
-        //   if(previous_node_score==1)
-        //         newick+=tree.data.name
-        // }
-        // previous_node_score=tree.score
-
-        return newick
+        $("#newick-dropdown").dropdown("toggle");
       }
-      function create_intersection(tree)
-      {   let intersection='('
-          intersection+=new_tree(tree.nodes)
-          intersection=intersection.slice(0, -1)
-          intersection+=");"
-         
-          return intersection
-
-      }
-
-      function display_intersection(res)
-      {     
-            console.log(res)
-            var warning_div = d3
-              .select("#main_display")
-              .insert("div", ":first-child");
-            console.log(res)
-            window.tree3 = new phylotree.phylotree(res);
-            if (!tree3["json"]) {
-              warning_div
-                .attr("class", "alert alert-danger alert-dismissable")
-                .html(
-                  "<strong>Newick parser error for file " +
-                    f.name +
-                    ": </strong> In file " +
-                    res["error"]
-                );
-            } else {
-              tree3.render({
-                container: "#tree_container3",
-                "draw-size-bubbles": false,
-                "left-right-spacing": "fixed-step",
-                "node-styler": node_colorizer,
-                "edge-styler": edge_colorizer
-              });
-
-              tree3.display.selectionLabel(current_selection_name);
-
-              tree3.display.countHandler(count => {
-                $("#selected_branch_counter").text(function(d) {
-                  return count[current_selection_name];
-                });
-              });
-
-              // Get selection set names from parsed newick
-              if (tree3.parsed_tags.length) {
-                selection_set = tree3.parsed_tags;
-              }
-
-              update_selection_names();
-
-              $("#newick_modal").modal("hide");
-
-              $(tree3.display.container).empty();
-              $(tree3.display.container).html(tree3.display.show());
-            }
-      
-
-          $("#newick-dropdown").dropdown("toggle");
-        //  reader.readAsText(f);
-        }
-      //  });
-    //  }
-
       if('function' === typeof importScripts) {
         importScripts('../js/underscore.js');
       }
-
-
       function sort_nodes(asc, tree) {
         tree.resortChildren(function(a, b) {
           return (b.height - a.height || b.value - a.value) * (asc ? 1 : -1);
         });
       }
-
       $("#sort_original").on("click", function(e) {
         tree1.resortChildren(function(a, b) {
           return a["original_child_order"] - b["original_child_order"];
@@ -772,21 +638,18 @@
         tree1.update();
         tree2.update();
       });
-
       $("#sort_ascending").on("click", function(e) {
         sort_nodes(false, tree1);
         tree1.display.update();
         sort_nodes(false,tree2);
         tree2.display.update();
       });
-
       $("#sort_descending").on("click", function(e) {
         sort_nodes(true, tree1);
         tree1.display.update();
         sort_nodes(true, tree2);
         tree2.display.update();
       });
-
       $("#and_label").on("click", function(e) {
         tree1.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
@@ -799,7 +662,6 @@
           }, true);
         }, true);
       });
-
       $("#or_label").on("click", function(e) {
         tree1.display.internalLabel(function(d) {
           return d.reduce(function(prev, curr) {
@@ -812,7 +674,6 @@
           }, false);
         }, true);
       });
-
       $("#filter_add").on("click", function(e) {
         tree1.display
           .modifySelection(function(d) {
@@ -839,7 +700,6 @@
             false
           );
       });
-
       $("#filter_remove").on("click", function(e) {
         tree1.display.modifySelection(function(d) {
           return !d.tag;
@@ -944,7 +804,6 @@
       function default_tree_settings() {
         tree1 = phylotree();
         tree1.branchLength(null);
-        tree1.branchName(null);
         tree1.display.radial(false).separation(function(a, b) {
           return 0;
         });
@@ -1375,22 +1234,5 @@
         });
       });
     </script>
-
-    <!-- <script>
-      var _warn = console.warn;
-
-      console.warn = function() {
-        if (arguments[0].includes("Phylotree User Warning")) {
-          var warning_div = d3
-            .select("#main_display")
-            .insert("div", ":first-child");
-          warning_div
-            .attr("class", "alert alert-danger alert-dismissable")
-            .html(arguments[0]);
-        }
-        return _warn.apply(console, arguments);
-      };
-    </script> -->
-
   </body>
 </html>
