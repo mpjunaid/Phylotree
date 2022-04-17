@@ -304,14 +304,6 @@
               <button
                 type="button"
                 class="button1"
-                id="sort_original"
-                title="Restore original order"
-              >
-                <i class="fa fa-sort"></i>
-              </button>
-              <button
-                type="button"
-                class="button1"
                 id="save_image"
                 title="Save image"
               >
@@ -627,16 +619,6 @@
           return (b.height - a.height || b.value - a.value) * (asc ? 1 : -1);
         });
       }
-      $("#sort_original").on("click", function(e) {
-        tree1.resortChildren(function(a, b) {
-          return a["original_child_order"] - b["original_child_order"];
-        });
-        tree2.resortChildren(function(a, b) {
-          return a["original_child_order"] - b["original_child_order"];
-        });
-        tree1.update();
-        tree2.update();
-      });
       $("#sort_ascending").on("click", function(e) {
         sort_nodes(false, tree1);
         tree1.display.update();
