@@ -2760,6 +2760,23 @@ ___namespace.extend(TreeRender.prototype, events);
 ___namespace.extend(TreeRender.prototype, menus);
 ___namespace.extend(TreeRender.prototype, opt);
 
+function resortChildren(comparator, start_node, filter) {
+  // ascending
+  this.nodes
+    .sum(function(d) {
+      return d.value;
+    })
+    .sort(comparator);
+
+  // if a tree is rendered in the DOM
+  if (this.display) {
+    this.display.update_layout(this.nodes);
+    this.display.update();
+  }
+
+  return this;
+}
+
 let Phylotree = class {
   constructor(nwk, options = {}) {
     this.newick_string = "";
@@ -2900,6 +2917,7 @@ Phylotree.prototype.isLeafNode = isLeafNode;
 Phylotree.prototype.hasBranchLengths = hasBranchLengths;
 Phylotree.prototype.scaleBranchLengths = scale;
 Phylotree.prototype.getNewick = getNewick;
+Phylotree.prototype.resortChildren = resortChildren;
 Phylotree.prototype.setBranchLength = setBranchLength;
 
 ___namespace.extend(Phylotree.prototype, node_operations);
