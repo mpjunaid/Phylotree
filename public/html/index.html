@@ -556,6 +556,7 @@
       $("#display_tree").on("click", function(e) {
         tree1.options({ branches: "straight" }, true);
         tree2.options({ branches: "straight" }, true);
+        tree3.options({ branches: "straight" }, true);
       });
       $("[data-direction]").on("click", function(e) {
         var which_function =
@@ -569,6 +570,13 @@
           $(this).data("direction") == "vertical"
             ? tree2.display.spacing_x.bind(tree2.display)
             : tree2.display.spacing_y.bind(tree2.display)
+        which_function(which_function() + +$(this).data("amount")).update();
+      });
+      $("[data-direction]").on("click", function(e) {
+        var which_function =
+          $(this).data("direction") == "vertical"
+            ? tree3.display.spacing_x.bind(tree3.display)
+            : tree3.display.spacing_y.bind(tree3.display)
         which_function(which_function() + +$(this).data("amount")).update();
       });
       $(".phylotree-layout-mode").on("click", function(e) {
@@ -589,7 +597,8 @@
         var current_mode = $(this).hasClass("active");
         $(this).toggleClass("active");
         tree1.options({ transitions: !current_mode })
-        tree2.options({ transitions: !current_mode });
+        tree2.options({ transitions: !current_mode })
+        tree3.options({ transitions: !current_mode });
       });
       $(".phylotree-align-toggler").on("click", function(e) {
         var button_align = $(this).data("align");
@@ -604,6 +613,12 @@
           tree2.display.alignTips(button_align == "right");
           $(".phylotree-align-toggler").toggleClass("active");
           tree2.display.update();
+        }
+        var tree3_align = tree3.display.options.alignTips;
+        if (tree3_align != button_align) {
+          tree3.display.alignTips(button_align == "right");
+          $(".phylotree-align-toggler").toggleClass("active");
+          tree3.display.update();
         }
       });
       var newick="";      
@@ -798,6 +813,13 @@
         var rx = new RegExp(filter_value, "i");
         console.log(rx)
         tree1.display.modifySelection(n => {
+          if (!n.target.data.name) {
+            return false;
+          }
+          m = n.target.data.name.search(rx);
+          return filter_value.length && m != -1;
+        });
+        tree3.display.modifySelection(n => {
           if (!n.target.data.name) {
             return false;
           }
