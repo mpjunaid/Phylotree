@@ -54,6 +54,8 @@
     <script src="../js/phylotree.js"></script>
     <script src="../js/nodescores.js"></script>
     <script src="../js/intersection.js"></script>
+    <script src="../js/statistics.js"></script>
+
     <link href="../css/phylotree.css" rel="stylesheet" />
     <style>
       nav {
@@ -350,7 +352,7 @@
           <div id="tree_container1" class="tree-widget" style="display: block;width: 10%; padding:0px; vertical-align: top;"></div>
         </th>
         <th style="text-align:center; vertical-align: top;">
-          <div id = text> Nodescore color</div>
+          <div id = text> <h1>Nodescore color</h1></div>
           <div id = 01 style = "background-color: rgb(245, 141, 6); color:white;">0.0-0.1</div>
           <div id = 02 style = "background-color: rgb(245, 100, 6);color:white;">0.1-0.2</div>
           <div id = 03 style = "background-color: rgb(245, 60, 6);color:white;">0.2-0.3</div>
@@ -362,6 +364,22 @@
           <div id = 09 style = "background-color: rgb(85, 0, 206);color:white;">0.8-0.9</div>
           <div id = 10 style = "background-color: rgb(45, 0, 245);color:white;">0.9-1.0</div>
           <div id = 1 style = "background-color: rgb(0, 245, 0);color:white;">1</div>
+        
+          <div id = text> <h1>statistics</h1> </div>
+          <!-- <h1 id="test1"></h1> -->
+          <table border="2">
+            <tr><th bgcolor="orange">Tree-1</th></tr>
+            <tr><th>Average Depth:<h3 id="depth1"></h3></th></tr>
+            <tr><th>Average Height:<h3 id="height1"></h3></th></tr>
+            <tr><th>Number of nodes:<h3 id="node1"></h3></th></tr>
+            <tr><th>Number of leafs:<h3 id="leaf1"></h3></th></tr>
+
+            <tr><th bgcolor="orange">Tree-2</th></tr>
+            <tr><th>Average Depth:<h3 id="depth2"></h3></th></tr>
+            <tr><th>Average Height:<h3 id="height2"></h3></th></tr>
+            <tr><th>Number of nodes:<h3 id="node2"></h3></th></tr>
+            <tr><th>Number of leafs:<h3 id="leaf2"></h3></th></tr>
+          </table>
         </th>
         <th>
           <div id="tree_container2" class="tree-widget" style="display: block; width: 5%; padding:0px; vertical-align: top;"></div>
@@ -461,6 +479,22 @@
             
             const val_123=create_intersection(tree2)
             display_intersection(val_123)
+            vals=average_val(tree1.nodes)
+            console.log("Tree-1")
+            console.log(vals)
+            document.getElementById("depth1").innerHTML = vals[1]
+            document.getElementById("height1").innerHTML = vals[0]
+            document.getElementById("node1").innerHTML = vals[2]
+            document.getElementById("leaf1").innerHTML = vals[3]
+
+            vals=average_val(tree2.nodes)
+            console.log("Tree-2")
+            console.log(vals)
+            document.getElementById("depth2").innerHTML = vals[1]
+            document.getElementById("height2").innerHTML = vals[0]
+            document.getElementById("node2").innerHTML = vals[2]
+            document.getElementById("leaf2").innerHTML = vals[3]
+
             if (!tree2["json"]) {
               warning_div
                 .attr("class", "alert alert-danger alert-dismissable")
