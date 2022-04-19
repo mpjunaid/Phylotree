@@ -2767,11 +2767,13 @@ function resortChildren(comparator, start_node, filter) {
       return d.value;
     })
     .sort(comparator);
+
   // if a tree is rendered in the DOM
   if (this.display) {
     this.display.update_layout(this.nodes);
     this.display.update();
   }
+
   return this;
 }
 
