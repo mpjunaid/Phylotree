@@ -19,6 +19,8 @@ http://localhost:3000
 
 ```
 
+Load trees from the pecto-newick-trees folder
+
 # Our Application looks the following when two trees are loaded
 
 Linear view
